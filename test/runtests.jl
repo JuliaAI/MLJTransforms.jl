@@ -1,6 +1,13 @@
 using MLJTransforms
 using Test
+using DataFrames
+using ScientificTypes
+using CategoricalArrays
+using MLJModelInterface: MLJModelInterface
+using MLJBase
+const MMI = MLJModelInterface
 
-@testset "MLJTransforms.jl" begin
-    # Write your tests here.
+@testset "Target Encoding" begin
+   include("target_encoding.jl")
 end
+
