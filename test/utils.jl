@@ -11,14 +11,19 @@ function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false)
     # Define the target variable based on the target type
     if target_type == :binary
         y = [0, 1, 1, 1, 0, 1, 0, 1, 1, 1]
+        y = coerce(y, Multiclass)
     elseif target_type == :binary_str
         y = ["no", "yes", "yes", "yes", "no", "yes", "no", "yes", "yes", "yes"]
+        y = coerce(y, Multiclass)
     elseif target_type == :multiclass
         y = [0, 1, 2, 0, 1, 2, 0, 1, 2, 0]
+        y = coerce(y, Multiclass)
     elseif target_type == :multiclass_str
         y = ["c1", "c2", "c3", "c1", "c2", "c3", "c1", "c2", "c3", "c1"]
+        y = coerce(y, Multiclass)
     elseif target_type == :regression
         y = [10.5, 15.2, 13.1, 14.7, 11.9, 16.8, 17.0, 19.3, 18.1, 20.0]
+        y = coerce(y, Continuous)
     else
         error("Unsupported target type.")
     end

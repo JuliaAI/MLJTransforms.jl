@@ -82,11 +82,13 @@ Implement mixing between a posterior and a prior statistic  by computing `λ * p
 function mix_stats(; posterior, prior, λ)
 	# mixing prior and posterior with mixing factor λ
 	return λ .* posterior .+ (1 - λ) .* prior
+	# prior is like the frequency of the positive class over the whole data
+	# posterior is the frequency given rows that have the specific catefory
 end
 
 
 """
-	target_encoding_fit(X, y, cols=[]; exclude_cols=true, encode_ordered=false, λ = 1.0, m=0)
+	target_encoding_fit(X, y, cols=[]; exclude_cols=true, encode_ordinal=false, λ = 1.0, m=0)
 
 Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
 
@@ -94,28 +96,29 @@ Fit a target encoder on table X with target y by computing the necessary statist
 - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
 `Multiclass` or `OrderedFactor`
 - `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
-- `cols=[]`: A list of categorical columns to exclude or include from encoding
+- `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
 - `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
-- `encode_ordered=false`: Whether to encode `OrderedFactor` or ignore them
+- `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
 - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
-- `m`: Hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
+- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
  empirical Bayes estimation as described in [1]
 
 # Returns
-- `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics for 
-every categorical column as well as other metadata needed for transform
+- `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics needed to transform
+every categorical column as well as other metadata needed for transform.
 """
 function target_encoding_fit(
 	X,
-	y,
-	cols = [];
-	exclude_cols = true,
-	encode_ordered = false,
-	λ = 1.0,
-	m = 0,
+	y::AbstractVector,
+	cols::AbstractVector{Symbol} = Symbol[];
+	exclude_cols::Bool = true,
+	encode_ordinal::Bool = false,
+	lambda::Real= 1.0, 
+	m::Real = 0,
 )
 	# Get X column types and names
 	col_names = Tables.schema(X).names
+	
 
 	# Modify column_names based on cols 
 	col_names = (exclude_cols) ? setdiff(col_names, cols) : intersect(col_names, cols)
@@ -150,12 +153,14 @@ function target_encoding_fit(
 	end
 
 	# Loop on each column and gether per level
+	encoded_cols = Symbol[]
 	for col_name in col_names
 		col = MMI.selectcols(X, col_name)
 		col_type = elscitype(col)
 		col_has_allowed_type =
-			col_type <: Multiclass || (encode_ordered && col_type <: OrderedFactor)
+			col_type <: Multiclass || (encode_ordinal && col_type <: OrderedFactor)
 		if col_has_allowed_type
+			push!(encoded_cols, col_name)
 			for level in levels(col)
 				# Initialize dict of levels for the feature
 				y_stat_given_col_level[col_name] =
@@ -165,27 +170,27 @@ function target_encoding_fit(
 
 				# Compute λ for mixing
 				m == "auto" && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
-				λ = compute_shrinkage(targets_for_level; m = m, λ = λ)
+				lambda = compute_shrinkage(targets_for_level; m = m, λ = lambda)
 
 				if task == "Classification"
 					if !is_multiclass           # binary classification
 						y_freq_for_level =
 							compute_label_freq_for_level(targets_for_level, y_classes)
 						y_stat_given_col_level[col_name][level] =
-							mix_stats(posterior = y_freq_for_level, prior = y_prior, λ = λ)
+							mix_stats(posterior = y_freq_for_level, prior = y_prior, λ = lambda)
 					else                        # multiclass classification
 						y_freqs_for_level =
 							compute_label_freqs_for_level(targets_for_level, y_classes)
 						y_stat_given_col_level[col_name][level] = mix_stats(
 							posterior = y_freqs_for_level,
 							prior = y_priors,
-							λ = λ,
+							λ = lambda,
 						)
 					end
 				else                            # regression
 					y_mean_for_level = compute_target_mean_for_level(targets_for_level)
 					y_stat_given_col_level[col_name][level] =
-						mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = λ)
+						mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = lambda)
 				end
 			end
 		end
@@ -194,6 +199,7 @@ function target_encoding_fit(
 		:task => task,
 		:num_classes => (task == "Regression") ? -1 : length(y_classes),
 		:y_stat_given_col_level => y_stat_given_col_level,
+		:encoded_cols => encoded_cols
 	)
 	return cache
 end
