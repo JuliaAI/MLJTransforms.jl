@@ -113,12 +113,12 @@ function target_encoding_fit(
 	cols::AbstractVector{Symbol} = Symbol[];
 	exclude_cols::Bool = true,
 	encode_ordinal::Bool = false,
-	lambda::Real= 1.0, 
+	lambda::Real = 1.0,
 	m::Real = 0,
 )
 	# Get X column types and names
 	col_names = Tables.schema(X).names
-	
+
 
 	# Modify column_names based on cols 
 	col_names = (exclude_cols) ? setdiff(col_names, cols) : intersect(col_names, cols)
@@ -177,7 +177,11 @@ function target_encoding_fit(
 						y_freq_for_level =
 							compute_label_freq_for_level(targets_for_level, y_classes)
 						y_stat_given_col_level[col_name][level] =
-							mix_stats(posterior = y_freq_for_level, prior = y_prior, λ = lambda)
+							mix_stats(
+								posterior = y_freq_for_level,
+								prior = y_prior,
+								λ = lambda,
+							)
 					else                        # multiclass classification
 						y_freqs_for_level =
 							compute_label_freqs_for_level(targets_for_level, y_classes)
@@ -199,7 +203,7 @@ function target_encoding_fit(
 		:task => task,
 		:num_classes => (task == "Regression") ? -1 : length(y_classes),
 		:y_stat_given_col_level => y_stat_given_col_level,
-		:encoded_cols => encoded_cols
+		:encoded_cols => encoded_cols,
 	)
 	return cache
 end
@@ -209,7 +213,7 @@ end
 Function to generate new column names: col_name_0, col_name_1,..., col_name_n
 """
 function generate_new_column_names(col_name, num_inds)
-    return [Symbol("$(col_name)_$i") for i in 1:num_inds]
+	return [Symbol("$(col_name)_$i") for i in 1:num_inds]
 end
 
 
@@ -226,53 +230,20 @@ every categorical column as well as other metadata needed for transform
 
 # Returns
 - `X`: A table where the categorical columns as specified during fitting are transformed by target encoding. Other columns will remain
-    the same. This will attempt to preserve the type of the table but may not succeed. 
+	the same. This will attempt to preserve the type of the table but may not succeed. 
 """
 
 function transformit(X, cache)
-    col_names = Tables.schema(X).names
-    task = cache[:task]
-    y_stat_given_col_level = cache[:y_stat_given_col_level]
-    num_classes = cache[:num_classes]
+	col_names = Tables.schema(X).names
+	task = cache[:task]
+	y_stat_given_col_level = cache[:y_stat_given_col_level]
+	num_classes = cache[:num_classes]
 
-    
-    Xr = Tables.rowtable(X)             # for efficient mapping
-
-    # Dynamically construct the function arguments
-    function_arguments = Dict()
-    new_col_names = []
-
-    for col in col_names
-        # Create the transformation function for each column
-        if col in keys(y_stat_given_col_level)
-            if task == "Regression" || (task == "Classification" && num_classes < 3)
-                level2float = y_stat_given_col_level[col]
-                # Create a function that returns the target statistics for the given level
-                function_arguments[Symbol(col)] = x -> level2float[Tables.getcolumn(x, col)]
-                push!(new_col_names, Symbol(col))
-            else    # Multiclassification
-                level2vector = y_stat_given_col_level[col]
-                col_names_with_inds = generate_new_column_names(col, num_classes)
-                # Each column will generate k columns where k is the number of classes
-                for (i, col_name_with_ind) in enumerate(col_names_with_inds)
-                    function_arguments[Symbol(col_name_with_ind)] = x -> level2vector[Tables.getcolumn(x, col)][i]
-                    push!(new_col_names, Symbol(col_name_with_ind))
-                end
-            end
-        # Not to be transformed => left as is
-        else
-            function_arguments[Symbol(col)] = x -> Tables.getcolumn(x, col)
-            push!(new_col_names, Symbol(col))
-        end
-    end
-
-    # Create the transformation function arguments from the dict
-    transformation_function = x -> NamedTuple{Tuple(new_col_names)}(map(name -> function_arguments[name](x), new_col_names))
-
-    # Apply the transformation
-    transformed_X = Xr |> TableOperations.map(transformation_function) |> Tables.columntable
-
-    # Attempt to preserve table type
-    transformed_X = Tables.materializer(X)(transformed_X)
-    return transformed_X
+	return generic_transform(
+		X,
+		col_names,
+		y_stat_given_col_level,
+		task == "Regression" || (task == "Classification" && num_classes < 3),
+	)
 end
+

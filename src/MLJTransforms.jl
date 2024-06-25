@@ -7,6 +7,7 @@ using TableOperations
 using MLJBase
 const MMI = MLJModelInterface
 
+include("generic.jl")
 # Target encoding
 include("target_encoding/errors.jl")
 include("target_encoding/target_encoding.jl")
