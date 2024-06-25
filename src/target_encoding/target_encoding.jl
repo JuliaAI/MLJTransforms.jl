@@ -214,16 +214,14 @@ every categorical column as well as other metadata needed for transform
 """
 
 function transformit(X, cache)
-	col_names = Tables.schema(X).names
 	task = cache[:task]
 	y_stat_given_col_level = cache[:y_stat_given_col_level]
 	num_classes = cache[:num_classes]
 
 	return generic_transform(
 		X,
-		col_names,
-		y_stat_given_col_level,
-		task == "Regression" || (task == "Classification" && num_classes < 3),
+		y_stat_given_col_level;
+		single_col = task == "Regression" || (task == "Classification" && num_classes < 3),
 	)
 end
 

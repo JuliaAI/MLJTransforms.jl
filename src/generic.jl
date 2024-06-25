@@ -73,8 +73,9 @@ Given a table `X` and a dictionary `mapping_per_col_level` which maps each level
     assumption is necessary because any column in X must correspond to a constant number of columns in the output table (which is equal to k).
 * Columns not in the dictionary are mapped to themselves (i.e., not changed).
 """
-function generic_transform(X, col_names,  mapping_per_col_level, single_col = true)
+function generic_transform(X, mapping_per_col_level; single_col = true)
 	Xr = Tables.rowtable(X)             # for efficient mapping
+	col_names = Tables.schema(X).names
 
 	# Dynamically construct the function arguments
 	function_arguments = Dict()
