@@ -28,12 +28,12 @@ function MMI.clean!(t::TargetEncoder)
 	message = ""
 	if t.m < 0
 		throw(
-			ArgumentError("The hyperparamer `m` in `TargetEncoder` must be a nonnegative integer but got m=$(t.m).")
+			ArgumentError(NON_NEGATIVE_m(t.m))
 		)
 	end
 	if t.lambda < 0 || t.lambda > 1
 		throw(
-			ArgumentError("The hyperparameter `lambda` in `TargetEncoder` must be a number between 0 and 1 but got lambda=$(t.lambda).")
+			ArgumentError(INVALID_lambda(t.lambda))
 		)
 	end
 	return message
@@ -125,7 +125,7 @@ end
 $(MMI.doc_header(TargetEncoder))
 
 `TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
-    into continuous ones using statistics from the target variable
+    into continuous ones using statistics from the target variable.
 
 In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(cols = Symbol[],
 	exclude_cols = true,
@@ -141,7 +141,8 @@ In MLJ (or MLJBase) bind an instance `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`)
+- `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
+    scientific types `Multiclass` or `OrderedFactor` for their elements.
 
 - `y` is the target, which can be any `AbstractVector` whose element
   scitype is `Continuous` or `Count` for regression problems and 
@@ -160,7 +161,8 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply target encoding to the selected columns of `Xnew` and return the new table
+- `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
+    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
 
 # Fitted parameters
 
