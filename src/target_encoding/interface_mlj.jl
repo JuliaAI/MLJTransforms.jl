@@ -44,7 +44,7 @@ end
 struct TargetEncoderResult{
 	I <: Integer,
 	S <: AbstractString,
-	U <: Union{AbstractFloat, AbstractVector{AbstractFloat}},
+	U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},
 } <: MMI.MLJType
 	# target statistic for each level of each categorical column
 	y_stat_given_col_level::Dict{Symbol, Dict{Any, U}}

@@ -116,14 +116,7 @@ function target_encoding_fit(
 	lambda::Real = 1.0,
 	m::Real = 0,
 )
-	# Get X column types and names
-	col_names = Tables.schema(X).names
-
-
-	# Modify column_names based on cols 
-	col_names = (exclude_cols) ? setdiff(col_names, cols) : intersect(col_names, cols)
-
-	# Figure out task (classification or regression)
+	# 1. Figure out task (classification or regression)
 	y_scitype = elscitype(y)
 	classification_types = (y_scitype <: Multiclass || y_scitype <: OrderedFactor)
 	regression_types = (y_scitype <: Continuous || y_scitype <: Count)
@@ -134,71 +127,65 @@ function target_encoding_fit(
 		"Your target must be Continuous/Count for regression or Multiclass/OrderedFactor for classification",
 	)
 
-	# Setup prior statistics and structures for posterior statistics
+	# 2. Setup prior statistics 
 	if task == "Regression"
-		y_stat_given_col_level = Dict{Symbol, Dict{Any, AbstractFloat}}()
 		y_mean = mean(y)                             # for mixing
 		m == "auto" && (y_var = std(y)^2)              # for empirical Bayes estimation
 	else
 		y_classes = levels(y)
 		is_multiclass = length(y_classes) > 2
 		if !is_multiclass       # binary case
-			y_stat_given_col_level = Dict{Symbol, Dict{Any, AbstractFloat}}()
 			y_prior = sum(y .== y_classes[1]) / length(y)   # for mixing
 		else                    # multiclass case
 			y_stat_given_col_level =
-				Dict{Symbol, Dict{Any, AbstractVector{AbstractFloat}}}()
 			y_priors = [sum(y .== y_level) / length(y) for y_level in y_classes]    # for mixing
 		end
 	end
 
-	# Loop on each column and gether per level
-	encoded_cols = Symbol[]
-	for col_name in col_names
-		col = MMI.selectcols(X, col_name)
-		col_type = elscitype(col)
-		col_has_allowed_type =
-			col_type <: Multiclass || (encode_ordinal && col_type <: OrderedFactor)
-		if col_has_allowed_type
-			push!(encoded_cols, col_name)
-			for level in levels(col)
-				# Initialize dict of levels for the feature
-				y_stat_given_col_level[col_name] =
-					get(y_stat_given_col_level, col_name, Dict{Any, Float64}())
-				# Get the targets of an example that belong to this level
-				targets_for_level = y[col.==level]
+	# 3. Define function to compute the new value(s) for each level given a column
+	function column_mapper(col)
+		y_stat_given_col_level_for_col = Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
+		for level in levels(col)
+			# Get the targets of an example that belong to this level
+			targets_for_level = y[col.==level]
 
-				# Compute λ for mixing
-				m == "auto" && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
-				lambda = compute_shrinkage(targets_for_level; m = m, λ = lambda)
+			# Compute λ for mixing
+			m == "auto" && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
+			lambda = compute_shrinkage(targets_for_level; m = m, λ = lambda)
 
-				if task == "Classification"
-					if !is_multiclass           # binary classification
-						y_freq_for_level =
-							compute_label_freq_for_level(targets_for_level, y_classes)
-						y_stat_given_col_level[col_name][level] =
-							mix_stats(
-								posterior = y_freq_for_level,
-								prior = y_prior,
-								λ = lambda,
-							)
-					else                        # multiclass classification
-						y_freqs_for_level =
-							compute_label_freqs_for_level(targets_for_level, y_classes)
-						y_stat_given_col_level[col_name][level] = mix_stats(
-							posterior = y_freqs_for_level,
-							prior = y_priors,
+			if task == "Classification"
+				if !is_multiclass           # 3.1 Binary classification
+					y_freq_for_level =
+						compute_label_freq_for_level(targets_for_level, y_classes)
+						y_stat_given_col_level_for_col[level] =
+						mix_stats(
+							posterior = y_freq_for_level,
+							prior = y_prior,
 							λ = lambda,
 						)
-					end
-				else                            # regression
-					y_mean_for_level = compute_target_mean_for_level(targets_for_level)
-					y_stat_given_col_level[col_name][level] =
-						mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = lambda)
+				else                        # 3.2 Multiclass classification
+					y_freqs_for_level =
+						compute_label_freqs_for_level(targets_for_level, y_classes)
+						y_stat_given_col_level_for_col[level] = mix_stats(
+						posterior = y_freqs_for_level,
+						prior = y_priors,
+						λ = lambda,
+					)
 				end
+			else                            # 3.3 Regression
+				y_mean_for_level = compute_target_mean_for_level(targets_for_level)
+				y_stat_given_col_level_for_col[level] =
+					mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = lambda)
 			end
 		end
+		return y_stat_given_col_level_for_col
 	end
+
+	# 4. Pass the function to generic_fit
+	y_stat_given_col_level, encoded_cols = generic_fit(
+		X, cols; exclude_cols = exclude_cols, encode_ordinal = encode_ordinal, column_mapper = column_mapper
+	)
+
 	cache = Dict(
 		:task => task,
 		:num_classes => (task == "Regression") ? -1 : length(y_classes),
@@ -208,13 +195,6 @@ function target_encoding_fit(
 	return cache
 end
 
-
-"""
-Function to generate new column names: col_name_0, col_name_1,..., col_name_n
-"""
-function generate_new_column_names(col_name, num_inds)
-	return [Symbol("$(col_name)_$i") for i in 1:num_inds]
-end
 
 
 """
