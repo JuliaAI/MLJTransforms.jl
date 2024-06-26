@@ -1,7 +1,7 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <: Supervised
+mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <: Unsupervised
 	cols::AS
 	exclude_cols::Bool
 	encode_ordinal::Bool
@@ -44,10 +44,10 @@ end
 struct TargetEncoderResult{
 	I <: Integer,
 	S <: AbstractString,
-	U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},
+	# U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},  # Unable to keep this after making fit generic (U->Any)
 } <: MMI.MLJType
 	# target statistic for each level of each categorical column
-	y_stat_given_col_level::Dict{Symbol, Dict{Any, U}}
+	y_stat_given_col_level::Dict{Symbol, Dict{Any, Any}}
 	task::S            # "Regression", "Classification" 
 	num_classes::I     # num_classes in case of classification
 end
@@ -63,7 +63,7 @@ MMI.fitted_params(::TargetEncoder, fitresult) = (
 
 # 6. Fit method
 function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
-	fit_res = target_encoding_fit(
+	fit_res = target_encoder_fit(
 		X, y,
 		transformer.cols;
 		exclude_cols = transformer.exclude_cols,
@@ -90,7 +90,7 @@ function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
 			:num_classes => fitresult.num_classes,
 		    :task => fitresult.task,
 	)
-	Xnew_transf = transformit(Xnew, fit_res)
+	Xnew_transf = target_encoder_transform(Xnew, fit_res)
 	return Xnew_transf
 end
 
@@ -105,20 +105,21 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
 	TargetEncoder,
-    input_scitype = Tuple{
+    input_scitype = 
+	Tuple{
                 Table(Union{Infinite, Finite}),
                 AbstractVector
                     },
     output_scitype =  Table(Union{Infinite, Finite}),
 	load_path = "MLJTransforms.TargetEncoder" 
 )
-function MMI.transform_scitype(t::TargetEncoder)
+
+function MMI.fit_data_scitype(t::TargetEncoder)
 	return Tuple{
-		AbstractMatrix{Continuous},
-		AbstractVector{<:Finite},
+		Table(Union{Infinite, Finite}),
+		AbstractVector
 	}
 end
-
 
 
 """

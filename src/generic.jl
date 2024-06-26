@@ -36,7 +36,7 @@ function generic_fit(
 	col_names = (exclude_cols) ? setdiff(col_names, cols) : intersect(col_names, cols)
 
 	# 3. Define mapping per column per level dictionary
-	mapping_per_col_level = Dict{Symbol, Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}}()
+	mapping_per_col_level = Dict{Symbol, Dict{Any, Any}}()
 
 	# 4. Use column mapper to compute the mapping of each level in each column
 	encoded_cols = Symbol[]				# to store column that were actually encoded
@@ -85,9 +85,9 @@ function generic_transform(X, mapping_per_col_level; single_col = true)
 		# Create the transformation function for each column
 		if col in keys(mapping_per_col_level)
 			if single_col
-				level2float = mapping_per_col_level[col]
+				level2scalar = mapping_per_col_level[col]
 				# Create a function that returns the target statistics for the given level
-				function_arguments[Symbol(col)] = x -> level2float[Tables.getcolumn(x, col)]
+				function_arguments[Symbol(col)] = x -> level2scalar[Tables.getcolumn(x, col)]
 				push!(new_col_names, Symbol(col))
 			else
 				level2vector = mapping_per_col_level[col]

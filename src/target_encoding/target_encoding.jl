@@ -88,7 +88,7 @@ end
 
 
 """
-	target_encoding_fit(X, y, cols=[]; exclude_cols=true, encode_ordinal=false, λ = 1.0, m=0)
+	target_encoder_fit(X, y, cols=[]; exclude_cols=true, encode_ordinal=false, λ = 1.0, m=0)
 
 Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
 
@@ -107,7 +107,7 @@ Fit a target encoder on table X with target y by computing the necessary statist
 - `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics needed to transform
 every categorical column as well as other metadata needed for transform.
 """
-function target_encoding_fit(
+function target_encoder_fit(
 	X,
 	y::AbstractVector,
 	cols::AbstractVector{Symbol} = Symbol[];
@@ -198,7 +198,7 @@ end
 
 
 """
-	transformit(X, cache)
+	target_encoder_transform(X, cache)
 
 Transform given data with fitted target encoder cache.
 
@@ -213,7 +213,7 @@ every categorical column as well as other metadata needed for transform
 	the same. This will attempt to preserve the type of the table but may not succeed. 
 """
 
-function transformit(X, cache)
+function target_encoder_transform(X, cache)
 	task = cache[:task]
 	y_stat_given_col_level = cache[:y_stat_given_col_level]
 	num_classes = cache[:num_classes]
