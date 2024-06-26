@@ -26,7 +26,7 @@ function generic_fit(
 	args...;
 	exclude_cols::Bool = true,
 	encode_ordinal::Bool = false,
-	column_mapper::Function,
+	column_mapper,
 	kwargs...,
 )
 	# 1. Get X column types and names
