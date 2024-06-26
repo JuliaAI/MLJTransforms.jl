@@ -1,5 +1,5 @@
-
-function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false)
+# Function to create a dummy dataset
+function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false, return_y::Bool=true)
     # Define categorical columns with shorter names
     A = ["g", "b", "g", "r", "r", "r", "r", "b", "b", "r"]  
     B = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
@@ -42,5 +42,6 @@ function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false)
     )
 
     as_dataframe && (X = DataFrame(X))
-	return X, y
+    
+	return (return_y) ?  (X, y) : X;
 end
