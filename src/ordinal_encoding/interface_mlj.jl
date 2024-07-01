@@ -1,4 +1,4 @@
-### TargetEncoding with MLJ Interface
+### OrdinalEncoding with MLJ Interface
 
 # 1. Interface Struct
 mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
@@ -98,8 +98,8 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
-    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
+- `transform(mach, Xnew)`: Apply ordinal encoding to `Multiclass` or `OrderedFactor
+  ` features of `Xnew`, and return the new table. 
 
 # Fitted parameters
 
