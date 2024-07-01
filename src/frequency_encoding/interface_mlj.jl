@@ -19,43 +19,35 @@ function FrequencyEncoder(;
 end;
 
 
-
-# 4. Fit result structure (what will be sent to transform)
-struct FrequencyEncoderResult <: MMI.MLJType
-    # target statistic for each level of each categorical column
-    statistic_given_feat_val::Dict{Symbol, Dict{Any, Any}}
-end
-
-# 5. Fitted parameters (for user access)
+# 4. Fitted parameters (for user access)
 MMI.fitted_params(::FrequencyEncoder, fitresult) = (
-    statistic_given_feat_val = fitresult.statistic_given_feat_val
+    statistic_given_feat_val = fitresult,
 )
 
-# 6. Fit method
+# 5. Fit method
 function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
-    fit_res = frequency_encoder_fit(
+    generic_cache = frequency_encoder_fit(
         X,
         transformer.features;
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
         normalize = transformer.normalize,
     )
-    fitresult = FrequencyEncoderResult(
-        fit_res[:statistic_given_feat_val],
-    )
-    report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
+    fitresult = generic_cache[:statistic_given_feat_val]
+
+    report = Dict(:encoded_features => generic_cache[:encoded_features])        # report only has list of encoded columns
     cache = nothing
     return fitresult, cache, report
 end;
 
 
-# 7. Transform method
+# 6. Transform method
 function MMI.transform(transformer::FrequencyEncoder, fitresult, Xnew)
-    fit_res = Dict(
+    generic_cache = Dict(
         :statistic_given_feat_val =>
-            fitresult.statistic_given_feat_val,
+            fitresult,
     )
-    Xnew_transf = frequency_encoder_transform(Xnew, fit_res)
+    Xnew_transf = frequency_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
 end
 

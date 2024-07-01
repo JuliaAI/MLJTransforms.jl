@@ -17,42 +17,34 @@ function OrdinalEncoder(;
 end;
 
 
-
-# 4. Fit result structure (what will be sent to transform)
-struct OrdinalEncoderResult <: MMI.MLJType
-    # target statistic for each level of each categorical column
-    index_given_feat_level::Dict{Symbol, Dict{Any, Any}}
-end
-
-# 5. Fitted parameters (for user access)
+# 4. Fitted parameters (for user access)
 MMI.fitted_params(::OrdinalEncoder, fitresult) = (
-    index_given_feat_level = fitresult.index_given_feat_level,
+    index_given_feat_level = fitresult,
 )
 
-# 6. Fit method
+# 5. Fit method
 function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
-    fit_res = ordinal_encoder_fit(
+    generic_cache = ordinal_encoder_fit(
         X,
         transformer.features;
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
     )
-    fitresult = OrdinalEncoderResult(
-        fit_res[:index_given_feat_level],
-    )
-    report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
+    fitresult =
+        generic_cache[:index_given_feat_level]
+    report =
+            Dict(:encoded_features => generic_cache[:encoded_features])        # report only has list of encoded columns
     cache = nothing
     return fitresult, cache, report
 end;
 
 
-# 7. Transform method
+# 6. Transform method
 function MMI.transform(transformer::OrdinalEncoder, fitresult, Xnew)
-    fit_res = Dict(
-        :index_given_feat_level =>
-            fitresult.index_given_feat_level,
+    generic_cache = Dict(
+        :index_given_feat_level => fitresult,
     )
-    Xnew_transf = ordinal_encoder_transform(Xnew, fit_res)
+    Xnew_transf = ordinal_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
 end
 
