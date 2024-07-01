@@ -41,7 +41,7 @@ function generic_fit(
 	# 4. Use column mapper to compute the mapping of each level in each column
 	encoded_cols = Symbol[]				# to store column that were actually encoded
 	for col_name in col_names
-		col = MMI.selectcols(X, col_name)
+		col = Tables.getcolumn(X, col_name)
 		col_type = elscitype(col)
 		col_has_allowed_type =
 			col_type <: Multiclass || (encode_ordinal && col_type <: OrderedFactor)

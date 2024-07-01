@@ -3,7 +3,7 @@ using Test
 using DataFrames
 using ScientificTypes
 using CategoricalArrays
-using MLJModelInterface: MLJModelInterface
+using MLJModelInterface
 using MLJBase
 const MMI = MLJModelInterface
 

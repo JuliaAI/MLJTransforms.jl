@@ -2,9 +2,8 @@ module MLJTransforms
 using Tables
 using ScientificTypes
 using CategoricalArrays
-using MLJModelInterface: MLJModelInterface
+using MLJModelInterface
 using TableOperations
-using MLJBase
 using StatsBase
 
 const MMI = MLJModelInterface
