@@ -84,8 +84,9 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
-    scientific types `Multiclass` or `OrderedFactor` for their elements.
+- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
+   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
+   check scitypes. 
 
 Train the machine using `fit!(mach, rows=...)`.
 
