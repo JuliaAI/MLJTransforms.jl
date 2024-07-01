@@ -2,77 +2,77 @@
 
 # 1. Interface Struct
 mutable struct FrequencyEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-	features::AS
-	ignore::Bool
-	ordered_factor::Bool
-	normalize::Bool
+    features::AS
+    ignore::Bool
+    ordered_factor::Bool
+    normalize::Bool
 end;
 
 # 2. Constructor
 function FrequencyEncoder(;
-	features = Symbol[],
-	ignore = true,
-	ordered_factor = false,
-	normalize = false,
+    features = Symbol[],
+    ignore = true,
+    ordered_factor = false,
+    normalize = false,
 )
-	return FrequencyEncoder(features, ignore, ordered_factor, normalize)
+    return FrequencyEncoder(features, ignore, ordered_factor, normalize)
 end;
 
 
 
 # 4. Fit result structure (what will be sent to transform)
 struct FrequencyEncoderResult <: MMI.MLJType
-	# target statistic for each level of each categorical column
-	statistic_given_feat_val::Dict{Symbol, Dict{Any, Any}}
+    # target statistic for each level of each categorical column
+    statistic_given_feat_val::Dict{Symbol, Dict{Any, Any}}
 end
 
 # 5. Fitted parameters (for user access)
 MMI.fitted_params(::FrequencyEncoder, fitresult) = (
-	statistic_given_feat_val = fitresult.statistic_given_feat_val
+    statistic_given_feat_val = fitresult.statistic_given_feat_val
 )
 
 # 6. Fit method
 function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
-	fit_res = frequency_encoder_fit(
-		X,
-		transformer.features;
-		ignore = transformer.ignore,
-		ordered_factor = transformer.ordered_factor,
-		normalize = transformer.normalize,
-	)
-	fitresult = FrequencyEncoderResult(
-		fit_res[:statistic_given_feat_val],
-	)
-	report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
-	cache = nothing
-	return fitresult, cache, report
+    fit_res = frequency_encoder_fit(
+        X,
+        transformer.features;
+        ignore = transformer.ignore,
+        ordered_factor = transformer.ordered_factor,
+        normalize = transformer.normalize,
+    )
+    fitresult = FrequencyEncoderResult(
+        fit_res[:statistic_given_feat_val],
+    )
+    report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
+    cache = nothing
+    return fitresult, cache, report
 end;
 
 
 # 7. Transform method
 function MMI.transform(transformer::FrequencyEncoder, fitresult, Xnew)
-	fit_res = Dict(
-		:statistic_given_feat_val =>
-			fitresult.statistic_given_feat_val,
-	)
-	Xnew_transf = frequency_encoder_transform(Xnew, fit_res)
-	return Xnew_transf
+    fit_res = Dict(
+        :statistic_given_feat_val =>
+            fitresult.statistic_given_feat_val,
+    )
+    Xnew_transf = frequency_encoder_transform(Xnew, fit_res)
+    return Xnew_transf
 end
 
 # 8. Extra metadata
 MMI.metadata_pkg(
-	FrequencyEncoder,
-	name = "MLJTransforms",
-	package_uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6",
-	package_url = "https://github.com/JuliaAI/MLJTransforms.jl",
-	is_pure_julia = true,
+    FrequencyEncoder,
+    name = "MLJTransforms",
+    package_uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6",
+    package_url = "https://github.com/JuliaAI/MLJTransforms.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-	FrequencyEncoder,
-	input_scitype = Table(Union{Infinite, Finite}),
-	output_scitype = Table(Union{Infinite, Finite}),
-	load_path = "MLJTransforms.FrequencyEncoder",
+    FrequencyEncoder,
+    input_scitype = Table(Union{Infinite, Finite}),
+    output_scitype = Table(Union{Infinite, Finite}),
+    load_path = "MLJTransforms.FrequencyEncoder",
 )
 
 
@@ -82,24 +82,24 @@ MMI.metadata_model(
 $(MMI.doc_header(FrequencyEncoder))
 
 `FrequencyEncoder` implements frequency encoding which replaces the categorical values in the specified
-	categorical columns with their (normalized or raw) frequencies of occurrence in the dataset. 
+    categorical columns with their (normalized or raw) frequencies of occurrence in the dataset. 
 
 In MLJ (or MLJModels) do `model = FrequencyEncoder()` which is equivalent to `model = FrequencyEncoder(features = Symbol[],
-	ignore = true,
-	ordered_factor = false, 
-	normalize = false
-	)` to construct a model instance.
+    ignore = true,
+    ordered_factor = false, 
+    normalize = false
+    )` to construct a model instance.
 
 # Training data
 
 In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
-	mach = machine(model, X)
+    mach = machine(model, X)
 
 Here:
 
 - `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
-	scientific types `Multiclass` or `OrderedFactor` for their elements.
+    scientific types `Multiclass` or `OrderedFactor` for their elements.
 
 Train the machine using `fit!(mach, rows=...)`.
 
@@ -113,7 +113,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Operations
 
 - `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
-	Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
+    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
 
 # Fitted parameters
 
@@ -152,11 +152,11 @@ mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
 
 julia > Xnew
-	(A = [2, 1, 2, 2, 2],
-	B = [1.0, 2.0, 3.0, 4.0, 5.0],
-	C = [4, 4, 4, 1, 4],
-	D = [3, 2, 3, 2, 3],
-	E = CategoricalArrays.CategoricalValue{Int64, UInt32}[1, 2, 3, 4, 5],)
+    (A = [2, 1, 2, 2, 2],
+    B = [1.0, 2.0, 3.0, 4.0, 5.0],
+    C = [4, 4, 4, 1, 4],
+    D = [3, 2, 3, 2, 3],
+    E = CategoricalArrays.CategoricalValue{Int64, UInt32}[1, 2, 3, 4, 5],)
 ```
 
 See also

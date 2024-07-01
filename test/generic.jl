@@ -9,14 +9,14 @@ dataset_forms = []          # X only (above is X,y)
 
 # Add datasets to the classification forms vector
 for form in [:binary, :binary_str]
-	push!(classification_forms, create_dummy_dataset(form, as_dataframe = false))
-	push!(classification_forms, create_dummy_dataset(form, as_dataframe = true))
+    push!(classification_forms, create_dummy_dataset(form, as_dataframe = false))
+    push!(classification_forms, create_dummy_dataset(form, as_dataframe = true))
 end
 
 # Add datasets to the multiclassification forms vector
 for form in [:multiclass, :multiclass_str]
-	push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = false))
-	push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = true))
+    push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = false))
+    push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = true))
 end
 
 # Add datasets to the regression forms vector
@@ -45,33 +45,33 @@ end
 
 # Dummy encoder that maps each level to its hash (some arbitrary function)
 function dummy_encoder_fit(
-	X,
-	features::AbstractVector{Symbol} = Symbol[];
-	ignore::Bool = true,
-	ordered_factor::Bool = false,
+    X,
+    features::AbstractVector{Symbol} = Symbol[];
+    ignore::Bool = true,
+    ordered_factor::Bool = false,
 )
-	# 1. Define column mapper
-	function feature_mapper(col)
-		feat_levels = levels(col)
-		hash_given_feat_val =
-			Dict{Any, Integer}(value => hash(value) for value in feat_levels)
-		return hash_given_feat_val
-	end
+    # 1. Define column mapper
+    function feature_mapper(col)
+        feat_levels = levels(col)
+        hash_given_feat_val =
+            Dict{Any, Integer}(value => hash(value) for value in feat_levels)
+        return hash_given_feat_val
+    end
 
-	# 2. Pass it to generic_fit
-	hash_given_feat_val, encoded_features = generic_fit(
-		X, features; ignore = ignore, ordered_factor = ordered_factor,
-		feature_mapper = feature_mapper,
-	)
-	cache = Dict(
-		:hash_given_feat_val => hash_given_feat_val,
-	)
-	return cache
+    # 2. Pass it to generic_fit
+    hash_given_feat_val, encoded_features = generic_fit(
+        X, features; ignore = ignore, ordered_factor = ordered_factor,
+        feature_mapper = feature_mapper,
+    )
+    cache = Dict(
+        :hash_given_feat_val => hash_given_feat_val,
+    )
+    return cache
 end
 
 function dummy_encoder_transform(X, cache::Dict)
-	hash_given_feat_val = cache[:hash_given_feat_val]
-	return generic_transform(X, hash_given_feat_val)
+    hash_given_feat_val = cache[:hash_given_feat_val]
+    return generic_transform(X, hash_given_feat_val)
 end
 
 

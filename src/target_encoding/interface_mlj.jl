@@ -2,55 +2,55 @@
 
 # 1. Interface Struct
 mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <:
-			   Unsupervised
-	features::AS
-	ignore::Bool
-	ordered_factor::Bool
-	lambda::R1
-	m::R2
+               Unsupervised
+    features::AS
+    ignore::Bool
+    ordered_factor::Bool
+    lambda::R1
+    m::R2
 end;
 
 # 2. Constructor
 function TargetEncoder(;
-	features = Symbol[],
-	ignore = true,
-	ordered_factor = false,
-	lambda = 1.0,
-	m = 0,
+    features = Symbol[],
+    ignore = true,
+    ordered_factor = false,
+    lambda = 1.0,
+    m = 0,
 )
-	t = TargetEncoder(features, ignore, ordered_factor, lambda, m)
-	MMI.clean!(t)
-	return t
+    t = TargetEncoder(features, ignore, ordered_factor, lambda, m)
+    MMI.clean!(t)
+    return t
 end;
 
 
 # 3. Hyperparameter checks
 function MMI.clean!(t::TargetEncoder)
-	message = ""
-	if t.m < 0
-		throw(
-			ArgumentError(NON_NEGATIVE_m(t.m)),
-		)
-	end
-	if t.lambda < 0 || t.lambda > 1
-		throw(
-			ArgumentError(INVALID_lambda(t.lambda)),
-		)
-	end
-	return message
+    message = ""
+    if t.m < 0
+        throw(
+            ArgumentError(NON_NEGATIVE_m(t.m)),
+        )
+    end
+    if t.lambda < 0 || t.lambda > 1
+        throw(
+            ArgumentError(INVALID_lambda(t.lambda)),
+        )
+    end
+    return message
 end
 
 
 # 4. Fit result structure (what will be sent to transform)
 struct TargetEncoderResult{
-	I <: Integer,
-	S <: AbstractString,
-	# U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},  # Unable to keep this after making fit generic (U->Any)
+    I <: Integer,
+    S <: AbstractString,
+    # U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},  # Unable to keep this after making fit generic (U->Any)
 } <: MMI.MLJType
-	# target statistic for each level of each categorical column
-	y_stat_given_feat_level::Dict{Symbol, Dict{Any, Any}}
-	task::S            # "Regression", "Classification" 
-	num_classes::I     # num_classes in case of classification
+    # target statistic for each level of each categorical column
+    y_stat_given_feat_level::Dict{Symbol, Dict{Any, Any}}
+    task::S            # "Regression", "Classification" 
+    num_classes::I     # num_classes in case of classification
 end
 
 
@@ -58,68 +58,68 @@ end
 
 # 5. Fitted parameters (for user access)
 MMI.fitted_params(::TargetEncoder, fitresult) = (
-	y_statistic_given_feat_level = fitresult.y_stat_given_feat_level,
-	task = fitresult.task,
+    y_statistic_given_feat_level = fitresult.y_stat_given_feat_level,
+    task = fitresult.task,
 )
 
 # 6. Fit method
 function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
-	fit_res = target_encoder_fit(
-		X, y,
-		transformer.features;
-		ignore = transformer.ignore,
-		ordered_factor = transformer.ordered_factor,
-		lambda = transformer.lambda,
-		m = transformer.m,
-	)
-	fitresult = TargetEncoderResult(
-		fit_res[:y_stat_given_feat_level],
-		fit_res[:task],
-		fit_res[:num_classes],
-	)
-	report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
-	cache = nothing
-	return fitresult, cache, report
+    fit_res = target_encoder_fit(
+        X, y,
+        transformer.features;
+        ignore = transformer.ignore,
+        ordered_factor = transformer.ordered_factor,
+        lambda = transformer.lambda,
+        m = transformer.m,
+    )
+    fitresult = TargetEncoderResult(
+        fit_res[:y_stat_given_feat_level],
+        fit_res[:task],
+        fit_res[:num_classes],
+    )
+    report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
+    cache = nothing
+    return fitresult, cache, report
 end;
 
 
 # 7. Transform method
 function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
-	fit_res = Dict(
-		:y_stat_given_feat_level =>
-			fitresult.y_stat_given_feat_level,
-		:num_classes => fitresult.num_classes,
-		:task => fitresult.task,
-	)
-	Xnew_transf = target_encoder_transform(Xnew, fit_res)
-	return Xnew_transf
+    fit_res = Dict(
+        :y_stat_given_feat_level =>
+            fitresult.y_stat_given_feat_level,
+        :num_classes => fitresult.num_classes,
+        :task => fitresult.task,
+    )
+    Xnew_transf = target_encoder_transform(Xnew, fit_res)
+    return Xnew_transf
 end
 
 # 8. Extra metadata
 MMI.metadata_pkg(
-	TargetEncoder,
-	name = "MLJTransforms",
-	package_uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6",
-	package_url = "https://github.com/JuliaAI/MLJTransforms.jl",
-	is_pure_julia = true,
+    TargetEncoder,
+    name = "MLJTransforms",
+    package_uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6",
+    package_url = "https://github.com/JuliaAI/MLJTransforms.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-	TargetEncoder,
-	input_scitype =
-	Tuple{
-		Table(Union{Infinite, Finite}),
-		AbstractVector,
-	},
-	output_scitype = Table(Union{Infinite, Finite}),
-	load_path = "MLJTransforms.TargetEncoder",
+    TargetEncoder,
+    input_scitype =
+    Tuple{
+        Table(Union{Infinite, Finite}),
+        AbstractVector,
+    },
+    output_scitype = Table(Union{Infinite, Finite}),
+    load_path = "MLJTransforms.TargetEncoder",
 )
 
 function MMI.fit_data_scitype(t::TargetEncoder)
-	return Tuple{
-		Table(Union{Infinite, Finite}),
-		AbstractVector,
-	}
+    return Tuple{
+        Table(Union{Infinite, Finite}),
+        AbstractVector,
+    }
 end
 
 
@@ -127,24 +127,24 @@ end
 $(MMI.doc_header(TargetEncoder))
 
 `TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
-	into continuous ones using statistics from the target variable.
+    into continuous ones using statistics from the target variable.
 
 In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(features = Symbol[],
-	ignore = true,
-	ordered_factor = false,
-	lambda = 1.0,
-	m = 0,)` to construct a model instance.
+    ignore = true,
+    ordered_factor = false,
+    lambda = 1.0,
+    m = 0,)` to construct a model instance.
 
 # Training data
 
 In MLJ (or MLJBase) bind an instance `model` to data with
 
-	mach = machine(model, X, y)
+    mach = machine(model, X, y)
 
 Here:
 
 - `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
-	scientific types `Multiclass` or `OrderedFactor` for their elements.
+    scientific types `Multiclass` or `OrderedFactor` for their elements.
 
 - `y` is the target, which can be any `AbstractVector` whose element
   scitype is `Continuous` or `Count` for regression problems and 
@@ -164,7 +164,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Operations
 
 - `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
-	Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
+    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
 
 # Fitted parameters
 
@@ -172,7 +172,7 @@ The fields of `fitted_params(mach)` are:
 
 - `task`: Whether the task is `Classification` or `Regression`
 - `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode each categorical column. It maps each 
-	level in each categorical column to a statistic computed over the target.
+    level in each categorical column to a statistic computed over the target.
 
 # Examples
 
@@ -228,8 +228,8 @@ julia > schema(Xnew)
 
 # Reference
 [1] Micci-Barreca, Daniele. 
-	“A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems” 
-	SIGKDD Explor. Newsl. 3, 1 (July 2001), 27–32.
+    “A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems” 
+    SIGKDD Explor. Newsl. 3, 1 (July 2001), 27–32.
 
 See also
 [`OneHotEncoder`](@ref)

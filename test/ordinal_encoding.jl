@@ -30,7 +30,7 @@ push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=true, return
             "m" => findfirst(==("m"), levels(C_col)),
             ),
     )
-    @test result == true_output	
+    @test result == true_output    
 end
 
 # Redundant because it must work if fit works (only relies on generic_transform)

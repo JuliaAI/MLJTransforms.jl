@@ -1,23 +1,23 @@
 using MLJTransforms: compute_label_freq_for_level, compute_label_freqs_for_level,
-	compute_target_mean_for_level, compute_shrinkage, compute_m_auto, mix_stats,
-	target_encoder_fit, generate_new_feat_names, target_encoder_transform, TargetEncoder
+    compute_target_mean_for_level, compute_shrinkage, compute_m_auto, mix_stats,
+    target_encoder_fit, generate_new_feat_names, target_encoder_transform, TargetEncoder
 
 @testset "Test statistic computation" begin
-	targets_for_level = [1, 0, 1, 1, 0, 0, 1]
-	y_classes = [1, 0]
-	@test compute_label_freq_for_level(targets_for_level, y_classes) == 4 / 7
+    targets_for_level = [1, 0, 1, 1, 0, 0, 1]
+    y_classes = [1, 0]
+    @test compute_label_freq_for_level(targets_for_level, y_classes) == 4 / 7
 
-	targets_for_level = [3, 3, 3, 3, 3]
-	y_classes = [3, 2]
-	@test compute_label_freq_for_level(targets_for_level, y_classes) == 1.0
+    targets_for_level = [3, 3, 3, 3, 3]
+    y_classes = [3, 2]
+    @test compute_label_freq_for_level(targets_for_level, y_classes) == 1.0
 
-	targets_for_level = [1, 2, 3, 4, 5]
-	@test compute_target_mean_for_level(targets_for_level) == 3.0
+    targets_for_level = [1, 2, 3, 4, 5]
+    @test compute_target_mean_for_level(targets_for_level) == 3.0
 
-	targets_for_level = [1, 2, 2, 3, 3, 3]
-	y_classes = [1, 2, 3]
-	expected_freqs = [1 / 6, 2 / 6, 3 / 6]
-	@test compute_label_freqs_for_level(targets_for_level, y_classes) == expected_freqs
+    targets_for_level = [1, 2, 2, 3, 3, 3]
+    y_classes = [1, 2, 3]
+    expected_freqs = [1 / 6, 2 / 6, 3 / 6]
+    @test compute_label_freqs_for_level(targets_for_level, y_classes) == expected_freqs
 end
 
 @testset "Compute_shrinkage tests" begin
@@ -140,7 +140,7 @@ end
 
     # Test mixing in the edge case
     y_stat_given_feat_level =
-	target_encoder_fit(X, y; ignore = true, ordered_factor = false, m = Inf)[:y_stat_given_feat_level]
+    target_encoder_fit(X, y; ignore = true, ordered_factor = false, m = Inf)[:y_stat_given_feat_level]
 
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict("m" => μ̂, "l" => μ̂, "s" => μ̂,),

@@ -43,5 +43,5 @@ function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false, r
 
     as_dataframe && (X = DataFrame(X))
     
-	return (return_y) ?  (X, y) : X;
+    return (return_y) ?  (X, y) : X;
 end
