@@ -1,7 +1,7 @@
 include("utils.jl")
 using MLJTransforms: compute_label_freq_for_level, compute_label_freqs_for_level,
 	compute_target_mean_for_level, compute_shrinkage, compute_m_auto, mix_stats,
-	target_encoder_fit, generate_new_column_names, target_encoder_transform, TargetEncoder
+	target_encoder_fit, generate_new_feat_names, target_encoder_transform, TargetEncoder
 
 # Initial setup
 classification_forms = []

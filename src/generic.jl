@@ -66,9 +66,20 @@ end
 
 Function to generate new column names: feat_name_0, feat_name_1,..., feat_name_n
 """
-function generate_new_column_names(feat_name, num_inds)
-	return [Symbol("$(feat_name)_$i") for i in 1:num_inds]
+function generate_new_feat_names(feat_name, num_inds, existing_names)
+    conflict = true		# will be kept true as long as there is a conflict
+    count = 1			# number of conflicts+1 = number of underscores
+
+	new_column_names = []
+    while conflict
+        suffix = repeat("_", count)  
+        new_column_names = [Symbol("$(feat_name)$(suffix)$i") for i in 1:num_inds]
+        conflict = any(name -> name in existing_names, new_column_names)
+        count += 1
+    end
+    return new_column_names
 end
+
 
 
 """
@@ -107,9 +118,10 @@ function generic_transform(X, mapping_per_feat_level; single_feat = true)
 				push!(new_feat_names, Symbol(col))
 			else
 				level2vector = mapping_per_feat_level[col]
-				feat_names_with_inds = generate_new_column_names(
+				feat_names_with_inds = generate_new_feat_names(
 					col,
 					length(first(mapping_per_feat_level[col])[2]),
+					feat_names,
 				)
 				# Each column will generate k columns where k is the number of classes
 				for (i, feat_name_with_ind) in enumerate(feat_names_with_inds)
