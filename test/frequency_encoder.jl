@@ -81,6 +81,6 @@ end
         @test statistic_given_feat_val == generic_cache[:statistic_given_feat_val]
 
         # Test report
-        @test report(mach) == Dict(:encoded_features => generic_cache[:encoded_features])
+        @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
     end
 end

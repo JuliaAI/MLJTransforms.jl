@@ -80,6 +80,6 @@ end
         @test index_given_feat_level == generic_cache[:index_given_feat_level]
 
         # Test report
-        @test report(mach) == Dict(:encoded_features => generic_cache[:encoded_features])
+        @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
     end
 end

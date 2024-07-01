@@ -35,7 +35,7 @@ function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
     )
     fitresult = generic_cache[:statistic_given_feat_val]
 
-    report = Dict(:encoded_features => generic_cache[:encoded_features])        # report only has list of encoded columns
+    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded columns
     cache = nothing
     return fitresult, cache, report
 end;
