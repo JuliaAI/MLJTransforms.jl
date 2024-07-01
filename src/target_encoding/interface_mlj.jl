@@ -3,22 +3,22 @@
 # 1. Interface Struct
 mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <:
 			   Unsupervised
-	cols::AS
-	exclude_cols::Bool
-	encode_ordinal::Bool
+	features::AS
+	ignore::Bool
+	ordered_factor::Bool
 	lambda::R1
 	m::R2
 end;
 
 # 2. Constructor
 function TargetEncoder(;
-	cols = Symbol[],
-	exclude_cols = true,
-	encode_ordinal = false,
+	features = Symbol[],
+	ignore = true,
+	ordered_factor = false,
 	lambda = 1.0,
 	m = 0,
 )
-	t = TargetEncoder(cols, exclude_cols, encode_ordinal, lambda, m)
+	t = TargetEncoder(features, ignore, ordered_factor, lambda, m)
 	MMI.clean!(t)
 	return t
 end;
@@ -48,7 +48,7 @@ struct TargetEncoderResult{
 	# U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},  # Unable to keep this after making fit generic (U->Any)
 } <: MMI.MLJType
 	# target statistic for each level of each categorical column
-	y_stat_given_col_level::Dict{Symbol, Dict{Any, Any}}
+	y_stat_given_feat_level::Dict{Symbol, Dict{Any, Any}}
 	task::S            # "Regression", "Classification" 
 	num_classes::I     # num_classes in case of classification
 end
@@ -58,7 +58,7 @@ end
 
 # 5. Fitted parameters (for user access)
 MMI.fitted_params(::TargetEncoder, fitresult) = (
-	y_statistic_given_col_level = fitresult.y_stat_given_col_level,
+	y_statistic_given_feat_level = fitresult.y_stat_given_feat_level,
 	task = fitresult.task,
 )
 
@@ -66,18 +66,18 @@ MMI.fitted_params(::TargetEncoder, fitresult) = (
 function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
 	fit_res = target_encoder_fit(
 		X, y,
-		transformer.cols;
-		exclude_cols = transformer.exclude_cols,
-		encode_ordinal = transformer.encode_ordinal,
+		transformer.features;
+		ignore = transformer.ignore,
+		ordered_factor = transformer.ordered_factor,
 		lambda = transformer.lambda,
 		m = transformer.m,
 	)
 	fitresult = TargetEncoderResult(
-		fit_res[:y_stat_given_col_level],
+		fit_res[:y_stat_given_feat_level],
 		fit_res[:task],
 		fit_res[:num_classes],
 	)
-	report = Dict(:encoded_cols => fit_res[:encoded_cols])        # report only has list of encoded columns
+	report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
 	cache = nothing
 	return fitresult, cache, report
 end;
@@ -86,8 +86,8 @@ end;
 # 7. Transform method
 function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
 	fit_res = Dict(
-		:y_stat_given_col_level =>
-			fitresult.y_stat_given_col_level,
+		:y_stat_given_feat_level =>
+			fitresult.y_stat_given_feat_level,
 		:num_classes => fitresult.num_classes,
 		:task => fitresult.task,
 	)
@@ -129,9 +129,9 @@ $(MMI.doc_header(TargetEncoder))
 `TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
 	into continuous ones using statistics from the target variable.
 
-In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(cols = Symbol[],
-	exclude_cols = true,
-	encode_ordinal = false,
+In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(features = Symbol[],
+	ignore = true,
+	ordered_factor = false,
 	lambda = 1.0,
 	m = 0,)` to construct a model instance.
 
@@ -154,9 +154,9 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
-- `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
+- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
 - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
  empirical Bayes estimation as described in [1]
@@ -171,7 +171,7 @@ Train the machine using `fit!(mach, rows=...)`.
 The fields of `fitted_params(mach)` are:
 
 - `task`: Whether the task is `Classification` or `Regression`
-- `y_statistic_given_col_level`: A dictionary with the necessary statistics to encode each categorical column. It maps each 
+- `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode each categorical column. It maps each 
 	level in each categorical column to a statistic computed over the target.
 
 # Examples
@@ -204,7 +204,7 @@ X = coerce(X,
 )
 y = coerce(y, Multiclass)
 
-encoder = TargetEncoder(encode_ordinal = false, lambda = 1.0, m = 0,)
+encoder = TargetEncoder(ordered_factor = false, lambda = 1.0, m = 0,)
 mach = fit!(machine(encoder, X, y))
 Xnew = transform(mach, X)
 

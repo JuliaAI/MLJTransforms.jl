@@ -94,7 +94,7 @@ end
 
 
 """
-	target_encoder_fit(X, y, cols=[]; exclude_cols=true, encode_ordinal=false, λ = 1.0, m=0)
+	target_encoder_fit(X, y, features=[]; ignore=true, ordered_factor=false, λ = 1.0, m=0)
 
 Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
 
@@ -103,24 +103,24 @@ Fit a target encoder on table X with target y by computing the necessary statist
   - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
 	`Multiclass` or `OrderedFactor`
   - `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
-  - `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-  - `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
-  - `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
+  - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
+  - `ignore=true`: Whether to exclude or includes the columns given in `features`
+  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
   - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
   - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
 	empirical Bayes estimation as described in [1]
 
 # Returns
 
-  - `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics needed to transform
+  - `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics needed to transform
 	every categorical column as well as other metadata needed for transform.
 """
 function target_encoder_fit(
 	X,
 	y::AbstractVector,
-	cols::AbstractVector{Symbol} = Symbol[];
-	exclude_cols::Bool = true,
-	encode_ordinal::Bool = false,
+	features::AbstractVector{Symbol} = Symbol[];
+	ignore::Bool = true,
+	ordered_factor::Bool = false,
 	lambda::Real = 1.0,
 	m::Real = 0,
 )
@@ -145,14 +145,14 @@ function target_encoder_fit(
 		if !is_multiclass       # binary case
 			y_prior = sum(y .== y_classes[1]) / length(y)   # for mixing
 		else                    # multiclass case
-			y_stat_given_col_level =
+			y_stat_given_feat_level =
 				y_priors = [sum(y .== y_level) / length(y) for y_level in y_classes]    # for mixing
 		end
 	end
 
 	# 3. Define function to compute the new value(s) for each level given a column
-	function column_mapper(col)
-		y_stat_given_col_level_for_col =
+	function feature_mapper(col)
+		y_stat_given_feat_level_for_col =
 			Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
 		for level in levels(col)
 			# Get the targets of an example that belong to this level
@@ -166,7 +166,7 @@ function target_encoder_fit(
 				if !is_multiclass           # 3.1 Binary classification
 					y_freq_for_level =
 						compute_label_freq_for_level(targets_for_level, y_classes)
-					y_stat_given_col_level_for_col[level] =
+					y_stat_given_feat_level_for_col[level] =
 						mix_stats(
 							posterior = y_freq_for_level,
 							prior = y_prior,
@@ -175,7 +175,7 @@ function target_encoder_fit(
 				else                        # 3.2 Multiclass classification
 					y_freqs_for_level =
 						compute_label_freqs_for_level(targets_for_level, y_classes)
-					y_stat_given_col_level_for_col[level] = mix_stats(
+					y_stat_given_feat_level_for_col[level] = mix_stats(
 						posterior = y_freqs_for_level,
 						prior = y_priors,
 						λ = lambda,
@@ -183,24 +183,24 @@ function target_encoder_fit(
 				end
 			else                            # 3.3 Regression
 				y_mean_for_level = compute_target_mean_for_level(targets_for_level)
-				y_stat_given_col_level_for_col[level] =
+				y_stat_given_feat_level_for_col[level] =
 					mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = lambda)
 			end
 		end
-		return y_stat_given_col_level_for_col
+		return y_stat_given_feat_level_for_col
 	end
 
 	# 4. Pass the function to generic_fit
-	y_stat_given_col_level, encoded_cols = generic_fit(
-		X, cols; exclude_cols = exclude_cols, encode_ordinal = encode_ordinal,
-		column_mapper = column_mapper,
+	y_stat_given_feat_level, encoded_features = generic_fit(
+		X, features; ignore = ignore, ordered_factor = ordered_factor,
+		feature_mapper = feature_mapper,
 	)
 
 	cache = Dict(
 		:task => task,
 		:num_classes => (task == "Regression") ? -1 : length(y_classes),
-		:y_stat_given_col_level => y_stat_given_col_level,
-		:encoded_cols => encoded_cols,
+		:y_stat_given_feat_level => y_stat_given_feat_level,
+		:encoded_features => encoded_features,
 	)
 	return cache
 end
@@ -215,7 +215,7 @@ Transform given data with fitted target encoder cache.
 # Arguments
 - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
 `Multiclass` or `OrderedFactor`
-- `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics for 
+- `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics for 
 every categorical column as well as other metadata needed for transform
 
 # Returns
@@ -225,13 +225,13 @@ every categorical column as well as other metadata needed for transform
 
 function target_encoder_transform(X, cache)
 	task = cache[:task]
-	y_stat_given_col_level = cache[:y_stat_given_col_level]
+	y_stat_given_feat_level = cache[:y_stat_given_feat_level]
 	num_classes = cache[:num_classes]
 
 	return generic_transform(
 		X,
-		y_stat_given_col_level;
-		single_col = task == "Regression" || (task == "Classification" && num_classes < 3),
+		y_stat_given_feat_level;
+		single_feat = task == "Regression" || (task == "Classification" && num_classes < 3),
 	)
 end
 

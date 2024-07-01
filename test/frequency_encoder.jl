@@ -12,7 +12,7 @@ push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=true, return
     normalize = [false, true]
     A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
     for norm in normalize
-        result = frequency_encoder_fit(X; normalize=norm)[:statistic_given_col_val]
+        result = frequency_encoder_fit(X; normalize=norm)[:statistic_given_feat_val]
         enc = (col, level) -> ((norm) ? sum(col .== level)/length(col) : sum(col .== level))
         true_output = Dict{Symbol, Dict{Any, Any}}(
             :F => Dict(

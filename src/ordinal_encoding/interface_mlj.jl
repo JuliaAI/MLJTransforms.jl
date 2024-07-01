@@ -2,18 +2,18 @@
 
 # 1. Interface Struct
 mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-	cols::AS
-	exclude_cols::Bool
-	encode_ordinal::Bool
+	features::AS
+	ignore::Bool
+	ordered_factor::Bool
 end;
 
 # 2. Constructor
 function OrdinalEncoder(;
-	cols = Symbol[],
-	exclude_cols = true,
-	encode_ordinal = false,
+	features = Symbol[],
+	ignore = true,
+	ordered_factor = false,
 )
-	return OrdinalEncoder(cols, exclude_cols, encode_ordinal)
+	return OrdinalEncoder(features, ignore, ordered_factor)
 end;
 
 
@@ -21,26 +21,26 @@ end;
 # 4. Fit result structure (what will be sent to transform)
 struct OrdinalEncoderResult <: MMI.MLJType
 	# target statistic for each level of each categorical column
-	index_given_col_level::Dict{Symbol, Dict{Any, Any}}
+	index_given_feat_level::Dict{Symbol, Dict{Any, Any}}
 end
 
 # 5. Fitted parameters (for user access)
 MMI.fitted_params(::OrdinalEncoder, fitresult) = (
-	index_given_col_level = fitresult.index_given_col_level,
+	index_given_feat_level = fitresult.index_given_feat_level,
 )
 
 # 6. Fit method
 function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
 	fit_res = ordinal_encoder_fit(
 		X,
-		transformer.cols;
-		exclude_cols = transformer.exclude_cols,
-		encode_ordinal = transformer.encode_ordinal,
+		transformer.features;
+		ignore = transformer.ignore,
+		ordered_factor = transformer.ordered_factor,
 	)
 	fitresult = OrdinalEncoderResult(
-		fit_res[:index_given_col_level],
+		fit_res[:index_given_feat_level],
 	)
-	report = Dict(:encoded_cols => fit_res[:encoded_cols])        # report only has list of encoded columns
+	report = Dict(:encoded_features => fit_res[:encoded_features])        # report only has list of encoded columns
 	cache = nothing
 	return fitresult, cache, report
 end;
@@ -49,8 +49,8 @@ end;
 # 7. Transform method
 function MMI.transform(transformer::OrdinalEncoder, fitresult, Xnew)
 	fit_res = Dict(
-		:index_given_col_level =>
-			fitresult.index_given_col_level,
+		:index_given_feat_level =>
+			fitresult.index_given_feat_level,
 	)
 	Xnew_transf = ordinal_encoder_transform(Xnew, fit_res)
 	return Xnew_transf
@@ -81,9 +81,9 @@ $(MMI.doc_header(OrdinalEncoder))
 `OrdinalEncoder` implements ordinal encoding which replaces the categorical values in the specified
 	categorical columns with integers (ordered arbitrarily).
 
-In MLJ (or MLJModels) do `model = OrdinalEncoder()` which is equivalent to `model = OrdinalEncoder(cols = Symbol[],
-	exclude_cols = true,
-	encode_ordinal = false, )` to construct a model instance.
+In MLJ (or MLJModels) do `model = OrdinalEncoder()` which is equivalent to `model = OrdinalEncoder(features = Symbol[],
+	ignore = true,
+	ordered_factor = false, )` to construct a model instance.
 
 # Training data
 
@@ -100,9 +100,9 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
-- `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
+- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 
 # Operations
 
@@ -113,7 +113,7 @@ Train the machine using `fit!(mach, rows=...)`.
 
 The fields of `fitted_params(mach)` are:
 
-- `index_given_col_level`: A dictionary that maps each level for each column in a subset of the categorical columns of X into an integer. 
+- `index_given_feat_level`: A dictionary that maps each level for each column in a subset of the categorical columns of X into an integer. 
 
 # Examples
 
@@ -141,7 +141,7 @@ X = coerce(X,
 :E => OrderedFactor,
 )
 
-encoder = OrdinalEncoder(encode_ordinal = false)
+encoder = OrdinalEncoder(ordered_factor = false)
 mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
 

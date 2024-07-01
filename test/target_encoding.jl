@@ -71,23 +71,23 @@ end
     X, y = classification_forms[1]
 
     # test exclude columns
-    col_names = Tables.schema(X).names
-    ignore_cols = [rand(col_names), rand(col_names)]
-    y_stat_given_col_level = target_encoder_fit(X, y, ignore_cols; exclude_cols = true, encode_ordinal = false)[:y_stat_given_col_level]
-    @test intersect(keys(y_stat_given_col_level), ignore_cols) == Set()
+    feat_names = Tables.schema(X).names
+    ignore_cols = [rand(feat_names), rand(feat_names)]
+    y_stat_given_feat_level = target_encoder_fit(X, y, ignore_cols; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
+    @test intersect(keys(y_stat_given_feat_level), ignore_cols) == Set()
 
     # test include columns
-    col_names = [:A, :C, :D, :F]        # these are multiclass
-    include_cols = [rand(col_names), rand(col_names)]
-    y_stat_given_col_level2 = target_encoder_fit(X, y, include_cols; exclude_cols = false, encode_ordinal = false)[:y_stat_given_col_level]
-    @test intersect(keys(y_stat_given_col_level2), include_cols) == Set(include_cols)
+    feat_names = [:A, :C, :D, :F]        # these are multiclass
+    include_cols = [rand(feat_names), rand(feat_names)]
+    y_stat_given_feat_level2 = target_encoder_fit(X, y, include_cols; ignore = false, ordered_factor = false)[:y_stat_given_feat_level]
+    @test intersect(keys(y_stat_given_feat_level2), include_cols) == Set(include_cols)
 
     # test types of encoded columns
-    col_names = Tables.schema(X).names
-    y_stat_given_col_level = target_encoder_fit(X, y, Symbol[]; exclude_cols = true, encode_ordinal = false)[:y_stat_given_col_level]
-    @test !(:E in keys(y_stat_given_col_level))
-    y_stat_given_col_level = target_encoder_fit(X, y, Symbol[]; exclude_cols = true, encode_ordinal = true)[:y_stat_given_col_level]
-    @test (:E in keys(y_stat_given_col_level))
+    feat_names = Tables.schema(X).names
+    y_stat_given_feat_level = target_encoder_fit(X, y, Symbol[]; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
+    @test !(:E in keys(y_stat_given_feat_level))
+    y_stat_given_feat_level = target_encoder_fit(X, y, Symbol[]; ignore = true, ordered_factor = true)[:y_stat_given_feat_level]
+    @test (:E in keys(y_stat_given_feat_level))
 end
 
 
@@ -95,9 +95,9 @@ end
     # Test consistency of output
     results = []
     for (X, y) in classification_forms
-        y_stat_given_col_level =
-            target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false)[:y_stat_given_col_level]
-        push!(results, y_stat_given_col_level)
+        y_stat_given_feat_level =
+            target_encoder_fit(X, y; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
+        push!(results, y_stat_given_feat_level)
     end
     
     @test all(x -> x == results[1], results)
@@ -132,8 +132,8 @@ end
     # Test mixing works in the edge case
     P̂ = length(y[y .== 0])/length(y)
 
-    y_stat_given_col_level =
-        target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false, m = Inf)[:y_stat_given_col_level]
+    y_stat_given_feat_level =
+        target_encoder_fit(X, y; ignore = true, ordered_factor = false, m = Inf)[:y_stat_given_feat_level]
 
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict("m" => P̂, "l" => P̂, "s" => P̂,),
@@ -141,7 +141,7 @@ end
         :D => Dict(false => P̂, true => P̂,),
         :C => Dict("f" => P̂, "m" => P̂,),
     )
-    @test y_stat_given_col_level == true_output
+    @test y_stat_given_feat_level == true_output
 
 end
 
@@ -150,9 +150,9 @@ end
     # Test output consistency
     results = []
     for (X, y) in regression_forms
-        y_stat_given_col_level =
-            target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false)[:y_stat_given_col_level]
-        push!(results, y_stat_given_col_level)
+        y_stat_given_feat_level =
+            target_encoder_fit(X, y; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
+        push!(results, y_stat_given_feat_level)
     end
     
     @test all(x -> x == results[1], results)
@@ -186,8 +186,8 @@ end
     @test results[1] == true_output
 
     # Test mixing in the edge case
-    y_stat_given_col_level =
-	target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false, m = Inf)[:y_stat_given_col_level]
+    y_stat_given_feat_level =
+	target_encoder_fit(X, y; ignore = true, ordered_factor = false, m = Inf)[:y_stat_given_feat_level]
 
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict("m" => μ̂, "l" => μ̂, "s" => μ̂,),
@@ -195,7 +195,7 @@ end
         :D => Dict(false => μ̂, true => μ̂,),
         :C => Dict("f" => μ̂, "m" => μ̂,),
     )
-    @test y_stat_given_col_level == true_output
+    @test y_stat_given_feat_level == true_output
 end
 
 @testset "Fit for multiclassification dataset" begin
@@ -203,9 +203,9 @@ end
     # Test output consistency
     results = []
     for (X, y) in multiclassification_forms
-        y_stat_given_col_level =
-            target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false)[:y_stat_given_col_level]
-        push!(results, y_stat_given_col_level)
+        y_stat_given_feat_level =
+            target_encoder_fit(X, y; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
+        push!(results, y_stat_given_feat_level)
     end
 
     @test all(x -> x == results[1], results)
@@ -240,8 +240,8 @@ end
 
     # Text mixing in the edge case
     P̂ = [length(y[y .== l])/length(y) for l in y_classes]
-    y_stat_given_col_level =
-        target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false, m = Inf)[:y_stat_given_col_level]
+    y_stat_given_feat_level =
+        target_encoder_fit(X, y; ignore = true, ordered_factor = false, m = Inf)[:y_stat_given_feat_level]
 
     true_output = Dict{Symbol, Dict{Any, AbstractVector{AbstractFloat}}}(
         :F => Dict("m" => P̂, "l" => P̂, "s" => P̂,),
@@ -249,17 +249,17 @@ end
         :D => Dict(false => P̂, true => P̂,),
         :C => Dict("f" => P̂, "m" => P̂,),
     )
-    @test y_stat_given_col_level == true_output
+    @test y_stat_given_feat_level == true_output
 end
 
 
 @testset "Test binary classification target encoding transforms" begin
     X, y = classification_forms[1]
     cache =
-        target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false)
+        target_encoder_fit(X, y; ignore = true, ordered_factor = false)
     X_tr = target_encoder_transform(X, cache)
 
-    enc = (col, level) -> cache[:y_stat_given_col_level][col][level]
+    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
 
     target = (
         A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -275,7 +275,7 @@ end
 @testset "Test preserving output type" begin
     X, y = classification_forms[4]
     cache =
-        target_encoder_fit(X, y; exclude_cols = true, encode_ordinal = false)
+        target_encoder_fit(X, y; ignore = true, ordered_factor = false)
     X_tr = target_encoder_transform(X, cache)
     
     @test typeof(X_tr) == typeof(X)
@@ -289,7 +289,7 @@ end
         target_encoder_fit(X, y)
     X_tr = target_encoder_transform(X, cache)
 
-    enc = (col, level) -> cache[:y_stat_given_col_level][col][level]
+    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
 
     target = (
         A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -308,7 +308,7 @@ end
         target_encoder_fit(X, y)
     X_tr = target_encoder_transform(X, cache)
     
-    enc = (col, level) -> cache[:y_stat_given_col_level][col][level]
+    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
     
     target = (
         A_1 = [enc(:A, X[:A][i])[1] for i in 1:10],
@@ -339,10 +339,10 @@ end
     Xys = vcat(classification_forms, regression_forms, multiclassification_forms)
     for (X, y) in Xys
         # functional api
-        fit_res = target_encoder_fit(X, y; exclude_cols=true, encode_ordinal=false, lambda=0.5, m=1)
+        fit_res = target_encoder_fit(X, y; ignore=true, ordered_factor=false, lambda=0.5, m=1)
         X_transf = target_encoder_transform(X, fit_res)
         # mlj api
-        encoder = TargetEncoder( exclude_cols=true, encode_ordinal=false, lambda=0.5, m=1.0)
+        encoder = TargetEncoder( ignore=true, ordered_factor=false, lambda=0.5, m=1.0)
         mach = machine(encoder, X, y)
         fit!(mach)
         Xnew_transf = MMI.transform(mach, X)
@@ -352,20 +352,20 @@ end
 
         # fitted parameters is correct
         fitresult = fitted_params(mach)
-        @test fitresult.y_statistic_given_col_level == fit_res[:y_stat_given_col_level]
+        @test fitresult.y_statistic_given_feat_level == fit_res[:y_stat_given_feat_level]
         @test fitresult.task == fit_res[:task]
 
         # Test invalid `m`
         @test_throws ArgumentError begin
-            t = TargetEncoder(exclude_cols=true, encode_ordinal=false, lambda=0.5, m=-5)
+            t = TargetEncoder(ignore=true, ordered_factor=false, lambda=0.5, m=-5)
         end
 
         # Test invalid `lambda`
         @test_throws ArgumentError begin
-             t = TargetEncoder(exclude_cols=true, encode_ordinal=false, lambda=1.1, m=1)
+             t = TargetEncoder(ignore=true, ordered_factor=false, lambda=1.1, m=1)
         end
 
         # Test report
-        @test report(mach) == Dict(:encoded_cols => fit_res[:encoded_cols])
+        @test report(mach) == Dict(:encoded_features => fit_res[:encoded_features])
     end
 end
