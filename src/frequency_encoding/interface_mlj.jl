@@ -106,7 +106,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Operations
 
 - `transform(mach, Xnew)`: Apply frequency encoding to `Multiclass` or `OrderedFactor
-  ` features of `Xnew`, and return the new table. 
+  ` features of `Xnew`, and return the new table. Features that are neither `Multiclass` nor `OrderedFactor` are always left unchanged.
 
 # Fitted parameters
 
