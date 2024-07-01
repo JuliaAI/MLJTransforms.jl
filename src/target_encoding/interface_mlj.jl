@@ -108,16 +108,16 @@ MMI.metadata_model(
     TargetEncoder,
     input_scitype =
     Tuple{
-        Table(Union{Infinite, Finite}),
+        Table,
         AbstractVector,
     },
-    output_scitype = Table(Union{Infinite, Finite}),
+    output_scitype = Table,
     load_path = "MLJTransforms.TargetEncoder",
 )
 
 function MMI.fit_data_scitype(t::TargetEncoder)
     return Tuple{
-        Table(Union{Infinite, Finite}),
+        Table,
         AbstractVector,
     }
 end

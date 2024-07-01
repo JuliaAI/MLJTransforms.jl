@@ -58,8 +58,8 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     OrdinalEncoder,
-    input_scitype = Table(Union{Infinite, Finite}),
-    output_scitype = Table(Union{Infinite, Finite}),
+    input_scitype = Table,
+    output_scitype = Table,
     load_path = "MLJTransforms.OrdinalEncoder",
 )
 
