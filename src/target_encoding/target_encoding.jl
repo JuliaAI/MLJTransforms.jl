@@ -1,13 +1,15 @@
 """
-Given the targets belonging to a specific category (level) for a categorical variable, 
+Given the targets belonging to a specific category (level) for a categorical variable,
 find the frequency of the positive class (binary classification is assumed).
 
 # Arguments
-- `targets_for_level`: An abstract vector containing the target Multiclass or OrderedFactor values
-- `y_classes`: An abstract vector containing the classes in the target variable
+
+  - `targets_for_level`: An abstract vector containing the target Multiclass or OrderedFactor values
+  - `y_classes`: An abstract vector containing the classes in the target variable
 
 # Returns
-- `freq`: A float for the frequency of the positive class given the category
+
+  - `freq`: A float for the frequency of the positive class given the category
 """
 function compute_label_freq_for_level(targets_for_level, y_classes)
 	# Assumes binary classification where the first level is the positive class
@@ -17,14 +19,16 @@ function compute_label_freq_for_level(targets_for_level, y_classes)
 end
 
 """
-Given the targets belonging to a specific category (level) for a categorical variable, 
+Given the targets belonging to a specific category (level) for a categorical variable,
 find the mean of these values (regression is assumed).
 
 # Arguments
-- `targets_for_level`: An abstract vector containing the target Continuous or Count values
+
+  - `targets_for_level`: An abstract vector containing the target Continuous or Count values
 
 # Returns
-- `avg`: A float for the mean of the targets given the category
+
+  - `avg`: A float for the mean of the targets given the category
 """
 function compute_target_mean_for_level(targets_for_level)
 	avg = mean(targets_for_level)
@@ -32,15 +36,17 @@ function compute_target_mean_for_level(targets_for_level)
 end
 
 """
-Given the targets belonging to a specific category (level) for a categorical variable, 
+Given the targets belonging to a specific category (level) for a categorical variable,
 find the frequency of each of the classes (multiclass classification assumed classification is assumed).
 
 # Arguments
-- `targets_for_level`: An abstract vector containing the target Multiclass or OrderedFactor values
-- `y_classes`: An abstract vector containing the classes in the target variable
+
+  - `targets_for_level`: An abstract vector containing the target Multiclass or OrderedFactor values
+  - `y_classes`: An abstract vector containing the classes in the target variable
 
 # Returns
-- `freqs`: A vector of floats for the frequency of the positive class
+
+  - `freqs`: A vector of floats for the frequency of the positive class
 """
 function compute_label_freqs_for_level(targets_for_level, y_classes)
 	# e.g., if y_classes = [1, 2, 3, 4]
@@ -65,7 +71,7 @@ function compute_shrinkage(targets_for_level; m = 0, λ = 1.0)
 end
 
 """
-Compute m automatically using empirical Bayes estimation as suggested in [Micci-Barreca, 2001]. 
+Compute m automatically using empirical Bayes estimation as suggested in [Micci-Barreca, 2001].
 Only possible for regression tasks
 """
 function compute_m_auto(task, targets_for_level; y_var)
@@ -93,19 +99,21 @@ end
 Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
 
 # Arguments
-- `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
-`Multiclass` or `OrderedFactor`
-- `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
-- `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
-- `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
-- `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
-- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
- empirical Bayes estimation as described in [1]
+
+  - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
+	`Multiclass` or `OrderedFactor`
+  - `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
+  - `cols=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
+  - `exclude_cols=true`: Whether to exclude or includes the columns given in `cols`
+  - `encode_ordinal=false`: Whether to encode `OrderedFactor` or ignore them
+  - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
+  - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
+	empirical Bayes estimation as described in [1]
 
 # Returns
-- `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics needed to transform
-every categorical column as well as other metadata needed for transform.
+
+  - `cache`: A dictionary containing a dictionary `y_stat_given_col_level` with the necessary statistics needed to transform
+	every categorical column as well as other metadata needed for transform.
 """
 function target_encoder_fit(
 	X,
@@ -138,13 +146,14 @@ function target_encoder_fit(
 			y_prior = sum(y .== y_classes[1]) / length(y)   # for mixing
 		else                    # multiclass case
 			y_stat_given_col_level =
-			y_priors = [sum(y .== y_level) / length(y) for y_level in y_classes]    # for mixing
+				y_priors = [sum(y .== y_level) / length(y) for y_level in y_classes]    # for mixing
 		end
 	end
 
 	# 3. Define function to compute the new value(s) for each level given a column
 	function column_mapper(col)
-		y_stat_given_col_level_for_col = Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
+		y_stat_given_col_level_for_col =
+			Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
 		for level in levels(col)
 			# Get the targets of an example that belong to this level
 			targets_for_level = y[col.==level]
@@ -157,7 +166,7 @@ function target_encoder_fit(
 				if !is_multiclass           # 3.1 Binary classification
 					y_freq_for_level =
 						compute_label_freq_for_level(targets_for_level, y_classes)
-						y_stat_given_col_level_for_col[level] =
+					y_stat_given_col_level_for_col[level] =
 						mix_stats(
 							posterior = y_freq_for_level,
 							prior = y_prior,
@@ -166,7 +175,7 @@ function target_encoder_fit(
 				else                        # 3.2 Multiclass classification
 					y_freqs_for_level =
 						compute_label_freqs_for_level(targets_for_level, y_classes)
-						y_stat_given_col_level_for_col[level] = mix_stats(
+					y_stat_given_col_level_for_col[level] = mix_stats(
 						posterior = y_freqs_for_level,
 						prior = y_priors,
 						λ = lambda,
@@ -183,7 +192,8 @@ function target_encoder_fit(
 
 	# 4. Pass the function to generic_fit
 	y_stat_given_col_level, encoded_cols = generic_fit(
-		X, cols; exclude_cols = exclude_cols, encode_ordinal = encode_ordinal, column_mapper = column_mapper
+		X, cols; exclude_cols = exclude_cols, encode_ordinal = encode_ordinal,
+		column_mapper = column_mapper,
 	)
 
 	cache = Dict(

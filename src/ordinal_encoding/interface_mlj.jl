@@ -1,7 +1,7 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct OrdinalEncoder{ AS <: AbstractVector{Symbol}} <: Unsupervised
+mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
 	cols::AS
 	exclude_cols::Bool
 	encode_ordinal::Bool
@@ -13,7 +13,7 @@ function OrdinalEncoder(;
 	exclude_cols = true,
 	encode_ordinal = false,
 )
-    return OrdinalEncoder(cols, exclude_cols, encode_ordinal)
+	return OrdinalEncoder(cols, exclude_cols, encode_ordinal)
 end;
 
 
@@ -31,7 +31,7 @@ MMI.fitted_params(::OrdinalEncoder, fitresult) = (
 
 # 6. Fit method
 function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
-	fit_res =  ordinal_encoder_fit(
+	fit_res = ordinal_encoder_fit(
 		X,
 		transformer.cols;
 		exclude_cols = transformer.exclude_cols,
@@ -67,9 +67,9 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
 	OrdinalEncoder,
-    input_scitype = Table(Union{Infinite, Finite}),
-    output_scitype =  Table(Union{Infinite, Finite}),
-	load_path = "MLJTransforms.OrdinalEncoder" 
+	input_scitype = Table(Union{Infinite, Finite}),
+	output_scitype = Table(Union{Infinite, Finite}),
+	load_path = "MLJTransforms.OrdinalEncoder",
 )
 
 
@@ -89,12 +89,12 @@ In MLJ (or MLJModels) do `model = OrdinalEncoder()` which is equivalent to `mode
 
 In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
-    mach = machine(model, X)
+	mach = machine(model, X)
 
 Here:
 
 - `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
-    scientific types `Multiclass` or `OrderedFactor` for their elements.
+	scientific types `Multiclass` or `OrderedFactor` for their elements.
 
 Train the machine using `fit!(mach, rows=...)`.
 
@@ -107,7 +107,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Operations
 
 - `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
-    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
+	Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
 
 # Fitted parameters
 

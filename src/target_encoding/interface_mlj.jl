@@ -1,7 +1,8 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <: Unsupervised
+mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <:
+			   Unsupervised
 	cols::AS
 	exclude_cols::Bool
 	encode_ordinal::Bool
@@ -18,8 +19,8 @@ function TargetEncoder(;
 	m = 0,
 )
 	t = TargetEncoder(cols, exclude_cols, encode_ordinal, lambda, m)
-    MMI.clean!(t)
-    return t
+	MMI.clean!(t)
+	return t
 end;
 
 
@@ -28,12 +29,12 @@ function MMI.clean!(t::TargetEncoder)
 	message = ""
 	if t.m < 0
 		throw(
-			ArgumentError(NON_NEGATIVE_m(t.m))
+			ArgumentError(NON_NEGATIVE_m(t.m)),
 		)
 	end
 	if t.lambda < 0 || t.lambda > 1
 		throw(
-			ArgumentError(INVALID_lambda(t.lambda))
+			ArgumentError(INVALID_lambda(t.lambda)),
 		)
 	end
 	return message
@@ -87,8 +88,8 @@ function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
 	fit_res = Dict(
 		:y_stat_given_col_level =>
 			fitresult.y_stat_given_col_level,
-			:num_classes => fitresult.num_classes,
-		    :task => fitresult.task,
+		:num_classes => fitresult.num_classes,
+		:task => fitresult.task,
 	)
 	Xnew_transf = target_encoder_transform(Xnew, fit_res)
 	return Xnew_transf
@@ -105,19 +106,19 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
 	TargetEncoder,
-    input_scitype = 
+	input_scitype =
 	Tuple{
-                Table(Union{Infinite, Finite}),
-                AbstractVector
-                    },
-    output_scitype =  Table(Union{Infinite, Finite}),
-	load_path = "MLJTransforms.TargetEncoder" 
+		Table(Union{Infinite, Finite}),
+		AbstractVector,
+	},
+	output_scitype = Table(Union{Infinite, Finite}),
+	load_path = "MLJTransforms.TargetEncoder",
 )
 
 function MMI.fit_data_scitype(t::TargetEncoder)
 	return Tuple{
 		Table(Union{Infinite, Finite}),
-		AbstractVector
+		AbstractVector,
 	}
 end
 
@@ -126,7 +127,7 @@ end
 $(MMI.doc_header(TargetEncoder))
 
 `TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
-    into continuous ones using statistics from the target variable.
+	into continuous ones using statistics from the target variable.
 
 In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(cols = Symbol[],
 	exclude_cols = true,
@@ -138,12 +139,12 @@ In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model
 
 In MLJ (or MLJBase) bind an instance `model` to data with
 
-    mach = machine(model, X, y)
+	mach = machine(model, X, y)
 
 Here:
 
 - `X` is any table of input features (eg, a `DataFrame`). Categorical columns in this table must have
-    scientific types `Multiclass` or `OrderedFactor` for their elements.
+	scientific types `Multiclass` or `OrderedFactor` for their elements.
 
 - `y` is the target, which can be any `AbstractVector` whose element
   scitype is `Continuous` or `Count` for regression problems and 
@@ -163,7 +164,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Operations
 
 - `transform(mach, Xnew)`: Apply target encoding to the`Multiclass` or `OrderedFactor` selected columns of `Xnew` and return the new table. 
-    Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
+	Columns that are not `Multiclass` or `OrderedFactor` will be always left unchanged.
 
 # Fitted parameters
 
@@ -171,7 +172,7 @@ The fields of `fitted_params(mach)` are:
 
 - `task`: Whether the task is `Classification` or `Regression`
 - `y_statistic_given_col_level`: A dictionary with the necessary statistics to encode each categorical column. It maps each 
-    level in each categorical column to a statistic computed over the target.
+	level in each categorical column to a statistic computed over the target.
 
 # Examples
 
@@ -227,8 +228,8 @@ julia > schema(Xnew)
 
 # Reference
 [1] Micci-Barreca, Daniele. 
-    “A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems” 
-    SIGKDD Explor. Newsl. 3, 1 (July 2001), 27–32.
+	“A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems” 
+	SIGKDD Explor. Newsl. 3, 1 (July 2001), 27–32.
 
 See also
 [`OneHotEncoder`](@ref)
