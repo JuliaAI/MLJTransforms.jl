@@ -1,4 +1,6 @@
 """
+**Private method.**
+
 Given the targets belonging to a specific category (level) for a categorical variable,
 find the frequency of the positive class (binary classification is assumed).
 
@@ -19,6 +21,8 @@ function compute_label_freq_for_level(targets_for_level, y_classes)
 end
 
 """
+**Private method.**
+
 Given the targets belonging to a specific category (level) for a categorical variable,
 find the mean of these values (regression is assumed).
 
@@ -36,6 +40,8 @@ function compute_target_mean_for_level(targets_for_level)
 end
 
 """
+**Private method.**
+
 Given the targets belonging to a specific category (level) for a categorical variable,
 find the frequency of each of the classes (multiclass classification assumed classification is assumed).
 
@@ -59,6 +65,8 @@ function compute_label_freqs_for_level(targets_for_level, y_classes)
 end
 
 """
+**Private method.**
+
 Given the hyperparameter m, compute λ as in [Micci-Barreca, 2001] unless λ was overridden.
 """
 function compute_shrinkage(targets_for_level; m = 0, λ = 1.0)
@@ -71,6 +79,8 @@ function compute_shrinkage(targets_for_level; m = 0, λ = 1.0)
 end
 
 """
+**Private method.**
+
 Compute m automatically using empirical Bayes estimation as suggested in [Micci-Barreca, 2001].
 Only possible for regression tasks
 """
@@ -83,6 +93,8 @@ function compute_m_auto(task, targets_for_level; y_var)
 end
 
 """
+**Private method.**
+
 Implement mixing between a posterior and a prior statistic  by computing `λ * posterior + (1 - λ) * prior`
 """
 function mix_stats(; posterior, prior, λ)

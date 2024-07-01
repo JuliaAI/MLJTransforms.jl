@@ -2,6 +2,8 @@
 
 
 """
+**Private method.**
+
 A generic function to fit a class of transformers where its convenient to define a single `feature_mapper` function that
 takes the column as a vector and potentially other arguments (as passed in ...args and ...kwargs) and returns
 a dictionary that maps each level of the categorical column to a scalar or vector
@@ -60,6 +62,8 @@ end
 
 
 """
+**Private method.**
+
 Function to generate new column names: feat_name_0, feat_name_1,..., feat_name_n
 """
 function generate_new_column_names(feat_name, num_inds)
@@ -68,6 +72,8 @@ end
 
 
 """
+**Private method.**
+
 Given a table `X` and a dictionary `mapping_per_feat_level` which maps each level for each column in 
 a subset of categorical columns of X into a scalar or a vector (as specified in single_feat)
 
