@@ -2,7 +2,7 @@
 
 
 """
-A generic function to fit a class transformers where its convenient to define a single `column_mapper` function that
+A generic function to fit a class of transformers where its convenient to define a single `column_mapper` function that
 takes the column as a vector and potentially other arguments (as passed in ...args and ...kwargs) and returns
 a dictionary that maps each level of the categorical column to a scalar or vector
 according to the transformation logic. In other words, the `column_mapper` simply answers the question "For level n of
