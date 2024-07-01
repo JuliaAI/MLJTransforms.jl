@@ -107,6 +107,12 @@ The fields of `fitted_params(mach)` are:
 
 - `index_given_feat_level`: A dictionary that maps each level for each column in a subset of the categorical columns of X into an integer. 
 
+# Report
+
+The fields of `report(mach)` are:
+
+- `encoded_features`: The subset of the categorical columns of X that were encoded
+
 # Examples
 
 ```julia

@@ -114,6 +114,12 @@ The fields of `fitted_params(mach)` are:
 
 - `statistic_given_feat_val`: A dictionary that maps each level for each column in a subset of the categorical columns of X into its frequency.
 
+# Report
+
+The fields of `report(mach)` are:
+
+- `encoded_features`: The subset of the categorical columns of X that were encoded
+
 # Examples
 
 ```julia
