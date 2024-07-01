@@ -185,7 +185,6 @@ The fields of `report(mach)` are:
 
 ```julia
 using ScientificTypes
-using MLJTransforms
 using MLJ
 
 # Define categorical columns
