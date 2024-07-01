@@ -1,10 +1,5 @@
 using MLJTransforms: frequency_encoder_fit, frequency_encoder_transform
 
-# Possible dataset forms (X,y)
-dataset_forms = []
-push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=false, return_y=false))
-push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=true, return_y=false))
-
 @testset "Frequency Encoding Fit" begin
     @test frequency_encoder_fit(dataset_forms[1]) == frequency_encoder_fit(dataset_forms[2])
 

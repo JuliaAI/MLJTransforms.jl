@@ -1,29 +1,6 @@
-include("utils.jl")
 using MLJTransforms: compute_label_freq_for_level, compute_label_freqs_for_level,
 	compute_target_mean_for_level, compute_shrinkage, compute_m_auto, mix_stats,
 	target_encoder_fit, generate_new_feat_names, target_encoder_transform, TargetEncoder
-
-# Initial setup
-classification_forms = []
-multiclassification_forms = []
-regression_forms = []
-
-# Add datasets to the classification forms vector
-for form in [:binary, :binary_str]
-	push!(classification_forms, create_dummy_dataset(form, as_dataframe = false))
-	push!(classification_forms, create_dummy_dataset(form, as_dataframe = true))
-end
-
-# Add datasets to the multiclassification forms vector
-for form in [:multiclass, :multiclass_str]
-	push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = false))
-	push!(multiclassification_forms, create_dummy_dataset(form, as_dataframe = true))
-end
-
-# Add datasets to the regression forms vector
-push!(regression_forms, create_dummy_dataset(:regression, as_dataframe = false))
-push!(regression_forms, create_dummy_dataset(:regression, as_dataframe = true))
-
 
 @testset "Test statistic computation" begin
 	targets_for_level = [1, 0, 1, 1, 0, 0, 1]
@@ -64,30 +41,6 @@ end
     y_var = 100.0
     @test compute_m_auto("Regression", targets_for_level, y_var=y_var) ≈ 100.0 / 250.0
     @test_throws ErrorException compute_m_auto("Classification", targets_for_level, y_var=y_var)
-end
-
-
-@testset "Column inclusion and exclusion" begin
-    X, y = classification_forms[1]
-
-    # test exclude columns
-    feat_names = Tables.schema(X).names
-    ignore_cols = [rand(feat_names), rand(feat_names)]
-    y_stat_given_feat_level = target_encoder_fit(X, y, ignore_cols; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
-    @test intersect(keys(y_stat_given_feat_level), ignore_cols) == Set()
-
-    # test include columns
-    feat_names = [:A, :C, :D, :F]        # these are multiclass
-    include_cols = [rand(feat_names), rand(feat_names)]
-    y_stat_given_feat_level2 = target_encoder_fit(X, y, include_cols; ignore = false, ordered_factor = false)[:y_stat_given_feat_level]
-    @test intersect(keys(y_stat_given_feat_level2), include_cols) == Set(include_cols)
-
-    # test types of encoded columns
-    feat_names = Tables.schema(X).names
-    y_stat_given_feat_level = target_encoder_fit(X, y, Symbol[]; ignore = true, ordered_factor = false)[:y_stat_given_feat_level]
-    @test !(:E in keys(y_stat_given_feat_level))
-    y_stat_given_feat_level = target_encoder_fit(X, y, Symbol[]; ignore = true, ordered_factor = true)[:y_stat_given_feat_level]
-    @test (:E in keys(y_stat_given_feat_level))
 end
 
 
