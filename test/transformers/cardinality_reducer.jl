@@ -9,22 +9,22 @@ end
         X = generate_high_cardinality_table(1000; obj = false, special_cat = 'X')
         cache = cardinality_reducer_fit(
             X;
-            infreq_val = Dict(AbstractString => "Other", Char => 'X'),
+            label_for_infrequent = Dict(AbstractString => "Other", Char => 'X'),
         )
     end
     @test_throws ArgumentError begin
         X = generate_high_cardinality_table(1000; obj = false, special_cat = 'O')
         cache = cardinality_reducer_fit(
             X;
-            infreq_val = Dict(AbstractString => "Other", Bool => 'X'),
+            label_for_infrequent = Dict(AbstractString => "Other", Bool => 'X'),
         )
     end
     @test_throws ArgumentError begin
         X = generate_high_cardinality_table(1000)
         cache = cardinality_reducer_fit(
             X;
-            min_freq = 20,
-            infreq_val = Dict(AbstractString => "X"),
+            min_frequency = 20,
+            label_for_infrequent = Dict(AbstractString => "X"),
         )
     end
 end
@@ -32,7 +32,7 @@ end
 
 @testset "Default for Numbers Set Correctly" begin
     X = generate_high_cardinality_table(1000)
-    cache = cardinality_reducer_fit(X; min_freq = 0.2)
+    cache = cardinality_reducer_fit(X; min_frequency = 0.2)
     new_cat_given_col_val = cache[:new_cat_given_col_val]
     convert(Integer, minimum(values(new_cat_given_col_val[:HighCardFeature1])))
     convert(Integer, minimum(X.HighCardFeature1)) - 1
@@ -41,13 +41,13 @@ end
 end
 
 
-@testset "Equivalence of float and integer min_freq" begin
+@testset "Equivalence of float and integer min_frequency" begin
     X = generate_high_cardinality_table(1000)
-    for min_freq in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-        cache1 = cardinality_reducer_fit(X; min_freq = min_freq)
+    for min_frequency in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+        cache1 = cardinality_reducer_fit(X; min_frequency = min_frequency)
         new_cat_given_col_val1 = cache1[:new_cat_given_col_val]
 
-        cache2 = cardinality_reducer_fit(X; min_freq = Int.(min_freq * 1000))
+        cache2 = cardinality_reducer_fit(X; min_frequency = Int.(min_frequency * 1000))
         new_cat_given_col_val2 = cache2[:new_cat_given_col_val]
 
         @test new_cat_given_col_val1 == new_cat_given_col_val2
@@ -56,13 +56,13 @@ end
 
 @testset "End-to-end test" begin
     X = generate_high_cardinality_table(1000)
-    for min_freq in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-        cache = cardinality_reducer_fit(X; min_freq = min_freq)
+    for min_frequency in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+        cache = cardinality_reducer_fit(X; min_frequency = min_frequency)
         X_tr = cardinality_reducer_transform(X, cache)
         for col in [:LowCardFeature, :HighCardFeature1, :HighCardFeature2]
             new_prop_map = proportionmap(X_tr[!, col])
             for val in values(new_prop_map)
-                @test (val >= min_freq || length(values(new_prop_map)) == 2)  # e.g., [A=0.7, O=0.3] is correct
+                @test (val >= min_frequency || length(values(new_prop_map)) == 2)  # e.g., [A=0.7, O=0.3] is correct
             end
         end
     end
@@ -76,8 +76,8 @@ end
         X[!, :1], X[:, :2], X[:, :3]
     result = cardinality_reducer_fit(
         X;
-        min_freq = 0.3,
-        infreq_val = Dict(AbstractString => "OtherOne", Char => 'X', Number => -99),
+        min_frequency = 0.3,
+        label_for_infrequent = Dict(AbstractString => "OtherOne", Char => 'X', Number => -99),
     )[:new_cat_given_col_val]
 
     enc_char = (col, level) -> (proportionmap(col)[level] >= 0.3 ? level : 'X')
@@ -114,8 +114,8 @@ end
         X[:LowCardFeature], X[:HighCardFeature1], X[:HighCardFeature2]
     cache = cardinality_reducer_fit(
         X;
-        min_freq = 0.3,
-        infreq_val = Dict(AbstractString => "OtherOne", Char => 'X', Number => -99),
+        min_frequency = 0.3,
+        label_for_infrequent = Dict(AbstractString => "OtherOne", Char => 'X', Number => -99),
     )
 
     enc_char = (col, level) -> (proportionmap(col)[level] >= 0.3 ? level : 'X')
@@ -162,3 +162,6 @@ end
     # Test report
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
 end
+
+# Look into MLJModelInterfaceTest
+# Add tests to ensure categorical column properties are as expected

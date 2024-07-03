@@ -10,8 +10,8 @@ mutable struct CardinalityReducer{
     features::AS
     ignore::Bool
     ordered_factor::Bool
-    min_freq::R
-    infreq_val::Dict{T, A}
+    min_frequency::R
+    label_for_infrequent::Dict{T, A}
 end;
 
 # 2. Constructor
@@ -19,13 +19,13 @@ function CardinalityReducer(;
     features = Symbol[],
     ignore = true,
     ordered_factor = false,
-    min_freq = 3,
-    infreq_val = Dict(
+    min_frequency = 3,
+    label_for_infrequent = Dict(
         AbstractString => "Other",
         Char => 'O',
     ),
 )
-    return CardinalityReducer(features, ignore, ordered_factor, min_freq, infreq_val)
+    return CardinalityReducer(features, ignore, ordered_factor, min_frequency, label_for_infrequent)
 end;
 
 
@@ -41,8 +41,8 @@ function MMI.fit(transformer::CardinalityReducer, verbosity::Int, X)
         transformer.features;
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
-        min_freq = transformer.min_freq,
-        infreq_val = transformer.infreq_val,
+        min_frequency = transformer.min_frequency,
+        label_for_infrequent = transformer.label_for_infrequent,
     )
     fitresult = generic_cache[:new_cat_given_col_val]
 
@@ -85,15 +85,15 @@ MMI.metadata_model(
 $(MMI.doc_header(CardinalityReducer))
 
 `CardinalityReducer` maps any level of a categorical column that occurs with
-frequency < `min_freq` into a new level (e.g., "Other"). This is useful when some categorical columns have
+frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical columns have
 high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
 types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString, Char).
 
 In MLJ (or MLJModels) do `model = CardinalityReducer()` which is equivalent to `model = CardinalityReducer(features = Symbol[],
     ignore = true,
     ordered_factor = false, 
-    min_freq = 3,
-    infreq_val = Dict{<:Type, <:Any}(
+    min_frequency = 3,
+    label_for_infrequent = Dict{<:Type, <:Any}(
         AbstractString => "Other",
         Char => 'O',
     )
@@ -118,9 +118,9 @@ Train the machine using `fit!(mach, rows=...)`.
 - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
 - `ignore=true`: Whether to exclude or includes the columns given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-- `min_freq::Real=3`: Any level of a categorical column that occurs with frequency < `min_freq` will be mapped to a new level. Could be
+- `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
-- `infreq_val=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
+- `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
 dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and the values
 are the new level to map into for each raw super type. By default, if the raw type of the column subtypes `AbstractString`
 then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
@@ -135,7 +135,7 @@ and if the raw type subtypes `Number` then the new value is the lowest value in 
 The fields of `fitted_params(mach)` are:
 
 - `new_cat_given_col_val`: A dictionary that maps each level in a
-    categorical column to a new level (either itself or the new level specified in `infreq_val`)
+    categorical column to a new level (either itself or the new level specified in `label_for_infrequent`)
 
 # Report
 
@@ -163,7 +163,7 @@ X = coerce(X,
 :B => Multiclass
 )
 
-encoder = CardinalityReducer(ordered_factor = false, min_freq=3)
+encoder = CardinalityReducer(ordered_factor = false, min_frequency=3)
 mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
 

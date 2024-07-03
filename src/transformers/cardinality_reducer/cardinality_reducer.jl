@@ -6,7 +6,7 @@ union_types(x::Type) = (x,)
 
 """
 Fit a transformer that maps any level of a categorical column that occurs with
-frequency < `min_freq` into a new level (e.g., "Other"). This is useful when some categorical columns have
+frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical columns have
 high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
 types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString, Char).
 
@@ -17,9 +17,9 @@ types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString
   - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
   - `ignore=true`: Whether to exclude or includes the columns given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-  - `min_freq::Real=3`: Any level of a categorical column that occurs with frequency < `min_freq` will be mapped to a new level. Could be
+  - `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
     an integer or a float which decides whether raw counts or normalized frequencies are used.
-  - `infreq_val=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
+  - `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
     dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and the values
     are the new level to map into for each raw super type. By default, if the raw type of the column subtypes `AbstractString`
     then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
@@ -28,7 +28,7 @@ types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString
 # Returns (in a dict)
 
   - `new_cat_given_col_val`: A dictionary that maps each level in a
-    categorical column to a new level (either itself or the new level specified in `infreq_val`)
+    categorical column to a new level (either itself or the new level specified in `label_for_infrequent`)
   - `encoded_features`: The subset of the categorical columns of X that were encoded
 """
 function cardinality_reducer_fit(
@@ -36,17 +36,18 @@ function cardinality_reducer_fit(
     features::AbstractVector{Symbol} = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
-    min_freq::Real = 3,
-    infreq_val::Dict{<:Type, <:Any} = Dict(
+    min_frequency::Real = 3,                        
+    label_for_infrequent::Dict{<:Type, <:Any} = Dict(    
         AbstractString => "Other",
         Char => 'O',
     ),
-)
+)   
 
     # 1. Define column mapper
     function feature_mapper(col)
-        val_to_freq = (min_freq isa AbstractFloat) ? proportionmap(col) : countmap(col)
+        val_to_freq = (min_frequency isa AbstractFloat) ? proportionmap(col) : countmap(col)
         col_type = eltype(col).parameters[1]
+        feat_levels = levels(col)
 
         # Ensure column type is valid (can't test because never occurs)
         # Converting array elements to strings before wrapping in a `CategoricalArray`, as `Object{Int64}` unsupported by CategoricalArrays. 
@@ -54,15 +55,15 @@ function cardinality_reducer_fit(
             throw(ArgumentError(UNSUPPORTED_COL_TYPE(col_type)))
         end
 
-        # Ensure infreq_val keys are valid types
-        for possible_col_type in keys(infreq_val)
+        # Ensure label_for_infrequent keys are valid types
+        for possible_col_type in keys(label_for_infrequent)
             if !(possible_col_type in union_types(ScientificTypes.SupportedTypes))
                 throw(ArgumentError(VALID_TYPES_NEW_VAL(possible_col_type)))
             end
         end
 
-        # Check no collision between keys(infreq_val) and keys(val_to_freq)
-        for value in values(infreq_val)
+        # Check no collision between keys(label_for_infrequent) and keys(val_to_freq)
+        for value in values(label_for_infrequent)
             if value in keys(val_to_freq)
                 throw(ArgumentError(COLLISION_NEW_VAL(value)))
             end
@@ -77,18 +78,17 @@ function cardinality_reducer_fit(
             end
         end
 
-        new_cat_given_col_val = Dict{eltype(col), eltype(col)}()
+        new_cat_given_col_val = Dict()
         for (level, freq) in val_to_freq
-            if freq >= min_freq
+            if freq >= min_frequency
                 new_cat_given_col_val[level] = level
             else
-                if elgrandtype in keys(infreq_val)
-                    new_cat_given_col_val[level] = categorical([infreq_val[elgrandtype]])[1]
+                if elgrandtype in keys(label_for_infrequent)
+                    new_cat_given_col_val[level] = label_for_infrequent[elgrandtype]
                 elseif elgrandtype == Number
-                    new_cat_given_col_val[level] =
-                        categorical([convert(Integer, minimum(col)) - 1])[1]
+                    new_cat_given_col_val[level] = minimum(feat_levels) - 1
                 else
-                    throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, infreq_val)))
+                    throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent)))
                 end
             end
         end
@@ -97,7 +97,7 @@ function cardinality_reducer_fit(
 
     # 2. Pass it to generic_fit
     new_cat_given_col_val, encoded_features = generic_fit(
-        X, features; ignore = ignore, feature_mapper = feature_mapper,
+        X, features; ignore = ignore, ordered_factor = ordered_factor, feature_mapper = feature_mapper,
     )
     cache = Dict(
         :new_cat_given_col_val => new_cat_given_col_val,

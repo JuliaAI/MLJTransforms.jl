@@ -1,8 +1,8 @@
 UNSUPPORTED_COL_TYPE(col_type) =
     "In CardinalityReducer, elements have type $(col_type). The supported types are $(ScientificTypes.SupportedTypes)"
 VALID_TYPES_NEW_VAL(possible_col_type) =
-    "In CardinalityReducer, infreq_val keys have type $(possible_col_type). The supported types are $(ScientificTypes.SupportedTypes)"
+    "In CardinalityReducer, label_for_infrequent keys have type $(possible_col_type). The supported types are $(ScientificTypes.SupportedTypes)"
 COLLISION_NEW_VAL(value) =
-    "In CardinalityReducer, infreq_val specifies new column name $(value). However, this name already exists in one of the columns. Please respecify infreq_val."
-UNSPECIFIED_COL_TYPE(col_type, infreq_val) =
-    "In CardinalityReducer, $(col_type) does not appear in infreq_val which only has keys $(keys(infreq_val))"
+    "In CardinalityReducer, label_for_infrequent specifies new column name $(value). However, this name already exists in one of the columns. Please respecify label_for_infrequent."
+UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent) =
+    "In CardinalityReducer, $(col_type) does not appear in label_for_infrequent which only has keys $(keys(label_for_infrequent))"
