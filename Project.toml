@@ -12,18 +12,19 @@ TableOperations = "ab02a1b2-a7df-11e8-156e-fb1833f50b87"
 Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
-julia = "1.6.7"
 CategoricalArrays = "0.10"
 MLJModelInterface = "1.10"
 ScientificTypes = "3.0"
 StatsBase = "0.34"
 TableOperations = "1.2"
 Tables = "1.11"
+julia = "1.6.7"
 
 [extras]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "DataFrames", "MLJBase"]
+test = ["Test", "DataFrames", "MLJBase", "Random"]

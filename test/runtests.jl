@@ -5,12 +5,15 @@ using ScientificTypes
 using CategoricalArrays
 using MLJModelInterface
 using MLJBase
+using StatsBase
+using Random
 const MMI = MLJModelInterface
 
 @testset "Target Encoding" begin
-   include("generic.jl")
-   include("target_encoding.jl")
-   include("ordinal_encoding.jl")
-   include("frequency_encoder.jl")
+    include("generic.jl")
+    include("encoders/target_encoding.jl")
+    include("encoders/ordinal_encoding.jl")
+    include("encoders/frequency_encoder.jl")
+    include("transformers/cardinality_reducer.jl")
 end
 

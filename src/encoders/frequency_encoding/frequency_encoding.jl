@@ -1,6 +1,6 @@
 
 """
-Fit an encoder encode the categorical values in the specified
+Fit an encoder that encodes the categorical values in the specified
 categorical columns with their (normalized or raw) frequencies of occurrence in the dataset.
 
 # Arguments

@@ -45,3 +45,59 @@ function create_dummy_dataset(target_type::Symbol; as_dataframe::Bool = false, r
     
     return (return_y) ?  (X, y) : X;
 end
+
+
+struct Object{I<:Integer}
+	A::I
+end
+# Create dummy dataset but with high cardinality
+function generate_high_cardinality_table(num_rows; obj=false, special_cat='E')
+	# Set the random seed for reproducibility
+	Random.seed!(42)
+
+	# Define the categories for the categorical features with their respective probabilities
+	low_card_categories = ['A', 'B', 'C', 'D', special_cat]
+	low_card_probs = [0.7, 0.2, 0.04, 0.04, 0.02]  # Imbalanced distribution
+
+
+
+	high_card_categories1 = [((obj) ? Object(i) : i) for i in 1:100]
+	high_card_probs1 = vcat(fill(0.01, 90), fill(0.1, 10))  # Last 10 categories more frequent
+
+	high_card_categories2 = [string("Group", i) for i in 1:200]
+	high_card_probs2 = vcat(fill(0.005, 190), fill(0.05, 10))  # Last 10 categories more frequent
+
+	# Function to generate a weighted random sample
+	function weighted_sample(categories, probs)
+		cumulative_probs = cumsum(probs)
+		rand_val = rand()
+		for (i, p) in enumerate(cumulative_probs)
+			if rand_val <= p
+				return categories[i]
+			end
+		end
+	end
+
+	# Generate the categorical features with imbalanced distributions
+	low_card_feature = [weighted_sample(low_card_categories, low_card_probs) for _ in 1:num_rows]
+	high_card_feature1 = [weighted_sample(high_card_categories1, high_card_probs1) for _ in 1:num_rows]
+	high_card_feature2 = [weighted_sample(high_card_categories2, high_card_probs2) for _ in 1:num_rows]
+
+	dataset = DataFrame(
+	LowCardFeature = low_card_feature,
+	HighCardFeature1 = high_card_feature1,
+	HighCardFeature2 = high_card_feature2
+	)
+
+	dataset = coerce(dataset,
+	:LowCardFeature  => Multiclass,
+	:HighCardFeature1 => Multiclass,
+	:HighCardFeature2 => Multiclass,
+	)
+
+	return dataset
+
+end
+
+# Display the dataset
+dataset = generate_high_cardinality_table(1000; obj=false)
