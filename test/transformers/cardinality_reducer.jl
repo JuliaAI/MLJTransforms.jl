@@ -34,8 +34,10 @@ end
     X = generate_high_cardinality_table(1000)
     cache = cardinality_reducer_fit(X; min_frequency = 0.2)
     new_cat_given_col_val = cache[:new_cat_given_col_val]
+
     convert(Integer, minimum(values(new_cat_given_col_val[:HighCardFeature1])))
     convert(Integer, minimum(X.HighCardFeature1)) - 1
+    
     @test convert(Integer, minimum(values(new_cat_given_col_val[:HighCardFeature1]))) ==
           (convert(Integer, minimum(X.HighCardFeature1)) - 1)
 end
@@ -56,16 +58,20 @@ end
 
 @testset "End-to-end test" begin
     X = generate_high_cardinality_table(1000)
+    
     for min_frequency in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
         cache = cardinality_reducer_fit(X; min_frequency = min_frequency)
         X_tr = cardinality_reducer_transform(X, cache)
+
         for col in [:LowCardFeature, :HighCardFeature1, :HighCardFeature2]
             new_prop_map = proportionmap(X_tr[!, col])
             for val in values(new_prop_map)
-                @test (val >= min_frequency || length(values(new_prop_map)) == 2)  # e.g., [A=0.7, O=0.3] is correct
+                @test ((val >= min_frequency) || (length(values(new_prop_map)) == 2))  # e.g., [A=0.7, O=0.3] is correct
             end
         end
+
     end
+
 end
 
 
