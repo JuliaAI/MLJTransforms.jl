@@ -66,7 +66,8 @@ end
         for col in [:LowCardFeature, :HighCardFeature1, :HighCardFeature2]
             new_prop_map = proportionmap(X_tr[!, col])
             for val in values(new_prop_map)
-                @test ((val >= min_frequency) || (length(values(new_prop_map)) == 2))  # e.g., [A=0.7, O=0.3] is correct
+                # all new cateogories except at most the new one should satisfy min_frequency
+                @test sum(values(new_prop_map) .>= min_frequency) >= length(values(new_prop_map)) - 1
             end
         end
 

@@ -57,7 +57,7 @@ function generate_high_cardinality_table(num_rows; obj=false, special_cat='E')
 
 	# Define the categories for the categorical features with their respective probabilities
 	low_card_categories = ['A', 'B', 'C', 'D', special_cat]
-	low_card_probs = [0.7, 0.2, 0.04, 0.04, 0.02]  # Imbalanced distribution
+	low_card_probs = [0.7, 0.2, 0.05, 0.04, 0.01]  # Imbalanced distribution
 
 
 
