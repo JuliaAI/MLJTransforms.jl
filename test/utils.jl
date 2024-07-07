@@ -53,7 +53,7 @@ end
 # Create dummy dataset but with high cardinality
 function generate_high_cardinality_table(num_rows; obj=false, special_cat='E')
 	# Set the random seed for reproducibility
-	Random.seed!(42)
+	Random.seed!(Random.MersenneTwister(42))
 
 	# Define the categories for the categorical features with their respective probabilities
 	low_card_categories = ['A', 'B', 'C', 'D', special_cat]
