@@ -99,7 +99,7 @@ Train the machine using `fit!(mach, rows=...)`.
 # Hyper-parameters
 
 - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `ignore=true`: Whether to exclude or include the columns given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
 
