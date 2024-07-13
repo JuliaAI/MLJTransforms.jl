@@ -23,7 +23,7 @@ end
         X = generate_high_cardinality_table(1000)
         cache = cardinality_reducer_fit(
             X;
-            min_frequency = 20,
+            min_frequency = 30,
             label_for_infrequent = Dict(AbstractString => "X"),
         )
     end
@@ -34,12 +34,9 @@ end
     X = generate_high_cardinality_table(1000)
     cache = cardinality_reducer_fit(X; min_frequency = 0.2)
     new_cat_given_col_val = cache[:new_cat_given_col_val]
-
-    convert(Integer, minimum(values(new_cat_given_col_val[:HighCardFeature1])))
-    convert(Integer, minimum(X.HighCardFeature1)) - 1
     
-    @test convert(Integer, minimum(values(new_cat_given_col_val[:HighCardFeature1]))) ==
-          (convert(Integer, minimum(X.HighCardFeature1)) - 1)
+    @test minimum(values(new_cat_given_col_val[:HighCardFeature1])) ==
+          minimum(levels(X.HighCardFeature1)) - 1
 end
 
 
@@ -95,19 +92,19 @@ end
         :LowCardFeature => Dict(
             [
             (level, enc_char(LowCardFeature_col, level)) for
-            level in levels(LowCardFeature_col)
+            level in levels(LowCardFeature_col) if proportionmap(LowCardFeature_col)[level] < 0.3
         ],
         ),
         :HighCardFeature1 => Dict(
             [
             (level, enc_num(HighCardFeature1_col, level)) for
-            level in levels(HighCardFeature1_col)
+            level in levels(HighCardFeature1_col) if proportionmap(HighCardFeature1_col)[level] < 0.3
         ],
         ),
         :HighCardFeature2 => Dict(
             [
             (level, enc_str(HighCardFeature2_col, level)) for
-            level in levels(HighCardFeature2_col)
+            level in levels(HighCardFeature2_col) if proportionmap(HighCardFeature2_col)[level] < 0.3
         ],
         ),
     )
@@ -145,16 +142,41 @@ end
     @test target == X_tr
 end
 
+@testset "Schema doesn't change after transform" begin
+    X = Tables.columntable(generate_high_cardinality_table(10))
+    LowCardFeature_col, HighCardFeature1_col, HighCardFeature2_col =
+        X[:LowCardFeature], X[:HighCardFeature1], X[:HighCardFeature2]
+    cache = cardinality_reducer_fit(
+        X;
+        min_frequency = 0.1,
+        label_for_infrequent = Dict(AbstractString => "OtherOne", Char => 'X', Number => -99),
+    )
+    X_tr = cardinality_reducer_transform(X, cache)
+    @test elscitype(X_tr[:LowCardFeature]) <: Multiclass
+    @test elscitype(X_tr[:HighCardFeature1]) <: Multiclass
+    @test elscitype(X_tr[:HighCardFeature2]) <: Multiclass
+end
 
+@testset "Adding new levels" begin
+    X = Tables.columntable(generate_high_cardinality_table(10))
+    levels!(Tables.getcolumn(X, :LowCardFeature), ['A', 'B', 'C', 'D', 'E', 'Z'])
 
+    cache = cardinality_reducer_fit(        
+        X;
+        label_for_infrequent = Dict(AbstractString => "OtherOne", Char => 'X', Number => -90),
+    )
+    X_tr = cardinality_reducer_transform(X, cache)
+
+    @test 'Z' in Set(levels(X_tr[:LowCardFeature]))
+end
 
 @testset "MLJ Interface Cardinality Reducer" begin
     X = generate_high_cardinality_table(1000)
     # functional api
-    generic_cache = cardinality_reducer_fit(X; ignore = true, ordered_factor = false)
+    generic_cache = cardinality_reducer_fit(X; min_frequency=0.1,  ignore = true, ordered_factor = false)
     X_transf = cardinality_reducer_transform(X, generic_cache)
     # mlj api
-    encoder = CardinalityReducer(ignore = true, ordered_factor = false)
+    encoder = CardinalityReducer(min_frequency=0.1, ignore = true, ordered_factor = false)
     mach = machine(encoder, X)
     fit!(mach)
     Xnew_transf = MMI.transform(mach, X)

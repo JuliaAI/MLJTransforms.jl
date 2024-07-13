@@ -45,10 +45,10 @@ end
 struct TargetEncoderResult{
     I <: Integer,
     S <: AbstractString,
-    # U <: Union{AbstractFloat, AbstractVector{<:AbstractFloat}},  # Unable to keep this after making fit generic (U->Any)
+    A <: Any            # Useless but likely can't do much better
 } <: MMI.MLJType
     # target statistic for each level of each categorical column
-    y_stat_given_feat_level::Dict{Symbol, Dict{Any, Any}}
+    y_stat_given_feat_level::Dict{A, A}
     task::S            # "Regression", "Classification" 
     num_classes::I     # num_classes in case of classification
 end

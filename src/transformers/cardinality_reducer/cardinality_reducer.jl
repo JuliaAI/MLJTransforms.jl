@@ -1,8 +1,5 @@
 
 include("errors.jl")
-# To go from e.g., Union{Integer, String} to (Integer, String)
-union_types(x::Union) = (x.a, union_types(x.b)...)
-union_types(x::Type) = (x,)
 
 """
 Fit a transformer that maps any level of a categorical column that occurs with
@@ -20,8 +17,8 @@ types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString
   - `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
     an integer or a float which decides whether raw counts or normalized frequencies are used.
   - `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
-    dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and the values
-    are the new level to map into for each raw super type. By default, if the raw type of the column subtypes `AbstractString`
+    dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and each value signifies
+    the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
     then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
     and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
 
@@ -44,13 +41,13 @@ function cardinality_reducer_fit(
 )   
 
     # 1. Define column mapper
-    function feature_mapper(col)
+    function feature_mapper(col, ind)
         val_to_freq = (min_frequency isa AbstractFloat) ? proportionmap(col) : countmap(col)
         col_type = eltype(col).parameters[1]
         feat_levels = levels(col)
 
         # Ensure column type is valid (can't test because never occurs)
-        # Converting array elements to strings before wrapping in a `CategoricalArray`, as `Object{Int64}` unsupported by CategoricalArrays. 
+        # Converting array elements to strings before wrapping in a `CategoricalArray`, as...
         if !(col_type <: ScientificTypes.SupportedTypes)
             throw(ArgumentError(UNSUPPORTED_COL_TYPE(col_type)))
         end
@@ -78,21 +75,21 @@ function cardinality_reducer_fit(
             end
         end
 
-        new_cat_given_col_val = Dict()
-        for (level, freq) in val_to_freq
-            if freq >= min_frequency
-                new_cat_given_col_val[level] = level
-            else
-                if elgrandtype in keys(label_for_infrequent)
-                    new_cat_given_col_val[level] = label_for_infrequent[elgrandtype]
-                elseif elgrandtype == Number
-                    new_cat_given_col_val[level] = minimum(feat_levels) - 1
-                else
-                    throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent)))
+        new_cat_given_col_val = Dict{col_type, col_type}()
+        for level in feat_levels
+            if level in keys(val_to_freq)
+                if val_to_freq[level] < min_frequency
+                    if elgrandtype in keys(label_for_infrequent)
+                        new_cat_given_col_val[level] = label_for_infrequent[elgrandtype]
+                    elseif elgrandtype == Number
+                        new_cat_given_col_val[level] = minimum(feat_levels) - 1
+                    else
+                        throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent)))
+                    end
                 end
             end
         end
-        return new_cat_given_col_val
+        return new_cat_given_col_val::Dict{col_type, col_type}
     end
 
     # 2. Pass it to generic_fit
@@ -108,7 +105,7 @@ end
 
 
 """
-Apply a fitted `cardinality_reducer_fit` to a table.
+Apply a fitted cardinality reducer to a table given the output of `cardinality_reducer_fit`
 
 # Arguments
 
@@ -122,5 +119,5 @@ Apply a fitted `cardinality_reducer_fit` to a table.
 """
 function cardinality_reducer_transform(X, cache::Dict)
     new_cat_given_col_val = cache[:new_cat_given_col_val]
-    return generic_transform(X, new_cat_given_col_val)
+    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true)
 end

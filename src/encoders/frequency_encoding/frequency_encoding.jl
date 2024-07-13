@@ -24,8 +24,9 @@ function frequency_encoder_fit(
     normalize::Bool = false,
 )
     # 1. Define column mapper
-    function feature_mapper(col)
-        statistic_given_feat_val = (!normalize) ? countmap(col) : proportionmap(col)
+    function feature_mapper(col, ind)
+        frequency_map = (!normalize) ? countmap(col) : proportionmap(col)
+        statistic_given_feat_val = Dict{Any, Real}(level=>frequency_map[level] for level in levels(col))
         return statistic_given_feat_val
     end
 

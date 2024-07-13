@@ -25,3 +25,4 @@ docs/site/
 meh/*.ipynb
 *.csv
 .DS_Store
+**/**/other_transformers

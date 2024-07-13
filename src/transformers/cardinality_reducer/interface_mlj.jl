@@ -121,8 +121,8 @@ Train the machine using `fit!(mach, rows=...)`.
 - `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
 - `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
-dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and the values
-are the new level to map into for each raw super type. By default, if the raw type of the column subtypes `AbstractString`
+dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and each value signifies
+the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
 then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
 and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
 

@@ -41,9 +41,7 @@ end
     normalize = [false, true]
     for norm in normalize
         cache = frequency_encoder_fit(X; normalize = norm)
-
         X_tr = frequency_encoder_transform(X, cache)
-
         enc =
             (col, level) ->
                 ((norm) ? sum(X[col] .== level) / length(X[col]) : sum(X[col] .== level))

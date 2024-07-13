@@ -41,19 +41,21 @@ function generic_fit(X,
     feat_names = (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
 
     # 3. Define mapping per column per level dictionary
-    mapping_per_feat_level = Dict{Symbol, Dict{Any, Any}}()
+    mapping_per_feat_level = Dict()
 
     # 4. Use column mapper to compute the mapping of each level in each column
     encoded_features = Symbol[]# to store column that were actually encoded
+    i = 1
     for feat_name in feat_names
         col = Tables.getcolumn(X, feat_name)
         feat_type = elscitype(col)
         feat_has_allowed_type =
-            feat_type <: Multiclass || (ordered_factor && feat_type <: OrderedFactor)
+            feat_type <: Union{Missing, Multiclass} || (ordered_factor && feat_type <: Union{Missing, OrderedFactor})
         if feat_has_allowed_type  # then should be encoded
             push!(encoded_features, feat_name)
             # Compute the dict using the given feature_mapper function
-            mapping_per_feat_level[feat_name] = feature_mapper(col, args...; kwargs...)
+            mapping_per_feat_level[feat_name] = feature_mapper(col, i, args...; kwargs...)
+            i += 1
         end
     end
     return mapping_per_feat_level, encoded_features
@@ -98,54 +100,53 @@ a subset of categorical columns of X into a scalar or a vector (as specified in 
     assumption is necessary because any column in X must correspond to a constant number of columns 
     in the output table (which is equal to k).
   - Columns not in the dictionary are mapped to themselves (i.e., not changed).
+  - Levels not in the nested dictionary are mapped to themselves if `identity_map_unknown` is true else raise an error.
 """
-function generic_transform(X, mapping_per_feat_level; single_feat = true)
-    Xr = Tables.rowtable(X)             # for efficient mapping
+function generic_transform(X, mapping_per_feat_level; single_feat = true, ignore_unknown = false)
     feat_names = Tables.schema(X).names
-
-    # Dynamically construct the function arguments
-    function_arguments = Dict()
-    new_feat_names = []
-
-    for col in feat_names
+    new_feat_names = Symbol[]
+    new_cols = []
+    for feat_name in feat_names
+        col = Tables.getcolumn(X, feat_name)
         # Create the transformation function for each column
-        if col in keys(mapping_per_feat_level)
-            if single_feat
-                level2scalar = mapping_per_feat_level[col]
-                # Create a function that returns the target statistics for the given level
-                function_arguments[Symbol(col)] =
-                    x -> level2scalar[Tables.getcolumn(x, col)]
-                push!(new_feat_names, Symbol(col))
-            else
-                level2vector = mapping_per_feat_level[col]
-                feat_names_with_inds = generate_new_feat_names(
-                    col,
-                    length(first(mapping_per_feat_level[col])[2]),
-                    feat_names,
-                )
-                # Each column will generate k columns where k is the number of classes
-                for (i, feat_name_with_ind) in enumerate(feat_names_with_inds)
-                    function_arguments[Symbol(feat_name_with_ind)] =
-                        x -> level2vector[Tables.getcolumn(x, col)][i]
-                    push!(new_feat_names, Symbol(feat_name_with_ind))
+        if feat_name in keys(mapping_per_feat_level)
+            if !ignore_unknown
+                train_levels = keys(mapping_per_feat_level[feat_name])
+                test_levels = levels(col)
+                # test levels must be a subset of train levels
+                if !issubset(test_levels, train_levels)
+                    # get the levels in test that are not in train
+                    lost_levels = setdiff(test_levels, train_levels)
+                    error("While transforming, found novel levels for the column $(feat_name): $(lost_levels) that were not seen while training.")
                 end
             end
-            # Not to be transformed => left as is
+            
+            if single_feat
+                level2scalar = mapping_per_feat_level[feat_name]
+                new_col = !isempty(level2scalar) ? recode(col, level2scalar...) : col
+                push!(new_cols, new_col)
+                push!(new_feat_names, feat_name)
+            else
+                level2vector = mapping_per_feat_level[feat_name]
+                new_multi_col = map(x->get(level2vector, x, x), col)
+                new_multi_col = [col for col in eachrow(hcat(new_multi_col...))]
+                push!(new_cols, new_multi_col...)
+
+                feat_names_with_inds = generate_new_feat_names(
+                    feat_name,
+                    length(first(mapping_per_feat_level[feat_name])[2]),
+                    feat_names,
+                )
+                push!(new_feat_names, feat_names_with_inds...)
+            end
         else
-            function_arguments[Symbol(col)] = x -> Tables.getcolumn(x, col)
-            push!(new_feat_names, Symbol(col))
+            # Not to be transformed => left as is
+            push!(new_feat_names, feat_name)
+            push!(new_cols, col)
         end
     end
 
-    # Create the transformation function arguments from the dict
-    transformation_function =
-        x -> NamedTuple{Tuple(new_feat_names)}(
-            map(name -> function_arguments[name](x), new_feat_names),
-        )
-
-    # Apply the transformation
-    transformed_X = Xr |> TableOperations.map(transformation_function) |> Tables.columntable
-
+    transformed_X= NamedTuple{tuple(new_feat_names...)}(tuple(new_cols)...)
     # Attempt to preserve table type
     transformed_X = Tables.materializer(X)(transformed_X)
     return transformed_X

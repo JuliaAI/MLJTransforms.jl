@@ -53,7 +53,7 @@ end
 # Create dummy dataset but with high cardinality
 function generate_high_cardinality_table(num_rows; obj=false, special_cat='E')
 	# Set the random seed for reproducibility
-	Random.seed!(Random.MersenneTwister(42))
+	Random.seed!(stable_rng, 123)
 
 	# Define the categories for the categorical features with their respective probabilities
 	low_card_categories = ['A', 'B', 'C', 'D', special_cat]
@@ -98,6 +98,20 @@ function generate_high_cardinality_table(num_rows; obj=false, special_cat='E')
 	return dataset
 
 end
+
+
+function generate_X_with_missingness(;john_name="John")
+    Xm = (
+        A = categorical(["Ben", john_name, missing, missing, "Mary", "John", missing]),
+        B = [1.85, 1.67, missing, missing, 1.5, 1.67, missing],
+        C= categorical([7, 5, missing, missing, 10, 5, missing]),
+        D = [23, 23, 44, 66, 14, 23, 11],
+        E = categorical([missing, 'g', 'r', missing, 'r', 'g', 'p'])
+    )
+
+    return Xm
+end
+
 
 # Display the dataset
 dataset = generate_high_cardinality_table(1000; obj=false)

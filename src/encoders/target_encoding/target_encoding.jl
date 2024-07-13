@@ -163,7 +163,7 @@ function target_encoder_fit(
     end
 
     # 3. Define function to compute the new value(s) for each level given a column
-    function feature_mapper(col)
+    function feature_mapper(col, ind)
         y_stat_given_feat_level_for_col =
             Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
         for level in levels(col)

@@ -1,4 +1,3 @@
-include("utils.jl")
 using MLJTransforms: generate_new_feat_names, generic_fit, generic_transform
 
 # Initial setup
@@ -51,7 +50,7 @@ function dummy_encoder_fit(
     ordered_factor::Bool = false,
 )
     # 1. Define column mapper
-    function feature_mapper(col)
+    function feature_mapper(col, ind)
         feat_levels = levels(col)
         hash_given_feat_val =
             Dict{Any, Integer}(value => hash(value) for value in feat_levels)

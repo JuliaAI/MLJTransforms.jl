@@ -9,11 +9,19 @@ using StatsBase
 using Random
 const MMI = MLJModelInterface
 
-@testset "Target Encoding" begin
-    include("generic.jl")
-    include("encoders/target_encoding.jl")
-    include("encoders/ordinal_encoding.jl")
-    include("encoders/frequency_encoder.jl")
-    include("transformers/cardinality_reducer.jl")
-end
+# Other transformers
+using Tables, CategoricalArrays
+using ScientificTypes: scitype
+using Statistics
+using StableRNGs
+stable_rng = StableRNGs.StableRNG(123)
+using Dates: DateTime, Date, Time, Day, Hour
+_get(x) = CategoricalArrays.DataAPI.unwrap(x)
 
+
+include("utils.jl")
+include("generic.jl")
+include("encoders/target_encoding.jl")
+include("encoders/ordinal_encoding.jl")
+include("encoders/frequency_encoder.jl")
+include("transformers/cardinality_reducer.jl")

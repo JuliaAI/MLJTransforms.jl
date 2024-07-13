@@ -1,15 +1,23 @@
 module MLJTransforms
 using Tables
 using ScientificTypes
+using ScientificTypes: scitype
 using CategoricalArrays
 using MLJModelInterface
 using TableOperations
 using StatsBase
+# Other transformers
+using Combinatorics
+import Distributions
+using Parameters
+using Dates
+using OrderedCollections
 
 const MMI = MLJModelInterface
 
 # Functions of generic use across transformers
 include("generic.jl")
+include("utils.jl")
 
 # Target encoding
 include("encoders/target_encoding/errors.jl")
@@ -27,7 +35,7 @@ include("encoders/frequency_encoding/frequency_encoding.jl")
 include("encoders/frequency_encoding/interface_mlj.jl")
 export frequency_encoder_fit, frequency_encoder_transform, FrequencyEncoder
 
-# Cardinality reducer
+# Cardinality reduction
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
