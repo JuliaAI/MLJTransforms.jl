@@ -45,17 +45,15 @@ function generic_fit(X,
 
     # 4. Use column mapper to compute the mapping of each level in each column
     encoded_features = Symbol[]# to store column that were actually encoded
-    i = 1
     for feat_name in feat_names
-        col = Tables.getcolumn(X, feat_name)
-        feat_type = elscitype(col)
+        feat_col = Tables.getcolumn(X, feat_name)
+        feat_type = elscitype(feat_col)
         feat_has_allowed_type =
             feat_type <: Union{Missing, Multiclass} || (ordered_factor && feat_type <: Union{Missing, OrderedFactor})
         if feat_has_allowed_type  # then should be encoded
             push!(encoded_features, feat_name)
             # Compute the dict using the given feature_mapper function
-            mapping_per_feat_level[feat_name] = feature_mapper(col, i, args...; kwargs...)
-            i += 1
+            mapping_per_feat_level[feat_name] = feature_mapper(feat_col, feat_name, args...; kwargs...)
         end
     end
     return mapping_per_feat_level, encoded_features

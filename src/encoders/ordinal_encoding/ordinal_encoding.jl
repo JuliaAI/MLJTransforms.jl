@@ -21,7 +21,7 @@ function ordinal_encoder_fit(
     ordered_factor::Bool = false,
 )
     # 1. Define column mapper
-    function feature_mapper(col, ind)
+    function feature_mapper(col, name)
         feat_levels = levels(col)
         index_given_feat_val =
             Dict{Any, Integer}(value => index for (index, value) in enumerate(feat_levels))

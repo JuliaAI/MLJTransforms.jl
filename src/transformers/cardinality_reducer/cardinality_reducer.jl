@@ -41,7 +41,7 @@ function cardinality_reducer_fit(
 )   
 
     # 1. Define column mapper
-    function feature_mapper(col, ind)
+    function feature_mapper(col, name)
         val_to_freq = (min_frequency isa AbstractFloat) ? proportionmap(col) : countmap(col)
         col_type = eltype(col).parameters[1]
         feat_levels = levels(col)

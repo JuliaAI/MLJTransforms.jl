@@ -50,7 +50,7 @@ function dummy_encoder_fit(
     ordered_factor::Bool = false,
 )
     # 1. Define column mapper
-    function feature_mapper(col, ind)
+    function feature_mapper(col, name)
         feat_levels = levels(col)
         hash_given_feat_val =
             Dict{Any, Integer}(value => hash(value) for value in feat_levels)

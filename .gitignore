@@ -26,3 +26,4 @@ meh/*.ipynb
 *.csv
 .DS_Store
 **/**/other_transformers
+/*.jl
