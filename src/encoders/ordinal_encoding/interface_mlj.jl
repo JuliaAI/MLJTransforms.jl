@@ -98,7 +98,7 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply ordinal encoding to `Multiclass` or `OrderedFactor
+- `transform(mach, Xnew)`: Apply ordinal encoding to selected `Multiclass` or `OrderedFactor
   ` features of `Xnew`, and return the new table. Features that are neither `Multiclass` nor `OrderedFactor` are always left unchanged.
 
 # Fitted parameters
