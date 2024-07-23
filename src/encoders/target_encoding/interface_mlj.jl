@@ -111,12 +111,7 @@ MMI.metadata_model(
     load_path = "MLJTransforms.TargetEncoder",
 )
 
-function MMI.fit_data_scitype(t::TargetEncoder)
-    return Tuple{
-        Table,
-        AbstractVector,
-    }
-end
+MMI.target_in_fit(::Type{<:TargetEncoder}) = true
 
 
 """
