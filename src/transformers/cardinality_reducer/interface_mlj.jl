@@ -119,7 +119,9 @@ and if the raw type subtypes `Number` then the new value is the lowest value in 
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or `OrderedFactor` columns in `Xnew`.
+- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
+   return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
+   are always left unchanged.
 
 # Fitted parameters
 
