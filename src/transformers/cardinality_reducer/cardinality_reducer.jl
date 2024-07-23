@@ -2,6 +2,8 @@
 include("errors.jl")
 
 """
+**Private method.**
+
 Fit a transformer that maps any level of a categorical column that occurs with
 frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical columns have
 high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
@@ -105,6 +107,8 @@ end
 
 
 """
+**Private method.**
+
 Apply a fitted cardinality reducer to a table given the output of `cardinality_reducer_fit`
 
 # Arguments

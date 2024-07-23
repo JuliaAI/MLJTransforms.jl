@@ -1,5 +1,7 @@
 
 """
+**Private method.**
+
 Fit an encoder to encode the levels of categorical variables in a given table as integers (ordered arbitrarily).
 
 # Arguments
@@ -42,6 +44,8 @@ end
 
 
 """
+**Private method.**
+
 Encode the levels of a categorical variable in a given table as integers.
 
 # Arguments

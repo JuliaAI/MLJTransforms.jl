@@ -1,5 +1,7 @@
 
 """
+**Private method.**
+
 Fit an encoder that encodes the categorical values in the specified
 categorical columns with their (normalized or raw) frequencies of occurrence in the dataset.
 
@@ -43,6 +45,8 @@ function frequency_encoder_fit(
 end
 
 """
+**Private method.**
+
 Encode the levels of a categorical variable in a given table with their (normalized or raw) frequencies of occurrence in the dataset.
 
 # Arguments

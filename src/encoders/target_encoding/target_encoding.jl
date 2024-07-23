@@ -106,6 +106,8 @@ end
 
 
 """
+**Private method.**
+
     target_encoder_fit(X, y, features=[]; ignore=true, ordered_factor=false, λ = 1.0, m=0)
 
 Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
@@ -220,6 +222,8 @@ end
 
 
 """
+**Private method.**
+
     target_encoder_transform(X, cache)
 
 Transform given data with fitted target encoder cache.
