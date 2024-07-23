@@ -110,15 +110,15 @@ end
 
     target_encoder_fit(X, y, features=[]; ignore=true, ordered_factor=false, λ = 1.0, m=0)
 
-Fit a target encoder on table X with target y by computing the necessary statistics for every categorical column.
+Fit a target encoder on table X with target y by computing the necessary statistics for every categorical feature.
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
+  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
     `Multiclass` or `OrderedFactor`
   - `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
-  - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the columns given in `features`
+  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+  - `ignore=true`: Whether to exclude or includes the features given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
   - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
   - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
@@ -127,7 +127,7 @@ Fit a target encoder on table X with target y by computing the necessary statist
 # Returns
 
   - `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics needed to transform
-    every categorical column as well as other metadata needed for transform.
+    every categorical feature as well as other metadata needed for transform.
 """
 function target_encoder_fit(
     X,
@@ -229,13 +229,13 @@ end
 Transform given data with fitted target encoder cache.
 
 # Arguments
-- `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
+- `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
 `Multiclass` or `OrderedFactor`
 - `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics for 
-every categorical column as well as other metadata needed for transform
+every categorical feature as well as other metadata needed for transform
 
 # Returns
-- `X`: A table where the categorical columns as specified during fitting are transformed by target encoding. Other columns will remain
+- `X`: A table where the categorical features as specified during fitting are transformed by target encoding. Other features will remain
     the same. This will attempt to preserve the type of the table but may not succeed. 
 """
 

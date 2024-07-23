@@ -26,7 +26,7 @@ push!(regression_forms, create_dummy_dataset(:regression, as_dataframe = true))
 push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=false, return_y=false))
 push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=true, return_y=false))
 
-@testset "Generate New Column Names Function Tests" begin
+@testset "Generate New feature names Function Tests" begin
     # Test 1: No initial conflicts
     @testset "No Initial Conflicts" begin
         existing_names = []
@@ -49,7 +49,7 @@ function dummy_encoder_fit(
     ignore::Bool = true,
     ordered_factor::Bool = false,
 )
-    # 1. Define column mapper
+    # 1. Define feature mapper
     function feature_mapper(col, name)
         feat_levels = levels(col)
         hash_given_feat_val =
@@ -78,19 +78,19 @@ end
 @testset "Column inclusion and exclusion for fit" begin
     X = dataset_forms[1]
 
-    # test exclude columns
+    # test exclude features
     feat_names = Tables.schema(X).names
     ignore_cols = [rand(feat_names), rand(feat_names)]
     hash_given_feat_val = dummy_encoder_fit(X, ignore_cols; ignore = true, ordered_factor = false)[:hash_given_feat_val]
     @test intersect(keys(hash_given_feat_val), ignore_cols) == Set()
 
-    # test include columns
+    # test include features
     feat_names = [:A, :C, :D, :F]        # these are multiclass
     include_cols = [rand(feat_names), rand(feat_names)]
     hash_given_feat_val2 = dummy_encoder_fit(X, include_cols; ignore = false, ordered_factor = false)[:hash_given_feat_val]
     @test intersect(keys(hash_given_feat_val2), include_cols) == Set(include_cols)
 
-    # test types of encoded columns
+    # test types of encoded features
     feat_names = Tables.schema(X).names
     hash_given_feat_val = dummy_encoder_fit(X, Symbol[]; ignore = true, ordered_factor = false)[:hash_given_feat_val]
     @test !(:E in keys(hash_given_feat_val))

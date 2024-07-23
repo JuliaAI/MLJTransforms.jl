@@ -46,7 +46,7 @@ function MMI.fit(transformer::CardinalityReducer, verbosity::Int, X)
     )
     fitresult = generic_cache[:new_cat_given_col_val]
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded columns
+    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -84,9 +84,9 @@ MMI.metadata_model(
 """
 $(MMI.doc_header(CardinalityReducer))
 
-`CardinalityReducer` maps any level of a categorical column that occurs with
-frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical columns have
-high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
+`CardinalityReducer` maps any level of a categorical feature that occurs with
+frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical features have
+high cardinality and many levels are infrequent. This assumes that the categorical features have raw
 types that are in `Union{AbstractString, Char, Number}`.
 
 
@@ -106,10 +106,10 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-- `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
+- `min_frequency::Real=3`: Any level of a categorical feature that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
 - `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
 dictionary where the possible values for keys are the types in `Union{Char, AbstractString, Number}` and each value signifies
@@ -128,13 +128,13 @@ and if the raw type subtypes `Number` then the new value is the lowest value in 
 The fields of `fitted_params(mach)` are:
 
 - `new_cat_given_col_val`: A dictionary that maps each level in a
-    categorical column to a new level (either itself or the new level specified in `label_for_infrequent`)
+    categorical feature to a new level (either itself or the new level specified in `label_for_infrequent`)
 
 # Report
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical columns of X that were encoded
+- `encoded_features`: The subset of the categorical features of X that were encoded
 
 # Examples
 
@@ -142,7 +142,7 @@ The fields of `report(mach)` are:
 using StatsBase
 using MLJ
 
-# Define categorical columns
+# Define categorical features
 A = [ ["a" for i in 1:100]..., "b", "b", "b", "c", "d"]
 B = [ [0 for i in 1:100]..., 1, 2, 3, 4, 4]
 

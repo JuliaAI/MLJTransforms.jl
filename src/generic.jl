@@ -6,25 +6,25 @@
 
 A generic function to fit a class of transformers where its convenient to define a single `feature_mapper` function that
 takes the column as a vector and potentially other arguments (as passed in ...args and ...kwargs) and returns
-a dictionary that maps each level of the categorical column to a scalar or vector
+a dictionary that maps each level of the categorical feature to a scalar or vector
 according to the transformation logic. In other words, the `feature_mapper` simply answers the question "For level n of
-the current categorical column c, what should the new value or vector (multiple columns) be as defined by the transformation
+the current categorical feature c, what should the new value or vector (multiple features) be as defined by the transformation
 logic?"
 
 # Arguments
 
-    - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
+    - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
     `Multiclass` or `OrderedFactor`
-    - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-    - `ignore=true`: Whether to exclude or includes the columns given in `features`
+    - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+    - `ignore=true`: Whether to exclude or includes the features given in `features`
     - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
     - `feature_mapper`: Defined above. 
 
 # Returns
 
-    - `mapping_per_feat_level`: Maps each level for each column in a subset of the categorical columns of
+    - `mapping_per_feat_level`: Maps each level for each feature in a subset of the categorical features of
      X into a scalar or a vector. 
-    - `encoded_features`: The subset of the categorical columns of X that were encoded
+    - `encoded_features`: The subset of the categorical features of X that were encoded
 """
 function generic_fit(X,
     features::AbstractVector{Symbol} = Symbol[],
@@ -43,7 +43,7 @@ function generic_fit(X,
     # 3. Define mapping per column per level dictionary
     mapping_per_feat_level = Dict()
 
-    # 4. Use column mapper to compute the mapping of each level in each column
+    # 4. Use feature mapper to compute the mapping of each level in each column
     encoded_features = Symbol[]# to store column that were actually encoded
     for feat_name in feat_names
         feat_col = Tables.getcolumn(X, feat_name)
@@ -64,7 +64,7 @@ end
 """
 **Private method.**
 
-Function to generate new column names: feat_name_0, feat_name_1,..., feat_name_n
+Function to generate new feature names: feat_name_0, feat_name_1,..., feat_name_n
 """
 function generate_new_feat_names(feat_name, num_inds, existing_names)
     conflict = true        # will be kept true as long as there is a conflict
@@ -86,18 +86,18 @@ end
 **Private method.**
 
 Given a table `X` and a dictionary `mapping_per_feat_level` which maps each level for each column in 
-a subset of categorical columns of X into a scalar or a vector (as specified in single_feat)
+a subset of categorical features of X into a scalar or a vector (as specified in single_feat)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level` 
   into a scalar (single_feat=true)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level` 
-  into a set of k columns where k is the length of the vector (single_feat=false)
+  into a set of k features where k is the length of the vector (single_feat=false)
   - In both cases it attempts to preserve the type of the table.
   - In the latter case, it assumes that all levels under the same category are mapped to vectors of the same length. Such
-    assumption is necessary because any column in X must correspond to a constant number of columns 
+    assumption is necessary because any column in X must correspond to a constant number of features 
     in the output table (which is equal to k).
-  - Columns not in the dictionary are mapped to themselves (i.e., not changed).
+  - Features not in the dictionary are mapped to themselves (i.e., not changed).
   - Levels not in the nested dictionary are mapped to themselves if `identity_map_unknown` is true else raise an error.
 """
 function generic_transform(X, mapping_per_feat_level; single_feat = true, ignore_unknown = false)

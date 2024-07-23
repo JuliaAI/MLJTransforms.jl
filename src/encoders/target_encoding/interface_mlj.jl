@@ -47,7 +47,7 @@ struct TargetEncoderResult{
     S <: AbstractString,
     A <: Any            # Useless but likely can't do much better
 } <: MMI.MLJType
-    # target statistic for each level of each categorical column
+    # target statistic for each level of each categorical feature
     y_stat_given_feat_level::Dict{A, A}
     task::S            # "Regression", "Classification" 
     num_classes::I     # num_classes in case of classification
@@ -77,7 +77,7 @@ function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
         generic_cache[:task],
         generic_cache[:num_classes],
     )
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded columns
+    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -140,8 +140,8 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
 - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
@@ -158,21 +158,21 @@ Train the machine using `fit!(mach, rows=...)`.
 The fields of `fitted_params(mach)` are:
 
 - `task`: Whether the task is `Classification` or `Regression`
-- `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode each categorical column. It maps each 
-    level in each categorical column to a statistic computed over the target.
+- `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode each categorical feature. It maps each 
+    level in each categorical feature to a statistic computed over the target.
 
 # Report
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical columns of X that were encoded
+- `encoded_features`: The subset of the categorical features of X that were encoded
 
 # Examples
 
 ```julia
 using MLJ
 
-# Define categorical columns
+# Define categorical features
 A = ["g", "b", "g", "r", "r",]  
 B = [1.0, 2.0, 3.0, 4.0, 5.0,]
 C = ["f", "f", "f", "m", "f",]  

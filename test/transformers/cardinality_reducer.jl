@@ -193,4 +193,4 @@ end
 end
 
 # Look into MLJModelInterfaceTest
-# Add tests to ensure categorical column properties are as expected
+# Add tests to ensure categorical feature properties are as expected

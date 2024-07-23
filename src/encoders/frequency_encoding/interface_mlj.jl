@@ -35,7 +35,7 @@ function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
     )
     fitresult = generic_cache[:statistic_given_feat_val]
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded columns
+    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -74,7 +74,7 @@ MMI.metadata_model(
 $(MMI.doc_header(FrequencyEncoder))
 
 `FrequencyEncoder` implements frequency encoding which replaces the categorical values in the specified
-    categorical columns with their (normalized or raw) frequencies of occurrence in the dataset. 
+    categorical features with their (normalized or raw) frequencies of occurrence in the dataset. 
 
 # Training data
 
@@ -92,8 +92,8 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or include the columns given in `features`
+- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or include the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
 
@@ -107,20 +107,20 @@ Train the machine using `fit!(mach, rows=...)`.
 
 The fields of `fitted_params(mach)` are:
 
-- `statistic_given_feat_val`: A dictionary that maps each level for each column in a subset of the categorical columns of X into its frequency.
+- `statistic_given_feat_val`: A dictionary that maps each level for each column in a subset of the categorical features of X into its frequency.
 
 # Report
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical columns of X that were encoded
+- `encoded_features`: The subset of the categorical features of X that were encoded
 
 # Examples
 
 ```julia
 using MLJ
 
-# Define categorical columns
+# Define categorical features
 A = ["g", "b", "g", "r", "r",]  
 B = [1.0, 2.0, 3.0, 4.0, 5.0,]
 C = ["f", "f", "f", "m", "f",]  

@@ -32,7 +32,7 @@ function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
     )
     fitresult =
         generic_cache[:index_given_feat_level]
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded columns
+    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -70,7 +70,7 @@ MMI.metadata_model(
 $(MMI.doc_header(OrdinalEncoder))
 
 `OrdinalEncoder` implements ordinal encoding which replaces the categorical values in the specified
-    categorical columns with integers (ordered arbitrarily). This will create an implicit ordering between
+    categorical features with integers (ordered arbitrarily). This will create an implicit ordering between
     categories which may not be a proper modelling assumption.
 
 # Training data
@@ -89,8 +89,8 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the columns given in `features`
+- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+- `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 
 # Operations
@@ -103,20 +103,20 @@ Train the machine using `fit!(mach, rows=...)`.
 
 The fields of `fitted_params(mach)` are:
 
-- `index_given_feat_level`: A dictionary that maps each level for each column in a subset of the categorical columns of X into an integer. 
+- `index_given_feat_level`: A dictionary that maps each level for each column in a subset of the categorical features of X into an integer. 
 
 # Report
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical columns of X that were encoded
+- `encoded_features`: The subset of the categorical features of X that were encoded
 
 # Examples
 
 ```julia
 using MLJ
 
-# Define categorical columns
+# Define categorical features
 A = ["g", "b", "g", "r", "r",]  
 B = [1.0, 2.0, 3.0, 4.0, 5.0,]
 C = ["f", "f", "f", "m", "f",]  

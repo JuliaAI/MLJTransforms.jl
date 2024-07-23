@@ -6,15 +6,15 @@ Fit an encoder to encode the levels of categorical variables in a given table as
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
-  - `features=[]`: A list of names of categorical columns given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the columns given in `features`
+  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
+  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+  - `ignore=true`: Whether to exclude or includes the features given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 
 # Returns (in a dict)
 
-  - `index_given_feat_level`: Maps each level for each column in a subset of the categorical columns of X into an integer.
-  - `encoded_features`: The subset of the categorical columns of X that were encoded
+  - `index_given_feat_level`: Maps each level for each column in a subset of the categorical features of X into an integer.
+  - `encoded_features`: The subset of the categorical features of X that were encoded
 """
 function ordinal_encoder_fit(
     X,
@@ -22,7 +22,7 @@ function ordinal_encoder_fit(
     ignore::Bool = true,
     ordered_factor::Bool = false,
 )
-    # 1. Define column mapper
+    # 1. Define feature mapper
     function feature_mapper(col, name)
         feat_levels = levels(col)
         index_given_feat_val =
@@ -50,12 +50,12 @@ Encode the levels of a categorical variable in a given table as integers.
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical columns have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
+  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
   - `cache`: The output of `ordinal_encoder_fit`
 
 # Returns
 
-  - `X_tr`: The table with selected columns after the selected columns are encoded by ordinal encoding.
+  - `X_tr`: The table with selected features after the selected features are encoded by ordinal encoding.
 """
 function ordinal_encoder_transform(X, cache::Dict)
     index_given_feat_level = cache[:index_given_feat_level]
