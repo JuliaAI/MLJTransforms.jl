@@ -139,6 +139,9 @@ X = coerce(X,
 :E => OrderedFactor,
 )
 
+# Check scitype coercions:
+schema(X)
+
 encoder = FrequencyEncoder(ordered_factor = false, normalize=true)
 mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
