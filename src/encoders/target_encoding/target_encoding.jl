@@ -2,7 +2,7 @@
 **Private method.**
 
 Given the targets belonging to a specific category (level) for a categorical variable,
-find the frequency of the positive class (binary classification is assumed).
+find the frequency of the reference class (binary classification is assumed).
 
 # Arguments
 
@@ -11,10 +11,10 @@ find the frequency of the positive class (binary classification is assumed).
 
 # Returns
 
-  - `freq`: A float for the frequency of the positive class given the category
+  - `freq`: A float for the frequency of the reference class given the category
 """
 function compute_label_freq_for_level(targets_for_level, y_classes)
-    # Assumes binary classification where the first level is the positive class
+    # Assumes binary classification where the first level is the reference class
     positive_class = y_classes[1]
     freq = sum(targets_for_level .== positive_class) / length(targets_for_level)
     return freq
@@ -52,7 +52,7 @@ find the frequency of each of the classes (multiclass classification assumed cla
 
 # Returns
 
-  - `freqs`: A vector of floats for the frequency of the positive class
+  - `freqs`: A vector of floats for the frequency of the reference class
 """
 function compute_label_freqs_for_level(targets_for_level, y_classes)
     # e.g., if y_classes = [1, 2, 3, 4]
@@ -100,7 +100,7 @@ Implement mixing between a posterior and a prior statistic  by computing `λ * p
 function mix_stats(; posterior, prior, λ)
     # mixing prior and posterior with mixing factor λ
     return λ .* posterior .+ (1 - λ) .* prior
-    # prior is like the frequency of the positive class over the whole data
+    # prior is like the frequency of the reference class over the whole data
     # posterior is the frequency given rows that have the specific catefory
 end
 
