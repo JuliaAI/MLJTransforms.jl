@@ -85,7 +85,7 @@ Compute m automatically using empirical Bayes estimation as suggested in [Micci-
 Only possible for regression tasks
 """
 function compute_m_auto(task, targets_for_level; y_var)
-    # call if m="auto" to compute by empirical Bayes est.
+    # call if m=:auto to compute by empirical Bayes est.
     task !== "Regression" && error("m = `auto` is only supported for regression")
     y_var_level = std(targets_for_level)^2
     m = y_var / y_var_level
@@ -119,7 +119,7 @@ Fit a target encoder on table X with target y by computing the necessary statist
   - `ignore=true`: Whether to exclude or includes the columns given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
   - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
-  - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
+  - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
     empirical Bayes estimation as described in [1]
 
 # Returns
@@ -150,7 +150,7 @@ function target_encoder_fit(
     # 2. Setup prior statistics 
     if task == "Regression"
         y_mean = mean(y)                             # for mixing
-        m == "auto" && (y_var = std(y)^2)              # for empirical Bayes estimation
+        m == :auto && (y_var = std(y)^2)              # for empirical Bayes estimation
     else
         y_classes = levels(y)
         is_multiclass = length(y_classes) > 2
@@ -171,7 +171,7 @@ function target_encoder_fit(
             targets_for_level = y[col.==level]
 
             # Compute λ for mixing
-            m == "auto" && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
+            m == :auto && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
             lambda = compute_shrinkage(targets_for_level; m = m, λ = lambda)
 
             if task == "Classification"

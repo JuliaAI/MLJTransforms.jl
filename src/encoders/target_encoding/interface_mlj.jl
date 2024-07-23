@@ -149,7 +149,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `ignore=true`: Whether to exclude or includes the columns given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
-- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m="auto"` then m will be computed using
+- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
  empirical Bayes estimation as described in [1]
 
 # Operations
