@@ -70,7 +70,8 @@ MMI.metadata_model(
 $(MMI.doc_header(OrdinalEncoder))
 
 `OrdinalEncoder` implements ordinal encoding which replaces the categorical values in the specified
-    categorical columns with integers (ordered arbitrarily).
+    categorical columns with integers (ordered arbitrarily). This will create an implicit ordering between
+    categories which may not be a proper modelling assumption.
 
 # Training data
 
