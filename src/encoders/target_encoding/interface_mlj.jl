@@ -106,11 +106,7 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     TargetEncoder,
-    input_scitype =
-    Tuple{
-        Table,
-        AbstractVector,
-    },
+    input_scitype = Table,
     output_scitype = Table,
     load_path = "MLJTransforms.TargetEncoder",
 )
