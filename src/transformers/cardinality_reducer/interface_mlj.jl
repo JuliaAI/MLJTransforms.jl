@@ -139,7 +139,7 @@ The fields of `report(mach)` are:
 # Examples
 
 ```julia
-using StatsBase
+import StatsBase.proportionmap
 using MLJ
 
 # Define categorical features
