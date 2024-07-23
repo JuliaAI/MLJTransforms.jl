@@ -111,7 +111,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
-- `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
+- `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
 dictionary where the possible values for keys are the types in `Union{Char, AbstractString, Number}` and each value signifies
 the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
 then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
