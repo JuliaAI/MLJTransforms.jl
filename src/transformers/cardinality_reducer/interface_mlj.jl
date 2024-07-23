@@ -139,7 +139,6 @@ The fields of `report(mach)` are:
 # Examples
 
 ```julia
-using ScientificTypes
 using StatsBase
 using MLJ
 
