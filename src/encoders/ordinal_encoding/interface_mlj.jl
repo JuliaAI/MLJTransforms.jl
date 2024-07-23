@@ -72,10 +72,6 @@ $(MMI.doc_header(OrdinalEncoder))
 `OrdinalEncoder` implements ordinal encoding which replaces the categorical values in the specified
     categorical columns with integers (ordered arbitrarily).
 
-In MLJ (or MLJModels) do `model = OrdinalEncoder()` which is equivalent to `model = OrdinalEncoder(features = Symbol[],
-    ignore = true,
-    ordered_factor = false, )` to construct a model instance.
-
 # Training data
 
 In MLJ (or MLJBase) bind an instance unsupervised `model` to data with

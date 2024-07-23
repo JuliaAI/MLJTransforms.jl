@@ -89,15 +89,6 @@ frequency < `min_frequency` into a new level (e.g., "Other"). This is useful whe
 high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
 types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString, Char).
 
-In MLJ (or MLJModels) do `model = CardinalityReducer()` which is equivalent to `model = CardinalityReducer(features = Symbol[],
-    ignore = true,
-    ordered_factor = false, 
-    min_frequency = 3,
-    label_for_infrequent = Dict{<:Type, <:Any}(
-        AbstractString => "Other",
-        Char => 'O',
-    )
-    )` to construct a model instance.
 
 # Training data
 

@@ -76,12 +76,6 @@ $(MMI.doc_header(FrequencyEncoder))
 `FrequencyEncoder` implements frequency encoding which replaces the categorical values in the specified
     categorical columns with their (normalized or raw) frequencies of occurrence in the dataset. 
 
-In MLJ (or MLJModels) do `model = FrequencyEncoder()` which is equivalent to `model = FrequencyEncoder(features = Symbol[],
-    ignore = true,
-    ordered_factor = false, 
-    normalize = false
-    )` to construct a model instance.
-
 # Training data
 
 In MLJ (or MLJBase) bind an instance unsupervised `model` to data with

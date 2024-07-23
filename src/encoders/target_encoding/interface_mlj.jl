@@ -129,12 +129,6 @@ $(MMI.doc_header(TargetEncoder))
 `TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
     into continuous ones using statistics from the target variable.
 
-In MLJ (or MLJModels) do `model = TargetEncoder()` which is equivalent to `model = TargetEncoder(features = Symbol[],
-    ignore = true,
-    ordered_factor = false,
-    lambda = 1.0,
-    m = 0,)` to construct a model instance.
-
 # Training data
 
 In MLJ (or MLJBase) bind an instance `model` to data with
