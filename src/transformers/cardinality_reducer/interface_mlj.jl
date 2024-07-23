@@ -87,7 +87,7 @@ $(MMI.doc_header(CardinalityReducer))
 `CardinalityReducer` maps any level of a categorical column that occurs with
 frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical columns have
 high cardinality and many levels are infrequent. This assumes that the categorical columns have raw
-types that are in `ScientificTypes.SupportedTypes` (e.g., Number, AbstractString, Char).
+types that are in `Union{AbstractString, Char, Number}`.
 
 
 # Training data
@@ -112,7 +112,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `min_frequency::Real=3`: Any level of a categorical column that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
 - `label_for_infrequent=Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
-dictionary where the possible values for keys are the types in `ScientificTypes.SupportedTypes` and each value signifies
+dictionary where the possible values for keys are the types in `Union{Char, AbstractString, Number}` and each value signifies
 the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
 then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
 and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
