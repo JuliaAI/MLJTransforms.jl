@@ -42,5 +42,8 @@ export  FrequencyEncoder
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
+include("encoders/contrast_encoder/contrast_encoder.jl")
+include("encoders/contrast_encoder/interface_mlj.jl")
+export ContrastEncoder
 
 end
