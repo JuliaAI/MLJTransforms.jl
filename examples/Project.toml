@@ -1,0 +1,9 @@
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
+MLJDecisionTreeInterface = "c6f25543-311c-4c74-83dc-3ea6d1015661"
+MLJTransforms = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+ScientificTypes = "321657f4-b219-11e9-178b-2701a2544e81"
