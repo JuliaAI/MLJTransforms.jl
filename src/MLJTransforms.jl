@@ -6,6 +6,8 @@ using CategoricalArrays
 using MLJModelInterface
 using TableOperations
 using StatsBase
+using LinearAlgebra
+
 # Other transformers
 using Combinatorics
 import Distributions
@@ -39,5 +41,19 @@ export frequency_encoder_fit, frequency_encoder_transform, FrequencyEncoder
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
+# MLJModels transformers
+include("transformers/other_transformers/continuous_encoding.jl")
+include("transformers/other_transformers/interaction_transform.jl")
+include("transformers/other_transformers/continuous_transform_time.jl")
+include("transformers/other_transformers/fill_imputation.jl")
+include("transformers/other_transformers/one_hot_encoding.jl")
+include("transformers/other_transformers/standardization.jl")
+include("transformers/other_transformers/uni_box_cox.jl")
+include("transformers/other_transformers/uni_discretization.jl")
+include("transformers/other_transformers/metadata_registry.jl")
 
+export UnivariateDiscretizer,
+    UnivariateStandardizer, Standardizer, UnivariateBoxCoxTransformer,
+    OneHotEncoder, ContinuousEncoder, FillImputer, UnivariateFillImputer,
+    UnivariateTimeTypeToContinuous, InteractionTransformer
 end
