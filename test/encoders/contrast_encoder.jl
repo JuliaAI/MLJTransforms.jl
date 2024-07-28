@@ -11,7 +11,7 @@ age    = [23, 23, 14, 23])
 @testset "Contrast Encoder Error Handling" begin
 
     # Example definitions to allow the test to run
-    function dummy_buildmatrix(levels, k)
+    function dummy_buildmatrix(colname, k)
         # Simple dummy function to generate a matrix of correct size
         return randn(k, k-1)  # Adjust dimensions as needed for the test
     end
@@ -149,7 +149,7 @@ end
 @testset "contrast mode end-to-end test" begin
 
 
-    function buildrandomcontrast(feat_levels, k)
+    function buildrandomcontrast(colname, k)
         return rand(StableRNGs.StableRNG(123), k, k-1)
     end
 
@@ -174,7 +174,7 @@ end
 # @testset "hypothesis matrix end-to-end test"
 @testset "hypothesis mode end-to-end test" begin
 
-    function buildrandomhypothesis(feat_levels, k)
+    function buildrandomhypothesis(colname, k)
         return rand(StableRNGs.StableRNG(123), k-1, k)
     end    
 
@@ -194,11 +194,11 @@ end
 end
 
 
-function buildrandomhypothesis(feat_levels, k)
+function buildrandomhypothesis(colname, k)
     return rand(StableRNGs.StableRNG(123), k-1, k)
 end    
 
-function buildrandomcontrast(feat_levels, k)
+function buildrandomcontrast(colname, k)
     return rand(StableRNGs.StableRNG(123), k, k-1)
 end
 

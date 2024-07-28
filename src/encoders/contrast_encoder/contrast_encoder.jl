@@ -65,7 +65,7 @@ Fit a contrast encoing scheme on given data in `X`.
   - `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`, `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`.
   If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
   contrast encoding scheme for each feature
-  - `buildmatrix=nothing`: A function that takes a vector of levels and the number of levels as input and should return a contrast or hypothesis matrix. 
+  - `buildmatrix=nothing`: A function that should take column name as a symbol and the number of levels as input and return a contrast or hypothesis matrix. 
   Only relevant if `mode` is `:contrast` or `:hypothesis`.
   - `ignore=true`: Whether to exclude or includes the features given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
@@ -103,10 +103,10 @@ function contrast_encoder_fit(
         k = length(feat_levels)
         feat_mode = (mode_is_vector) ? mode[findfirst(isequal(name), features)] : mode
         if feat_mode == :contrast
-            contrastmatrix = buildmatrix(feat_levels, k)
+            contrastmatrix = buildmatrix(name, k)            
             size(contrastmatrix) == (k, k-1) || throw(ArgumentError(MATRIX_SIZE_ERROR(k, size(contrastmatrix), name)))
         elseif feat_mode == :hypothesis
-            hypothesismatrix = buildmatrix(feat_levels, k)
+            hypothesismatrix = buildmatrix(name, k) 
             size(hypothesismatrix) == (k-1, k) || throw(ArgumentError(MATRIX_SIZE_ERROR_HYP(k, size(hypothesismatrix), name)))
             contrastmatrix = pinv(hypothesismatrix)
         elseif feat_mode == :dummy
