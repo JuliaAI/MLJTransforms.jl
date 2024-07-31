@@ -74,8 +74,10 @@ MMI.metadata_model(
 """
 $(MMI.doc_header(ContrastEncoder))
 
-`ContrastEncoder` implements various contrast encoding methods including dummy, sum, backward/forward different, and helmert coding and
-    supports more generic coding methods by specifying a function that returns a contrast or hypothesis matrix.
+`ContrastEncoder` implements the following contrast encoding methods for 
+categorical features: dummy, sum, backward/forward difference, and Helmert coding. 
+More generally, users can specify a custom contrast or hypothesis matrix, and each feature 
+can be encoded using a different method.
 
 # Training data
 
