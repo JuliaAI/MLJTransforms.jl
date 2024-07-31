@@ -97,8 +97,9 @@ Train the machine using `fit!(mach, rows=...)`.
 - `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`, `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`.
 If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
 contrast encoding scheme for each feature
-- `buildmatrix=nothing`: A function that takes a vector of levels and the number of levels as input and should return a contrast or hypothesis matrix. 
-Only relevant if `mode` is `:contrast` or `:hypothesis`.
+- `buildmatrix=nothing`: A function or other callable with signature `buildmatrix(colname, k)`, 
+where `colname` is the name of the feature levels and `k` is it's length, and which returns contrast or 
+hypothesis matrix with row/column ordering consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or `:hypothesis`.
 - `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 
