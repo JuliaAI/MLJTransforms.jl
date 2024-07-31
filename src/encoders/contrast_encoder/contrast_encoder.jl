@@ -123,18 +123,18 @@ function contrast_encoder_fit(
             throw(ArgumentError("Mode $feat_mode is not supported."))
         end
 
-        vec_given_feat_val = Dict(level=>contrastmatrix[l, :] for (l, level) in enumerate(feat_levels))
-        return vec_given_feat_val
+        vector_given_value_given_feature = Dict(level=>contrastmatrix[l, :] for (l, level) in enumerate(feat_levels))
+        return vector_given_value_given_feature
     end
 
     # 2. Pass it to generic_fit
-    vec_given_feat_val, encoded_features = generic_fit(
+    vector_given_value_given_feature, encoded_features = generic_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
         feature_mapper = feature_mapper,
     )
 
     cache = Dict(
-        :vec_given_feat_val  => vec_given_feat_val,
+        :vector_given_value_given_feature  => vector_given_value_given_feature,
         :encoded_features => encoded_features,
     )
 
@@ -156,6 +156,6 @@ Use a fitted contrast encoder to encode the levels of selected categorical varia
   - `X_tr`: The table with selected features after the selected features are encoded by contrast encoding.
 """
 function contrast_encoder_transform(X, cache::Dict)
-    vec_given_feat_val = cache[:vec_given_feat_val]
-    return generic_transform(X, vec_given_feat_val, single_feat = false)
+    vector_given_value_given_feature = cache[:vector_given_value_given_feature]
+    return generic_transform(X, vector_given_value_given_feature, single_feat = false)
 end

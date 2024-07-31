@@ -23,7 +23,7 @@ end;
 
 # 4. Fitted parameters (for user access)
 MMI.fitted_params(::ContrastEncoder, fitresult) = (
-    vec_given_feat_val = fitresult,
+    vector_given_value_given_feature = fitresult,
 )
 
 # 5. Fit method
@@ -36,7 +36,7 @@ function MMI.fit(transformer::ContrastEncoder, verbosity::Int, X)
         buildmatrix = transformer.buildmatrix,
         ordered_factor = transformer.ordered_factor,
     )
-    fitresult = generic_cache[:vec_given_feat_val]
+    fitresult = generic_cache[:vector_given_value_given_feature]
 
     report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
@@ -47,7 +47,7 @@ end;
 # 6. Transform method
 function MMI.transform(transformer::ContrastEncoder, fitresult, Xnew)
     generic_cache = Dict(
-        :vec_given_feat_val =>
+        :vector_given_value_given_feature =>
             fitresult,
     )
     Xnew_transf = contrast_encoder_transform(Xnew, generic_cache)
@@ -112,7 +112,7 @@ Only relevant if `mode` is `:contrast` or `:hypothesis`.
 
 The fields of `fitted_params(mach)` are:
 
-- `vec_given_feat_val`: A dictionary that maps each level for each column in a subset of the categorical features of X into its frequency.
+- `vector_given_value_given_feature`: A dictionary that maps each level for each column in a subset of the categorical features of X into its frequency.
 
 # Report
 

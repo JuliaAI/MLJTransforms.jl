@@ -53,8 +53,8 @@ end
     contrast_matrix = get_dummy_contrast(k)
     print()
     for (i, level) in enumerate(levels(X.name))
-        println(cache[:vec_given_feat_val])
-        @test cache[:vec_given_feat_val][:name][level] == contrast_matrix[i, :]
+        println(cache[:vector_given_value_given_feature])
+        @test cache[:vector_given_value_given_feature][:name][level] == contrast_matrix[i, :]
     end
 end
 
@@ -82,7 +82,7 @@ end
     k = length(levels(X.favnum))
     contrast_matrix = get_sum_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vec_given_feat_val][:favnum][level] == contrast_matrix[i, :]
+        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
     end
 end
 
@@ -101,7 +101,7 @@ end
     k = length(levels(X.favnum))
     contrast_matrix = get_backward_diff_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vec_given_feat_val][:favnum][level] == contrast_matrix[i, :]
+        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
     end
 end
 
@@ -118,7 +118,7 @@ end
     k = length(levels(X.favnum))
     contrast_matrix = get_forward_diff_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vec_given_feat_val][:favnum][level] == contrast_matrix[i, :]
+        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
     end
 end
 
@@ -140,7 +140,7 @@ end
      k = length(levels(X.name))
      contrast_matrix = get_helmert_contrast(k)
      for (i, level) in enumerate(levels(X.name))
-         @test cache[:vec_given_feat_val][:name][level] == contrast_matrix[i, :]
+         @test cache[:vector_given_value_given_feature][:name][level] == contrast_matrix[i, :]
      end
 end
 
@@ -284,8 +284,8 @@ end
     @test X_transf == Xnew_transf
 
     # fitted parameters is correct
-    vec_given_feat_val = fitted_params(mach).vec_given_feat_val
-    @test vec_given_feat_val == generic_cache[:vec_given_feat_val]
+    vector_given_value_given_feature = fitted_params(mach).vector_given_value_given_feature
+    @test vector_given_value_given_feature == generic_cache[:vector_given_value_given_feature]
 
     # Test report
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
