@@ -2,6 +2,7 @@ include("errors.jl")
 
 """
 ** Private Method **
+
 This and the following four methods implement the contrast matrix for dummy coding, sum coding, 
     backaward/forward difference coding and helmert coding.
 Where `k` is the number of levels in the feature and the returned contrast matrix has dimensions (k,k-1).
