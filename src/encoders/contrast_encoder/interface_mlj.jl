@@ -136,7 +136,11 @@ X = (
 # Check scitype coercions:
 schema(X)
 
-encoder =  ContrastEncoder(features=[:name, :favnum]; ignore=false, mode = [:dummy, :helmert])
+encoder =  ContrastEncoder(
+    features = [:name, :favnum],
+    ignore = false, 
+    mode = [:dummy, :helmert],
+)
 mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
 
