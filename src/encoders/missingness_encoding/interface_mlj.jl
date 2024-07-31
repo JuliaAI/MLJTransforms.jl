@@ -142,7 +142,7 @@ Xm = (
     E = categorical([missing, 'g', 'r', missing, 'r', 'g', 'p'])
 )
 
-encoder = MissingnessEncoder(ordered_factor = false)
+encoder = MissingnessEncoder()
 mach = fit!(machine(encoder, Xm))
 Xnew = transform(mach, Xm)
 
