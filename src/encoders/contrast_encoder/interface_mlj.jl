@@ -126,15 +126,21 @@ The fields of `report(mach)` are:
 using MLJ
 
 # Define categorical dataset
-X = (name   = categorical(["Ben", "John", "Mary", "John"]),
-height = [1.85, 1.67, 1.5, 1.67],
-favnum = categorical([7, 5, 10, 1]),
-age    = [23, 23, 14, 23])
+X = (
+    name   = categorical(["Ben", "John", "Mary", "John"]),
+    height = [1.85, 1.67, 1.5, 1.67],
+    favnum = categorical([7, 5, 10, 1]),
+    age    = [23, 23, 14, 23],
+)
 
 # Check scitype coercions:
 schema(X)
 
-encoder =  ContrastEncoder(features=[:name, :favnum]; ignore=false, mode = [:dummy, :helmert])
+encoder =  ContrastEncoder(
+    features = [:name, :favnum],
+    ignore = false, 
+    mode = [:dummy, :helmert],
+)
 mach = fit!(machine(encoder, X))
 Xnew = transform(mach, X)
 
