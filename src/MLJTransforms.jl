@@ -42,15 +42,15 @@ include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
 # MLJModels transformers
-include("transformers/other_transformers/continuous_encoding.jl")
-include("transformers/other_transformers/interaction_transform.jl")
-include("transformers/other_transformers/continuous_transform_time.jl")
-include("transformers/other_transformers/fill_imputation.jl")
-include("transformers/other_transformers/one_hot_encoding.jl")
-include("transformers/other_transformers/standardization.jl")
-include("transformers/other_transformers/uni_box_cox.jl")
-include("transformers/other_transformers/uni_discretization.jl")
-include("transformers/other_transformers/metadata_registry.jl")
+include("transformers/other_transformers/continuous_encoder.jl")
+include("transformers/other_transformers/interaction_transformer.jl")
+include("transformers/other_transformers/univariate_time_type_to_continuous.jl")
+include("transformers/other_transformers/fill_imputer.jl")
+include("transformers/other_transformers/one_hot_encoder.jl")
+include("transformers/other_transformers/standardizer.jl")
+include("transformers/other_transformers/univariate_boxcox_transformer.jl")
+include("transformers/other_transformers/univariate_discretizer.jl")
+include("transformers/other_transformers/metadata_shared.jl")
 
 export UnivariateDiscretizer,
     UnivariateStandardizer, Standardizer, UnivariateBoxCoxTransformer,
