@@ -43,6 +43,10 @@ export  FrequencyEncoder
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
+export  CardinalityReducer
+include("encoders/missingness_encoding/missingness_encoding.jl")
+include("encoders/missingness_encoding/interface_mlj.jl")
+export  MissingnessEncoder
 
 # Contrast encoder
 include("encoders/contrast_encoder/contrast_encoder.jl")
