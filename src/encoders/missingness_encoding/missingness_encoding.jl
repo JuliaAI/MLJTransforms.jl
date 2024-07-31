@@ -22,7 +22,7 @@ types that are in `Char`, `AbstractString`, and `Number`.
 
 # Returns (in a dict)
 
-  - `new_cat_given_col_val`: A dictionary that for each column, maps `missing` into some value according to `label_for_missing`
+  - `label_for_missing_given_feature`: A dictionary that for each column, maps `missing` into some value according to `label_for_missing`
   - `encoded_features`: The subset of the categorical features of X that were encoded
 """
 function missingness_encoder_fit(
@@ -74,26 +74,26 @@ function missingness_encoder_fit(
         end
         
         # Nonmissing levels remain as is
-        new_cat_given_col_val = Dict{Missing, col_type}()
+        label_for_missing_given_feature = Dict{Missing, col_type}()
 
         # Missing levels are mapped
         if elgrandtype in keys(label_for_missing)
-            new_cat_given_col_val[missing] = label_for_missing[elgrandtype]
+            label_for_missing_given_feature[missing] = label_for_missing[elgrandtype]
         elseif elgrandtype == Number
-            new_cat_given_col_val[missing] = minimum(feat_levels) - 1
+            label_for_missing_given_feature[missing] = minimum(feat_levels) - 1
         else
             throw(ArgumentError(UNSPECIFIED_COL_TYPE_ME(col_type, label_for_missing)))
         end
 
-        return new_cat_given_col_val::Dict{Missing, col_type}
+        return label_for_missing_given_feature::Dict{Missing, col_type}
     end
 
     # 2. Pass it to generic_fit
-    new_cat_given_col_val, encoded_features = generic_fit(
+    label_for_missing_given_feature, encoded_features = generic_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor, feature_mapper = feature_mapper,
     )
     cache = Dict(
-        :new_cat_given_col_val => new_cat_given_col_val,
+        :label_for_missing_given_feature => label_for_missing_given_feature,
         :encoded_features => encoded_features,
     )
     return cache
@@ -115,7 +115,7 @@ Apply a fitted missingness encoder to a table given the output of `missingness_e
   - `X_tr`: The table with selected features after the selected features are transformed by missingness encoder
 """
 function missingness_encoder_transform(X, cache::Dict)
-    new_cat_given_col_val = cache[:new_cat_given_col_val]
-    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true)
+    label_for_missing_given_feature = cache[:label_for_missing_given_feature]
+    return generic_transform(X, label_for_missing_given_feature; ignore_unknown = true)
 end
 

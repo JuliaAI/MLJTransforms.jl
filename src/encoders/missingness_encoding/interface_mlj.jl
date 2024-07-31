@@ -28,7 +28,7 @@ end;
 
 # 4. Fitted parameters (for user access)
 MMI.fitted_params(::MissingnessEncoder, fitresult) = (
-    new_cat_given_col_val = fitresult,
+    label_for_missing_given_feature = fitresult,
 )
 
 # 5. Fit method
@@ -40,7 +40,7 @@ function MMI.fit(transformer::MissingnessEncoder, verbosity::Int, X)
         ordered_factor = transformer.ordered_factor,
         label_for_missing = transformer.label_for_missing,
     )
-    fitresult = generic_cache[:new_cat_given_col_val]
+    fitresult = generic_cache[:label_for_missing_given_feature]
 
     report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
@@ -51,7 +51,7 @@ end;
 # 6. Transform method
 function MMI.transform(transformer::MissingnessEncoder, fitresult, Xnew)
     generic_cache = Dict(
-        :new_cat_given_col_val =>
+        :label_for_missing_given_feature =>
             fitresult,
     )
     Xnew_transf = missingness_encoder_transform(Xnew, generic_cache)
@@ -119,7 +119,7 @@ and if the raw type subtypes `Number` then the new value is the lowest value in 
 
 The fields of `fitted_params(mach)` are:
 
-- `new_cat_given_col_val`: A dictionary that for each column, maps `missing` into some value according to `label_for_missing`
+- `label_for_missing_given_feature`: A dictionary that for each column, maps `missing` into some value according to `label_for_missing`
 
 # Report
 

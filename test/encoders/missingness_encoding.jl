@@ -28,8 +28,8 @@ end
 @testset "Default for Numbers Set Correctly" begin
     X = generate_X_with_missingness()
     cache = missingness_encoder_fit(X)
-    new_cat_given_col_val = cache[:new_cat_given_col_val]
-    @test new_cat_given_col_val[:C][missing] == minimum(levels(X.C)) - 1
+    label_for_missing_given_feature = cache[:label_for_missing_given_feature]
+    @test label_for_missing_given_feature[:C][missing] == minimum(levels(X.C)) - 1
 end
 
 
@@ -57,7 +57,7 @@ end
     result = missingness_encoder_fit(
         X;
         label_for_missing = Dict(AbstractString => "MissingOne", Char => 'X', Number => -90),
-    )[:new_cat_given_col_val]
+    )[:label_for_missing_given_feature]
 
     true_output = Dict{Symbol, Dict{Any, Any}}(
         :A => Dict([(missing, "MissingOne")]),
@@ -148,8 +148,8 @@ end
     @test isequal(X_transf, Xnew_transf)
 
     # fitted parameters is correct
-    new_cat_given_col_val = fitted_params(mach).new_cat_given_col_val
-    @test new_cat_given_col_val == generic_cache[:new_cat_given_col_val]
+    label_for_missing_given_feature = fitted_params(mach).label_for_missing_given_feature
+    @test label_for_missing_given_feature == generic_cache[:label_for_missing_given_feature]
 
     # Test report
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
