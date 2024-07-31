@@ -15,6 +15,7 @@ using Parameters
 using Dates
 using OrderedCollections
 
+
 const MMI = MLJModelInterface
 
 # Functions of generic use across transformers
@@ -25,22 +26,29 @@ include("utils.jl")
 include("encoders/target_encoding/errors.jl")
 include("encoders/target_encoding/target_encoding.jl")
 include("encoders/target_encoding/interface_mlj.jl")
-export target_encoder_fit, target_encoder_transform, TargetEncoder
+export  TargetEncoder
 
 # Ordinal encoding
 include("encoders/ordinal_encoding/ordinal_encoding.jl")
 include("encoders/ordinal_encoding/interface_mlj.jl")
-export ordinal_encoder_fit, ordinal_encoder_transform, OrdinalEncoder
+export  OrdinalEncoder
 
 # Frequency encoding
 include("encoders/frequency_encoding/frequency_encoding.jl")
 include("encoders/frequency_encoding/interface_mlj.jl")
 export frequency_encoder_fit, frequency_encoder_transform, FrequencyEncoder
+export  FrequencyEncoder
 
 # Cardinality reduction
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
+
+# Contrast encoder
+include("encoders/contrast_encoder/contrast_encoder.jl")
+include("encoders/contrast_encoder/interface_mlj.jl")
+export ContrastEncoder
+
 # MLJModels transformers
 include("transformers/other_transformers/continuous_encoder.jl")
 include("transformers/other_transformers/interaction_transformer.jl")

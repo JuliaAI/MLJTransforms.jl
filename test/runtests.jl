@@ -10,6 +10,8 @@ using LinearAlgebra
 using StatsModels
 using Random
 const MMI = MLJModelInterface
+using LinearAlgebra
+using StatsModels
 
 # Other transformers
 using Tables, CategoricalArrays
@@ -27,6 +29,7 @@ include("encoders/target_encoding.jl")
 include("encoders/ordinal_encoding.jl")
 include("encoders/frequency_encoder.jl")
 include("transformers/cardinality_reducer.jl")
+include("encoders/contrast_encoder.jl")
 
 # Other transformers
 include("transformers/other_transformers/fill_imputer.jl")
