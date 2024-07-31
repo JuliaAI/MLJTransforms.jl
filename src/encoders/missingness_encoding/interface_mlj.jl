@@ -82,7 +82,7 @@ $(MMI.doc_header(MissingnessEncoder))
 `MissingnessEncoder` maps any missing level of a categorical feature into a new level (e.g., "Missing"). 
 By this, missingness will be treated as a new
 level by any subsequent model. This assumes that the categorical features have raw
-types that are in `Union{Char, AbstractString, Number}`.
+types that are in `Char`, `AbstractString`, and `Number`.
 
 # Training data
 
@@ -104,7 +104,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `label_for_missing::Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char => 'm', )`: A
-dictionary where the possible values for keys are the types in `Union{Char, AbstractString, Number}` and where each value
+dictionary where the possible values for keys are the types in `Char`, `AbstractString`, and `Number` and where each value
 signifies the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
 then missing values will be replaced with `"missing"` and if the raw type subtypes `Char` then the new value is `'m'`
 and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
