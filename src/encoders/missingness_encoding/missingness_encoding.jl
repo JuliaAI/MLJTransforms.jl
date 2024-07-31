@@ -14,7 +14,7 @@ types that are in `Union{Char, AbstractString, Number}`.
   - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
   - `ignore=true`: Whether to exclude or includes the features given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-  - `label_for_missing=Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char => 'm', )`: A
+  - `label_for_missing::Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char => 'm', )`: A
     dictionary where the possible values for keys are the types in `Union{Char, AbstractString, Number}` and where each value
     signifies the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
     then missing values will be replaced with `"missing"` and if the raw type subtypes `Char` then the new value is `'m'`
