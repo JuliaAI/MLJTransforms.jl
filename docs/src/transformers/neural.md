@@ -1,4 +1,4 @@
-Neural-based Encoders include ategorical encoders based on neural networks:
+Neural-based Encoders include categorical encoders based on neural networks:
 
 | Transformer | Brief Description |
 |:----------:|:----------:|

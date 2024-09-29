@@ -35,16 +35,15 @@ Xnew = transform(mach, X)
 ```
 
 ## Available Transformers
-In `MLJTransforms` we define "encoders" to encompass models that specifically operate by encoding categorical variables; meanwhile, "transformers" refers to models that apply more generic transformations on columns that are not necessarily categorical. We define the following taxonomy for different models founds in `MLJTransforms`:
+In `MLJTransforms` we denote transformers that operate on columns with `Continuous` and/or `Count` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/) as numerical transformers. Meanwhile, categorical transformers operate on `Multiclass` and/or `OrderedFactor` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/). Most categorical transformers in this package operate by converting categorical values into numerical values or vectors, and are therefore considered categorical encoders.
 
-| Genre | Definition | 
-|:----------:|:----------:|
-| **Classical Encoders** | Well known and commonly used categorical encoders | 
-| **Neural-based Encoders** | Categorical encoders based on neural networks | 
-| **Contrast Encoders** | Categorical encoders that could be modeled by a contrast matrix  | 
-| **Utility Encoders** | Categorical encoders meant to be used as preprocessors for other encoders or models | 
-| **Other Transformers** | More generic transformers that go beyond categorical encoding   | 
+Based on this, we categorize the methods as follows, with further distinctions for categorical encoders:
 
-
-
-
+| **Category**                | **Description**                                                                 |
+|:---------------------------:|:-------------------------------------------------------------------------------:|
+| **Numerical Transformers**   | Transformers that operate on `Continuous` or `Count` columns in a given dataset.|
+| **Classical Encoders**       | Widely recognized and frequently utilized categorical encoders.                 |
+| **Neural-based Encoders**    | Categorical encoders based on neural networks.                                  |
+| **Contrast Encoders**        | Categorical encoders modeled via a contrast matrix.                             |
+| **Utility Encoders**         | Categorical encoders meant to be used as preprocessors for other encoders or models.|
+| **Other Transformers**       | Transformers that fall into other categories.                                   |

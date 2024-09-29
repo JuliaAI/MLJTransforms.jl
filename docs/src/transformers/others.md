@@ -1,35 +1,14 @@
-Other Transformers include more generic transformers that go beyond categorical encoding
+Transformers that operate on columns with general or specialized scientific types.
 
 | Transformer | Brief Description | 
 |:----------:|:----------:|
-| [FillImputer](@ref) | Fill missing values of any features belonging to any scientific type | 
-| [Standardizer](@ref) | Transforming columns of numerical features by standardization | 
-| [BoxCoxTransformer](@ref) | Transforming columns of numerical features by BoxCox transformation | 
-| [InteractionTransformer](@ref) | Transforming columns of numerical features by creating new interaction features |
-| [UnivariateBoxCoxTransformer](@ref) | Apply BoxCox transformation given a single vector | 
-| [UnivariateDiscretizer](@ref) | Discretize a continuous vector into an ordered factor | 
+| [FillImputer](@ref) | Fill missing values of features belonging to any scientific type | 
 | [UnivariateTimeTypeToContinuous](@ref) | Transform a vector of time type into continuous type | 
 
 ```@docs
 MLJTransforms.FillImputer
 ```
 
-```@docs
-MLJTransforms.Standardizer
-```
-
-```@docs
-MLJTransforms.BoxCoxTransformer
-```
-
-```@docs
-MLJTransforms.InteractionTransformer
-```
-
-
-```@docs
-MLJTransforms.UnivariateDiscretizer
-```
 
 ```@docs
 MLJTransforms.UnivariateTimeTypeToContinuous

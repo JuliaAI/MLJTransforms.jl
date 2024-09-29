@@ -25,6 +25,7 @@ makedocs(
     pages = [
         "Introduction" => "index.md",
         "Transformers" => Any[
+            "Numerical Transformers"=>"transformers/numerical.md",
             "Classical Encoders"=>"transformers/classical.md",
             "Neural-based Encoders"=>"transformers/neural.md",
             "Contrast Encoders"=>"transformers/contrast.md",

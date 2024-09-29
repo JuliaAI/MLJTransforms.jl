@@ -2,8 +2,8 @@ Utility Encoders include categorical encoders meant to be used as preprocessors 
 
 | Transformer | Brief Description | 
 |:----------:|:----------:|
-| [CardinalityReducer](@ref) | Reduce cardinality of high cardinality features by grouping infrequent categories |
-| [MissingnessEncoder](@ref) | Encode missing values of categorical columns into new values |
+| [CardinalityReducer](@ref) | Reduce cardinality of high cardinality categorical features by grouping infrequent categories |
+| [MissingnessEncoder](@ref) | Encode missing values of categorical features into new values |
 
 ```@docs
 MLJTransforms.CardinalityReducer
