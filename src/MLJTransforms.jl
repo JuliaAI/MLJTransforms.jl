@@ -10,10 +10,11 @@ using LinearAlgebra
 
 # Other transformers
 using Combinatorics
-import Distributions
+using Distributions: Distributions
 using Parameters
 using Dates
 using OrderedCollections
+
 
 
 const MMI = MLJModelInterface
@@ -26,27 +27,27 @@ include("utils.jl")
 include("encoders/target_encoding/errors.jl")
 include("encoders/target_encoding/target_encoding.jl")
 include("encoders/target_encoding/interface_mlj.jl")
-export  TargetEncoder
+export TargetEncoder
 
 # Ordinal encoding
 include("encoders/ordinal_encoding/ordinal_encoding.jl")
 include("encoders/ordinal_encoding/interface_mlj.jl")
-export  OrdinalEncoder
+export OrdinalEncoder
 
 # Frequency encoding
 include("encoders/frequency_encoding/frequency_encoding.jl")
 include("encoders/frequency_encoding/interface_mlj.jl")
 export frequency_encoder_fit, frequency_encoder_transform, FrequencyEncoder
-export  FrequencyEncoder
+export FrequencyEncoder
 
 # Cardinality reduction
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
-export  CardinalityReducer
+export CardinalityReducer
 include("encoders/missingness_encoding/missingness_encoding.jl")
 include("encoders/missingness_encoding/interface_mlj.jl")
-export  MissingnessEncoder
+export MissingnessEncoder
 
 # Contrast encoder
 include("encoders/contrast_encoder/contrast_encoder.jl")
@@ -69,3 +70,25 @@ export UnivariateDiscretizer,
     OneHotEncoder, ContinuousEncoder, FillImputer, UnivariateFillImputer,
     UnivariateTimeTypeToContinuous, InteractionTransformer
 end
+
+# For the extension
+function get_activation end
+function entity_embedder_fit end
+function entity_embedder_transform end
+
+mutable struct EntityEmbedder{AS <: AbstractVector{Symbol},
+    TV <: Tuple{Vararg{Int}},
+    I1 <: Integer, I2 <: Integer, AF <: AbstractFloat,
+    DSR <: Dict{Symbol, Real}, I3 <: Int} <: Unsupervised
+    features::AS
+    ignore::Bool
+    hidden_layer_sizes::TV
+    activation::Symbol
+    epochs::I1
+    batch_size::I2
+    learning_rate::AF
+    embedding_dims::DSR
+    verbosity::I3
+end
+
+function EntityEmbedder end
