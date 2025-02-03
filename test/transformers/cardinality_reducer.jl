@@ -1,8 +1,6 @@
-using MLJTransforms: union_types, cardinality_reducer_fit, cardinality_reducer_transform
+using MLJTransforms:  cardinality_reducer_fit, cardinality_reducer_transform
 
-@testset "Union_types" begin
-    @test union_types(Union{Integer, String}) == (Integer, String)
-end
+
 
 @testset "Throws errors when needed" begin
     @test_throws ArgumentError begin
