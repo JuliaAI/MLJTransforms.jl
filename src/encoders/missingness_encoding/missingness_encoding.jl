@@ -35,7 +35,8 @@ function missingness_encoder_fit(
         Char => 'm',
     ),
 )
-    supportedtypes = Union{Char, AbstractString, Number}
+    supportedtypes_list = [Char, AbstractString, Number]
+    supportedtypes = Union{supportedtypes_list...}
 
     # 1. Define feature mapper
     function feature_mapper(col, name)
@@ -50,7 +51,7 @@ function missingness_encoder_fit(
 
         # Ensure label_for_missing keys are valid types
         for possible_col_type in keys(label_for_missing)
-            if !(possible_col_type in union_types(supportedtypes))
+            if !(possible_col_type in supportedtypes_list)
                 throw(ArgumentError(VALID_TYPES_NEW_VAL_ME(possible_col_type)))
             end
         end
@@ -66,7 +67,7 @@ function missingness_encoder_fit(
 
         # Get ancestor type of column
         elgrandtype = nothing
-        for allowed_type in union_types(supportedtypes)
+        for allowed_type in supportedtypes_list
             if col_type <: allowed_type
                 elgrandtype = allowed_type
                 break
