@@ -10,7 +10,7 @@ Fit an encoder to encode the levels of categorical variables in a given table as
   - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
   - `ignore=true`: Whether to exclude or includes the features given in `features`
   - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-
+  - `dtype`: The numerical concrete type of the encoded features. Default is `Float32`.
 # Returns (in a dict)
 
   - `index_given_feat_level`: Maps each level for each column in a subset of the categorical features of X into an integer.
@@ -21,12 +21,13 @@ function ordinal_encoder_fit(
     features::AbstractVector{Symbol} = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
+    op_dtype::Type = Float32,
 )
     # 1. Define feature mapper
     function feature_mapper(col, name)
         feat_levels = levels(col)
         index_given_feat_val =
-            Dict{Any, Integer}(value => index for (index, value) in enumerate(feat_levels))
+            Dict{eltype(feat_levels), op_dtype}(value => index for (index, value) in enumerate(feat_levels))
         return index_given_feat_val
     end
 
