@@ -166,8 +166,9 @@ function target_encoder_fit(
 
     # 3. Define function to compute the new value(s) for each level given a column
     function feature_mapper(col, name)
+        feat_levels = levels(col)
         y_stat_given_feat_level_for_col =
-            Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
+            Dict{eltype(feat_levels), Any}()
         for level in levels(col)
             # Get the targets of an example that belong to this level
             targets_for_level = y[col.==level]
