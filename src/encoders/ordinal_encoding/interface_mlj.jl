@@ -5,7 +5,7 @@ mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
     features::AS
     ignore::Bool
     ordered_factor::Bool
-    op_dtype::Type
+    output_type::Type
 end;
 
 # 2. Constructor
@@ -13,9 +13,9 @@ function OrdinalEncoder(;
     features = Symbol[],
     ignore = true,
     ordered_factor = false,
-    op_dtype = Float32,
+    output_type = Float32,
 )
-    return OrdinalEncoder(features, ignore, ordered_factor, op_dtype)
+    return OrdinalEncoder(features, ignore, ordered_factor, output_type)
 end;
 
 
@@ -31,7 +31,7 @@ function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
         transformer.features;
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
-        op_dtype = transformer.op_dtype,
+        output_type = transformer.output_type,
     )
     fitresult =
         generic_cache[:index_given_feat_level]
@@ -95,7 +95,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
 - `ignore=true`: Whether to exclude or includes the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-- `op_dtype`: The numerical concrete type of the encoded features. Default is `Float32`.
+- `output_type`: The numerical concrete type of the encoded features. Default is `Float32`.
 
 # Operations
 

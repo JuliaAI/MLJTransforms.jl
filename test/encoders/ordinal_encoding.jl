@@ -121,7 +121,7 @@ end
     schema(X).scitypes[end]
 
     ## Int32 case
-    encoder = OrdinalEncoder(ordered_factor = false, op_dtype = Int32)
+    encoder = OrdinalEncoder(ordered_factor = false, output_type = Int32)
     mach = fit!(machine(encoder, X))
     Xnew = MMI.transform(mach, X)
     scs = schema(Xnew).scitypes

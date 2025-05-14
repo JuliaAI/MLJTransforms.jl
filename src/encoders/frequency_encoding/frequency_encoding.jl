@@ -24,12 +24,13 @@ function frequency_encoder_fit(
     ignore::Bool = true,
     ordered_factor::Bool = false,
     normalize::Bool = false,
+    output_type::Type = Float32,
 )
     # 1. Define feature mapper
     function feature_mapper(col, name)
         frequency_map = (!normalize) ? countmap(col) : proportionmap(col)
         feat_levels = levels(col)
-        statistic_given_feat_val = Dict{eltype(feat_levels), Float32}(
+        statistic_given_feat_val = Dict{eltype(feat_levels), output_type}(
             level => frequency_map[level] for level in feat_levels
         )
         return statistic_given_feat_val

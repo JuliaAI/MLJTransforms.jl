@@ -21,13 +21,13 @@ function ordinal_encoder_fit(
     features::AbstractVector{Symbol} = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
-    op_dtype::Type = Float32,
+    output_type::Type = Float32,
 )
     # 1. Define feature mapper
     function feature_mapper(col, name)
         feat_levels = levels(col)
         index_given_feat_val =
-            Dict{eltype(feat_levels), op_dtype}(value => index for (index, value) in enumerate(feat_levels))
+            Dict{eltype(feat_levels), output_type}(value => index for (index, value) in enumerate(feat_levels))
         return index_given_feat_val
     end
 
