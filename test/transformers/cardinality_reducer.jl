@@ -190,5 +190,30 @@ end
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
 end
 
+
+@testset "Test Cardinality Reducer Output Types" begin
+    # Define categorical features
+    A = [["a" for i in 1:100]..., "b", "b", "b", "c", "d"]
+    B = [[0 for i in 1:100]..., 1, 2, 3, 4, 4]
+
+    # Combine into a named tuple
+    X = (A = A, B = B)
+
+    # Coerce A, C, D to multiclass and B to continuous and E to ordinal
+    X = coerce(X,
+        :A => Multiclass,
+        :B => Multiclass,
+    )
+
+    levels(X.A)
+
+    encoder = CardinalityReducer(ordered_factor = false, min_frequency = 3)
+    mach = fit!(machine(encoder, X))
+    Xnew = MMI.transform(mach, X)
+    @test schema(X).types == schema(Xnew).types
+    @test all(s -> (s <: Multiclass), schema(Xnew).scitypes)
+end
+
+
 # Look into MLJModelInterfaceTest
 # Add tests to ensure categorical feature properties are as expected

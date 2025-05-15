@@ -346,3 +346,43 @@ end
         @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
     end
 end
+
+
+
+@testset "Test Target Encoding Types" begin
+    # Define categorical features
+    A = ["g", "b", "g", "r", "r"]
+    B = [1.0, 2.0, 3.0, 4.0, 5.0]
+    C = ["f", "f", "f", "m", "f"]
+    D = [true, false, true, false, true]
+    E = [1, 2, 3, 4, 5]
+
+    # Define the target variable 
+    y = ["c1", "c2", "c3", "c1", "c2"]
+
+    # Combine into a named tuple
+    X = (A = A, B = B, C = C, D = D, E = E)
+
+    # Coerce A, C, D to multiclass and B to continuous and E to ordinal
+    X = coerce(X,
+        :A => Multiclass,
+        :B => Continuous,
+        :C => Multiclass,
+        :D => Multiclass,
+        :E => OrderedFactor,
+    )
+    y = coerce(y, Multiclass)
+
+    encoder = TargetEncoder(ordered_factor = false, lambda = 1.0, m = 0)
+    mach = fit!(machine(encoder, X, y))
+    Xnew = MMI.transform(mach, X)
+
+    scs = schema(Xnew).scitypes
+    ts  = schema(Xnew).types
+    # Check scitypes for previously continuos or categorical features
+    @test all(scs[1:end-1] .== Continuous)
+    @test all(t -> (t <: AbstractFloat) && isconcretetype(t), ts[1:end-1])
+    @test scs[end] === schema(X).scitypes[end]
+    @test ts[end] == schema(X).types[end]
+end
+
