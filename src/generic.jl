@@ -109,7 +109,7 @@ Given a table `X` and a dictionary `mapping_per_feat_level` which maps each leve
 a subset of categorical features of X into a scalar or a vector (as specified in single_feat)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
-    into a scalar (single_feat=true)
+    into a scalar (`single_feat=true`)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
     into a set of k features where k is the length of the vector (single_feat=false)
