@@ -130,6 +130,7 @@ function generic_transform(
     ignore_unknown = false,
     use_levelnames = false,
     custom_levels = nothing,
+    ensure_categorical = false,
 )
     feat_names = Tables.schema(X).names
     new_feat_names = Symbol[]
@@ -153,7 +154,12 @@ function generic_transform(
 
             if single_feat
                 level2scalar = mapping_per_feat_level[feat_name]
-                new_col = !isempty(level2scalar) ? recode(col, level2scalar...) : col
+                if ensure_categorical
+                    new_col = !isempty(level2scalar) ? recode(col, level2scalar...) : col
+                else 
+                    new_col = !isempty(level2scalar) ? unwrap.(recode(col, level2scalar...)) : col
+                end
+               
                 push!(new_cols, new_col)
                 push!(new_feat_names, feat_name)
             else

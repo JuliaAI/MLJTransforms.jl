@@ -30,7 +30,7 @@ function missingness_encoder_fit(
     features::AbstractVector{Symbol} = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
-    label_for_missing::Dict{<:Type, <:Any} = Dict(    
+    label_for_missing::Dict{<:Type, <:Any} = Dict(
         AbstractString => "missing",
         Char => 'm',
     ),
@@ -40,8 +40,8 @@ function missingness_encoder_fit(
 
     # 1. Define feature mapper
     function feature_mapper(col, name)
-        col_type = nonmissingtype(eltype(col)).parameters[1]
-        feat_levels = levels(col; skipmissing=true)
+        feat_levels = levels(col; skipmissing = true)
+        col_type = nonmissingtype(eltype(feat_levels))
 
         # Ensure column type is valid (can't test because never occurs)
         # Converting array elements to strings before wrapping in a `CategoricalArray`, as...
@@ -58,7 +58,7 @@ function missingness_encoder_fit(
 
         # Check no collision between keys(label_for_missing) and feat_levels
         for value in values(label_for_missing)
-            if !ismissing(value) 
+            if !ismissing(value)
                 if value in feat_levels
                     throw(ArgumentError(COLLISION_NEW_VAL_ME(value)))
                 end
@@ -73,7 +73,7 @@ function missingness_encoder_fit(
                 break
             end
         end
-        
+
         # Nonmissing levels remain as is
         label_for_missing_given_feature = Dict{Missing, col_type}()
 
@@ -91,7 +91,8 @@ function missingness_encoder_fit(
 
     # 2. Pass it to generic_fit
     label_for_missing_given_feature, encoded_features = generic_fit(
-        X, features; ignore = ignore, ordered_factor = ordered_factor, feature_mapper = feature_mapper,
+        X, features; ignore = ignore, ordered_factor = ordered_factor,
+        feature_mapper = feature_mapper,
     )
     cache = Dict(
         :label_for_missing_given_feature => label_for_missing_given_feature,
@@ -117,6 +118,11 @@ Apply a fitted missingness encoder to a table given the output of `missingness_e
 """
 function missingness_encoder_transform(X, cache::Dict)
     label_for_missing_given_feature = cache[:label_for_missing_given_feature]
-    return generic_transform(X, label_for_missing_given_feature; ignore_unknown = true)
+    return generic_transform(
+        X,
+        label_for_missing_given_feature;
+        ignore_unknown = true,
+        ensure_categorical = true,
+    )
 end
 

@@ -15,7 +15,7 @@ using StatsModels
 
 # Other transformers
 using Tables, CategoricalArrays
-using ScientificTypes: scitype
+using ScientificTypes: scitype, schema
 using Statistics
 using StableRNGs
 stable_rng = StableRNGs.StableRNG(123)

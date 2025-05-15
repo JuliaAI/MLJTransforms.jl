@@ -6,6 +6,7 @@ mutable struct FrequencyEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
     ignore::Bool
     ordered_factor::Bool
     normalize::Bool
+    output_type::Type
 end;
 
 # 2. Constructor
@@ -14,8 +15,9 @@ function FrequencyEncoder(;
     ignore = true,
     ordered_factor = false,
     normalize = false,
+    output_type = Float32,
 )
-    return FrequencyEncoder(features, ignore, ordered_factor, normalize)
+    return FrequencyEncoder(features, ignore, ordered_factor, normalize, output_type)
 end;
 
 
@@ -32,6 +34,7 @@ function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
         normalize = transformer.normalize,
+        output_type = transformer.output_type,
     )
     fitresult = generic_cache[:statistic_given_feat_val]
 
@@ -96,6 +99,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `ignore=true`: Whether to exclude or include the features given in `features`
 - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 - `normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
+- `output_type=Float32`: The type of the output values. The default is `Float32`, but you can set it to `Float64` or any other type that can hold the frequency values.
 
 # Operations
 
