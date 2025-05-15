@@ -112,7 +112,7 @@ a subset of categorical features of X into a scalar or a vector (as specified in
     into a scalar (`single_feat=true`)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
-    into a set of k features where k is the length of the vector (single_feat=false)
+    into a set of `k` features where `k` is the length of the vector (`single_feat=false`)
   - In both cases it attempts to preserve the type of the table.
   - In the latter case, it assumes that all levels under the same category are mapped to vectors of the same length. Such
     assumption is necessary because any column in X must correspond to a constant number of features
