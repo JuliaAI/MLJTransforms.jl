@@ -121,7 +121,7 @@ a subset of categorical features of X into a scalar or a vector (as specified in
   - Levels not in the nested dictionary are mapped to themselves if `identity_map_unknown` is true else raise an error.
   - use_levelnames: if true, the new feature names are generated using the level names when the transform generates multiple features;
     else they are generated using the indices of the levels.
-  - custom_levels: if not nothing, then the levels of the categorical features are replaced by the custom_levels
+  - custom_levels: if not `nothing`, then the levels of the categorical features are replaced by the custom_levels
 """
 function generic_transform(
     X,
