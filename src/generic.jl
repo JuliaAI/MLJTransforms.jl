@@ -106,7 +106,7 @@ end
 **Private method.**
 
 Given a table `X` and a dictionary `mapping_per_feat_level` which maps each level for each column in
-a subset of categorical features of X into a scalar or a vector (as specified in single_feat)
+a subset of categorical features of X into a scalar or a vector (as specified in `single_feat`)
 
   - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
     into a scalar (`single_feat=true`)
