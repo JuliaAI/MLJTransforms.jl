@@ -27,20 +27,37 @@ push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=false, retur
 push!(dataset_forms, create_dummy_dataset(:regression, as_dataframe=true, return_y=false))
 
 @testset "Generate New feature names Function Tests" begin
-    # Test 1: No initial conflicts
-    @testset "No Initial Conflicts" begin
-        existing_names = []
-        names = generate_new_feat_names("feat", 3, existing_names)
-        @test names == [Symbol("feat_1"), Symbol("feat_2"), Symbol("feat_3")]
+    levels = ("A", "B", "C")
+
+    # Test 1: No initial conflicts, indices mode (use_levelnames=false)
+    @testset "No Initial Conflicts (Indices)" begin
+        existing_names = Symbol[]
+        names = generate_new_feat_names("feat", 2, levels, existing_names; use_levelnames=false)
+        @test names == [Symbol("feat_1"), Symbol("feat_2")]
     end
 
-    # Test 2: Handle initial conflict by adding underscores
-    @testset "Initial Conflict Resolution" begin
-        existing_names = [Symbol("feat_1"), Symbol("feat_2"), Symbol("feat_3")]
-        names = generate_new_feat_names("feat", 3, existing_names)
-        @test names == [Symbol("feat__1"), Symbol("feat__2"), Symbol("feat__3")]
+    # Test 2: No conflicts, level-names mode (default use_levelnames=true)
+    @testset "No Initial Conflicts (Level Names)" begin
+        existing_names = Symbol[]
+        names = generate_new_feat_names("feat", 3, levels, existing_names)
+        @test names == [Symbol("feat_A"), Symbol("feat_B"), Symbol("feat_C")]
+    end
+
+    # Test 3: Handle initial conflict by adding underscores (indices)
+    @testset "Initial Conflict Resolution (Indices)" begin
+        existing_names = [Symbol("feat_1"), Symbol("feat_2")]
+        names = generate_new_feat_names("feat", 2, levels, existing_names; use_levelnames=false)
+        @test names == [Symbol("feat__1"), Symbol("feat__2")]
+    end
+
+    # Test 4: Handle initial conflict by adding underscores (level names)
+    @testset "Initial Conflict Resolution (Level Names)" begin
+        existing_names = [Symbol("feat_A"), Symbol("feat_B"), Symbol("feat_C")]
+        names = generate_new_feat_names("feat", 3, levels, existing_names)
+        @test names == [Symbol("feat__A"), Symbol("feat__B"), Symbol("feat__C")]
     end
 end
+
 
 # Dummy encoder that maps each level to its hash (some arbitrary function)
 function dummy_encoder_fit(

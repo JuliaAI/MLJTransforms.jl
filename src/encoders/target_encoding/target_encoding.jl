@@ -216,6 +216,7 @@ function target_encoder_fit(
         :num_classes => (task == "Regression") ? -1 : length(y_classes),
         :y_stat_given_feat_level => y_stat_given_feat_level,
         :encoded_features => encoded_features,
+        :y_classes => (task == "Regression") ? nothing : y_classes,
     )
     return cache
 end
@@ -244,11 +245,13 @@ function target_encoder_transform(X, cache)
     task = cache[:task]
     y_stat_given_feat_level = cache[:y_stat_given_feat_level]
     num_classes = cache[:num_classes]
+    y_classes = cache[:y_classes]
 
     return generic_transform(
         X,
         y_stat_given_feat_level;
         single_feat = task == "Regression" || (task == "Classification" && num_classes < 3),
-    )
+        use_levelnames = true,
+        custom_levels = y_classes,)
 end
 

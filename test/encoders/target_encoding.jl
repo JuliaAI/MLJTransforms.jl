@@ -277,22 +277,21 @@ end
     X_tr = target_encoder_transform(X, cache)
 
     enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
-
     target = (
-        A_1 = [enc(:A, X[:A][i])[1] for i in 1:10],
-        A_2 = [enc(:A, X[:A][i])[2] for i in 1:10],
-        A_3 = [enc(:A, X[:A][i])[3] for i in 1:10],
+        A_0 = [enc(:A, X[:A][i])[1] for i in 1:10],
+        A_1 = [enc(:A, X[:A][i])[2] for i in 1:10],
+        A_2 = [enc(:A, X[:A][i])[3] for i in 1:10],
         B = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-        C_1 = [enc(:C, X[:C][i])[1] for i in 1:10],
-        C_2 = [enc(:C, X[:C][i])[2] for i in 1:10],
-        C_3 = [enc(:C, X[:C][i])[3] for i in 1:10],
-        D_1 = [enc(:D, X[:D][i])[1] for i in 1:10],
-        D_2 = [enc(:D, X[:D][i])[2] for i in 1:10],
-        D_3 = [enc(:D, X[:D][i])[3] for i in 1:10],
+        C_0 = [enc(:C, X[:C][i])[1] for i in 1:10],
+        C_1 = [enc(:C, X[:C][i])[2] for i in 1:10],
+        C_2 = [enc(:C, X[:C][i])[3] for i in 1:10],
+        D_0 = [enc(:D, X[:D][i])[1] for i in 1:10],
+        D_1 = [enc(:D, X[:D][i])[2] for i in 1:10],
+        D_2 = [enc(:D, X[:D][i])[3] for i in 1:10],
         E = [1, 2, 3, 4, 5, 6, 6, 3, 2, 1],
-        F_1 = [enc(:F, X[:F][i])[1] for i in 1:10],
-        F_2 = [enc(:F, X[:F][i])[2] for i in 1:10],
-        F_3 = [enc(:F, X[:F][i])[3] for i in 1:10],
+        F_0 = [enc(:F, X[:F][i])[1] for i in 1:10],
+        F_1 = [enc(:F, X[:F][i])[2] for i in 1:10],
+        F_2 = [enc(:F, X[:F][i])[3] for i in 1:10],
     )
     for col in keys(target)
         @test all(X_tr[col] .== target[col])

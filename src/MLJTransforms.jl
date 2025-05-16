@@ -7,7 +7,7 @@ using MLJModelInterface
 using TableOperations
 using StatsBase
 using LinearAlgebra
-
+using OrderedCollections: OrderedDict
 # Other transformers
 using Combinatorics
 import Distributions
