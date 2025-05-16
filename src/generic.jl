@@ -13,21 +13,22 @@ logic?"
 
 # Arguments
 
-    - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
-    `Multiclass` or `OrderedFactor`
-    - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-    - `ignore=true`: Whether to exclude or includes the features given in `features`
-    - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-    - `feature_mapper`: Defined above. 
+    - X: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
+    Multiclass or OrderedFactor
+    - features=[]: A list of names of categorical features given as symbols to exclude or include from encoding,
+      or a callable that returns true for features to be included/excluded
+    - ignore=true: Whether to exclude or includes the features given in features
+    - ordered_factor=false: Whether to encode OrderedFactor or ignore them
+    - feature_mapper: Defined above. 
 
 # Returns
 
-    - `mapping_per_feat_level`: Maps each level for each feature in a subset of the categorical features of
+    - mapping_per_feat_level: Maps each level for each feature in a subset of the categorical features of
      X into a scalar or a vector. 
-    - `encoded_features`: The subset of the categorical features of X that were encoded
+    - encoded_features: The subset of the categorical features of X that were encoded
 """
 function generic_fit(X,
-    features::AbstractVector{Symbol} = Symbol[],
+    features::Union{AbstractVector{Symbol}, Function} = Symbol[],
     args...;
     ignore::Bool = true,
     ordered_factor::Bool = false,
@@ -38,7 +39,17 @@ function generic_fit(X,
     feat_names = Tables.schema(X).names
 
     #2.  Modify column_names based on features 
-    feat_names = (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
+    if features isa Function
+        # If features is a callable, apply it to each feature name
+        if ignore
+            feat_names = filter(name -> !features(name), feat_names)
+        else
+            feat_names = filter(features, feat_names)
+        end
+    else
+        # Original behavior for vector of symbols
+        feat_names = (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
+    end
 
     # 3. Define mapping per column per level dictionary
     mapping_per_feat_level = Dict()
