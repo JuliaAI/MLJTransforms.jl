@@ -14,7 +14,7 @@ logic?"
 # Arguments
 
     - X: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
-    Multiclass or OrderedFactor
+    `Multiclass` or `OrderedFactor`
     - features=[]: A list of names of categorical features given as symbols to exclude or include from encoding,
       or a callable that returns true for features to be included/excluded
     - ignore=true: Whether to exclude or includes the features given in features
