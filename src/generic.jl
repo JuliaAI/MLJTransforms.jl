@@ -40,17 +40,17 @@ function generic_fit(X,
     feat_names = Tables.schema(X).names
 
     #2.  Modify column_names based on features 
-    if features isa Function
+    if features isa AbstractVector{Symbol}
+         # Original behavior for vector of symbols
+        feat_names =
+            (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
+    else
         # If features is a callable, apply it to each feature name
         if ignore
             feat_names = filter(name -> !features(name), feat_names)
         else
             feat_names = filter(features, feat_names)
         end
-    else
-        # Original behavior for vector of symbols
-        feat_names =
-            (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
     end
 
     # 3. Define mapping per column per level dictionary
