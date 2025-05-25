@@ -25,11 +25,11 @@ _get(x) = CategoricalArrays.DataAPI.unwrap(x)
 
 include("utils.jl")
 include("generic.jl")
-include("encoders/target_encoding.jl")
-include("encoders/ordinal_encoding.jl")
-include("encoders/frequency_encoder.jl")
-include("transformers/cardinality_reducer.jl")
-include("encoders/missingness_encoding.jl")
+# include("encoders/target_encoding.jl")
+# include("encoders/ordinal_encoding.jl")
+# include("encoders/frequency_encoder.jl")
+# include("transformers/cardinality_reducer.jl")
+# include("encoders/missingness_encoding.jl")
 include("encoders/contrast_encoder.jl")
 
 # Other transformers

@@ -18,7 +18,7 @@ Fit an encoder to encode the levels of categorical variables in a given table as
 """
 function ordinal_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
 )

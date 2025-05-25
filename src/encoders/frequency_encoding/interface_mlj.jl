@@ -1,8 +1,8 @@
 ### FrequencyEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct FrequencyEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-    features::AS
+mutable struct FrequencyEncoder{A <: Any} <: Unsupervised
+    features::A
     ignore::Bool
     ordered_factor::Bool
     normalize::Bool

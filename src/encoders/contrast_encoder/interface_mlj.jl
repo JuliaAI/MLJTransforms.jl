@@ -1,11 +1,11 @@
 ### ContrastEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct ContrastEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-    features::AS
+mutable struct ContrastEncoder{ASS <: Union{Symbol, AbstractVector{Symbol}}, A1 <: Any, A2 <: Any} <: Unsupervised
+    features::A1
     ignore::Bool
-    mode::Union{Symbol, AS}
-    buildmatrix::Any
+    mode:: ASS
+    buildmatrix::A2
     ordered_factor::Bool
 end;
 

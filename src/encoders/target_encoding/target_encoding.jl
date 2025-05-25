@@ -132,7 +132,7 @@ Fit a target encoder on table X with target y by computing the necessary statist
 function target_encoder_fit(
     X,
     y::AbstractVector,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
     lambda::Real = 1.0,

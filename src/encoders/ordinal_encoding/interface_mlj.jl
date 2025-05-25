@@ -1,8 +1,8 @@
 ### OrdinalEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-    features::AS
+mutable struct OrdinalEncoder{A <: Any} <: Unsupervised
+    features::A
     ignore::Bool
     ordered_factor::Bool
 end;

@@ -27,7 +27,7 @@ types that are in `Char`, `AbstractString`, and `Number`.
 """
 function missingness_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
     label_for_missing::Dict{<:Type, <:Any} = Dict(    

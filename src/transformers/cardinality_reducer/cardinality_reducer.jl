@@ -32,7 +32,7 @@ types that are in `Char`, `AbstractString`, and `Number`.
 """
 function cardinality_reducer_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
     min_frequency::Real = 3,                        
