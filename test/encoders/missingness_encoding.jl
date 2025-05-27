@@ -1,21 +1,26 @@
 using MLJTransforms: missingness_encoder_fit, missingness_encoder_transform
 
-@testset "Throws errors when needed" begin
-    @test_throws ArgumentError begin
+@testset "Missingness Encoder Error Handling" begin
+    # Test COLLISION_NEW_VAL_ME error - when label_for_missing value already exists in levels
+    @test_throws MLJTransforms.COLLISION_NEW_VAL_ME("missing") begin
         X = generate_X_with_missingness(;john_name="missing")
         cache = missingness_encoder_fit(
             X;
             label_for_missing = Dict(AbstractString => "missing", Char => 'm'),
         )
     end
-    @test_throws ArgumentError begin
+    
+    # Test VALID_TYPES_NEW_VAL_ME error - when label_for_missing key is not a supported type
+    @test_throws MLJTransforms.VALID_TYPES_NEW_VAL_ME(Bool) begin
         X = generate_X_with_missingness()
         cache = missingness_encoder_fit(
             X;
             label_for_missing = Dict(AbstractString => "Other", Bool => 'X'),
         )
     end
-    @test_throws ArgumentError begin
+    
+    # Test UNSPECIFIED_COL_TYPE_ME error - when column type isn't in label_for_missing
+    @test_throws MLJTransforms.UNSPECIFIED_COL_TYPE_ME(Char, Dict(AbstractString => "X")) begin
         X = generate_X_with_missingness()
         cache = missingness_encoder_fit(
             X;

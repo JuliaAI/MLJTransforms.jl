@@ -2,11 +2,10 @@
 
 # 1. Interface Struct
 mutable struct MissingnessEncoder{
-    AS <: AbstractVector{Symbol},
     T <: Type,
     A <: Any,
 } <: Unsupervised
-    features::AS
+    features::A
     ignore::Bool
     ordered_factor::Bool
     label_for_missing::Dict{T, A}

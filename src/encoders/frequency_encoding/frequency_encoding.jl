@@ -20,7 +20,7 @@ categorical features with their (normalized or raw) frequencies of occurrence in
 """
 function frequency_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
     normalize::Bool = false,

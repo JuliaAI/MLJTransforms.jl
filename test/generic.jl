@@ -62,7 +62,7 @@ end
 # Dummy encoder that maps each level to its hash (some arbitrary function)
 function dummy_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
 )
@@ -81,6 +81,7 @@ function dummy_encoder_fit(
     )
     cache = Dict(
         :hash_given_feat_val => hash_given_feat_val,
+        :encoded => encoded_features,
     )
     return cache
 end
@@ -161,4 +162,40 @@ end
         F = [enc(:F, X[:F][i]) for i in 1:10]
     )
     @test X_tr == target
+end
+
+@testset "Callable feature functionality tests" begin
+    X = dataset_forms[1]
+    feat_names = Tables.schema(X).names
+
+    # Define a predicate: include only columns with name in uppercase list [:A, :C, :E]
+    predicate = name -> name in [:A, :C, :E]
+
+    # Test 1: ignore=true should exclude predicate columns
+    cache1 = dummy_encoder_fit(X, predicate; ignore=true, ordered_factor=false)
+    @test !(:A in cache1[:encoded]) && !(:C in cache1[:encoded]) && !(:E in cache1[:encoded])
+
+    # Test 2: ignore=false should include only predicate columns
+    cache2 = dummy_encoder_fit(X, predicate; ignore=false, ordered_factor=false)
+    @test Set(cache2[:encoded]) == Set([:A, :C])
+
+    # Test 3: predicate with ordered_factor=true picks up ordered factors (e.g., :E)
+    cache3 = dummy_encoder_fit(X, predicate; ignore=false, ordered_factor=true)
+    @test Set(cache3[:encoded]) == Set([:A, :C, :E])
+end
+
+@testset "Single Symbol and list of one symbol equivalence" begin
+     X = dataset_forms[1]
+    feat_names = Tables.schema(X).names
+
+    # Test 1: Single Symbol
+    single_symbol = :A
+    cache1 = dummy_encoder_fit(X, single_symbol; ignore=true, ordered_factor=false)
+    @test !(:A in cache1[:encoded])
+    # Test 2: List of one symbol
+    single_symbol_list = [:A]
+    cache2 = dummy_encoder_fit(X, single_symbol_list; ignore=true, ordered_factor=false)
+    @test !(:A in cache2[:encoded])
+    # Test 3: Both should yield the same result
+    @test cache1[:encoded] == cache2[:encoded]
 end

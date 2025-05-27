@@ -2,12 +2,11 @@
 
 # 1. Interface Struct
 mutable struct CardinalityReducer{
-    AS <: AbstractVector{Symbol},
     R <: Real,
     T <: Type,
     A <: Any,
 } <: Unsupervised
-    features::AS
+    features::A
     ignore::Bool
     ordered_factor::Bool
     min_frequency::R

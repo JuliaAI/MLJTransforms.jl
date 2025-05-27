@@ -9,7 +9,6 @@ age    = [23, 23, 14, 23])
 
 
 @testset "Contrast Encoder Error Handling" begin
-
     # Example definitions to allow the test to run
     function dummy_buildmatrix(colname, k)
         # Simple dummy function to generate a matrix of correct size
@@ -23,21 +22,35 @@ age    = [23, 23, 14, 23])
     )
 
     # Test IGNORE_MUST_FALSE_VEC_MODE error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=[:contrast], ignore=true)
+    @test_throws MLJTransforms.IGNORE_MUST_FALSE_VEC_MODE begin
+        contrast_encoder_fit(data, [:A], mode=[:contrast], ignore=true)
+    end
 
     # Test LENGTH_MISMATCH_VEC_MODE error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=[:contrast, :dummy], buildmatrix=dummy_buildmatrix, ignore=false)
+    @test_throws MLJTransforms.LENGTH_MISMATCH_VEC_MODE(2, 1) begin
+        contrast_encoder_fit(data, [:A], mode=[:contrast, :dummy], buildmatrix=dummy_buildmatrix, ignore=false)
+    end
 
     # Test BUILDFUNC_MUST_BE_SPECIFIED error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:contrast, ignore=false)
+    @test_throws MLJTransforms.BUILDFUNC_MUST_BE_SPECIFIED begin
+        contrast_encoder_fit(data, [:A], mode=:contrast, ignore=false)
+    end
 
     # Test MATRIX_SIZE_ERROR
     wrong_buildmatrix = (levels, k) -> randn(k, k)  # Incorrect dimensions
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:contrast, buildmatrix=wrong_buildmatrix, ignore=false)
+    k = 3  # Number of levels in data[:A]
+    wrong_size = (k, k)
+    @test_throws MLJTransforms.MATRIX_SIZE_ERROR(k, wrong_size, :A) begin
+        contrast_encoder_fit(data, [:A], mode=:contrast, buildmatrix=wrong_buildmatrix, ignore=false)
+    end
 
     # Test MATRIX_SIZE_ERROR_HYP
     wrong_buildmatrix_hyp = (levels, k) -> randn(k, k+1)  # Incorrect dimensions for hypothesis matrix
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:hypothesis, buildmatrix=wrong_buildmatrix_hyp, ignore=false)
+    wrong_size_hyp = (k, k+1)
+    @test_throws MLJTransforms.MATRIX_SIZE_ERROR_HYP(k, wrong_size_hyp, :A) begin
+        contrast_encoder_fit(data, [:A], mode=:hypothesis, buildmatrix=wrong_buildmatrix_hyp, ignore=false)
+    end
+    
 end
 
 @testset "Dummy Coding Tests" begin

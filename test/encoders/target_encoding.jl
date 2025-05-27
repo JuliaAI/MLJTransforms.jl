@@ -332,13 +332,15 @@ end
         @test fitresult.task == generic_cache[:task]
 
         # Test invalid `m`
-        @test_throws ArgumentError begin
-            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = 0.5, m = -5)
+        invalid_m = -5
+        @test_throws MLJTransforms.NON_NEGATIVE_m(invalid_m) begin
+            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = 0.5, m = invalid_m)
         end
-
-        # Test invalid `lambda`
-        @test_throws ArgumentError begin
-            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = 1.1, m = 1)
+        
+        # Test invalid `lambda` (value > 1)
+        invalid_lambda = 1.1
+        @test_throws MLJTransforms.INVALID_lambda(invalid_lambda) begin
+            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = invalid_lambda, m = 1)
         end
 
         # Test report

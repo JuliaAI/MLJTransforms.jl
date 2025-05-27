@@ -79,7 +79,7 @@ Fit a contrast encoing scheme on given data in `X`.
 """
 function contrast_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     mode::Union{Symbol, AbstractVector{Symbol}} = :dummy,
     buildmatrix = nothing,
     ignore::Bool = true,

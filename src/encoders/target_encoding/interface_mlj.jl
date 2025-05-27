@@ -1,9 +1,9 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <:
+mutable struct TargetEncoder{R1 <: Real, R2 <: Real, A <: Any} <:
                Unsupervised
-    features::AS
+    features::A
     ignore::Bool
     ordered_factor::Bool
     lambda::R1
@@ -45,7 +45,7 @@ end
 struct TargetEncoderResult{
     I <: Integer,
     S <: AbstractString,
-    A <: Any            # Useless but likely can't do much better
+    A <: Any,            # Useless but likely can't do much better
 } <: MMI.MLJType
     # target statistic for each level of each categorical feature
     y_stat_given_feat_level::Dict{A, A}

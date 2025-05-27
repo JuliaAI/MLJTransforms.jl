@@ -1,30 +1,36 @@
 using MLJTransforms:  cardinality_reducer_fit, cardinality_reducer_transform
 
 
-
-@testset "Throws errors when needed" begin
-    @test_throws ArgumentError begin
+@testset "Cardinality Reducer Error Handling" begin
+    # Test COLLISION_NEW_VAL error - when label_for_infrequent value already exists in data
+    @test_throws MLJTransforms.COLLISION_NEW_VAL('X') begin
         X = generate_high_cardinality_table(1000; obj = false, special_cat = 'X')
         cache = cardinality_reducer_fit(
             X;
             label_for_infrequent = Dict(AbstractString => "Other", Char => 'X'),
         )
     end
-    @test_throws ArgumentError begin
+    
+    # Test VALID_TYPES_NEW_VAL error - when label_for_infrequent key is not a supported type
+    @test_throws MLJTransforms.VALID_TYPES_NEW_VAL(Bool) begin
         X = generate_high_cardinality_table(1000; obj = false, special_cat = 'O')
         cache = cardinality_reducer_fit(
             X;
             label_for_infrequent = Dict(AbstractString => "Other", Bool => 'X'),
         )
     end
-    @test_throws ArgumentError begin
+    
+    # Test UNSPECIFIED_COL_TYPE error - when column type isn't in label_for_infrequent
+    @test_throws MLJTransforms.UNSPECIFIED_COL_TYPE(Char, Dict(AbstractString => "X")) begin
         X = generate_high_cardinality_table(1000)
         cache = cardinality_reducer_fit(
             X;
             min_frequency = 30,
             label_for_infrequent = Dict(AbstractString => "X"),
+            # Missing Char type in label_for_infrequent, which should be present in X
         )
     end
+    
 end
 
 
