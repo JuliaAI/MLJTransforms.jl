@@ -1,6 +1,5 @@
 # generic functions go here; such function can be used  throughout multiple methods
 
-
 """
 **Private method.**
 
@@ -13,20 +12,17 @@ logic?"
 
 # Arguments
 
-    - X: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
-    `Multiclass` or `OrderedFactor`
-    - features=[]: A list of names of categorical features given as symbols to exclude or include from encoding,
-      according to the value of `ignore`, or a single symbol (which is treated as a vector with one symbol),
-      or a callable that returns true for features to be included/excluded
-    - ignore=true: Whether to exclude or includes the features given in features
-    - ordered_factor=false: Whether to encode OrderedFactor or ignore them
+    $X_doc
+    $features_doc
+    $ignore_doc
+    $ordered_factor_doc
     - feature_mapper: Defined above. 
 
 # Returns
 
     - mapping_per_feat_level: Maps each level for each feature in a subset of the categorical features of
      X into a scalar or a vector. 
-    - encoded_features: The subset of the categorical features of X that were encoded
+    $encoded_features_doc
 """
 function generic_fit(X,
     features = Symbol[],

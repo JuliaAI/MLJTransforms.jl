@@ -7,16 +7,16 @@ categorical features with their (normalized or raw) frequencies of occurrence in
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
-  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the features given in `features`
-  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+    $X_doc
+    $features_doc
+    $ignore_doc
+    $ordered_factor_doc
   - `normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
 
-# Returns (in a dict)
+# Returns as a named-tuple
 
   - `statistic_given_feat_val`: The frequency of each level of each selected categorical feature
-  - `encoded_features`: The subset of the categorical features of X that were encoded
+  $encoded_features_doc
 """
 function frequency_encoder_fit(
     X,
@@ -39,11 +39,11 @@ function frequency_encoder_fit(
     # 2. Pass it to generic_fit
     statistic_given_feat_val, encoded_features = generic_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
-        feature_mapper = feature_mapper,)
-        
+        feature_mapper = feature_mapper)
+
     cache = (
-      statistic_given_feat_val = statistic_given_feat_val,
-      encoded_features = encoded_features,
+        statistic_given_feat_val = statistic_given_feat_val,
+        encoded_features = encoded_features,
     )
     return cache
 end

@@ -5,14 +5,13 @@
 Fit an encoder to encode the levels of categorical variables in a given table as integers (ordered arbitrarily).
 
 # Arguments
-
-  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
-  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the features given in `features`
-  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+    $X_doc
+    $features_doc
+    $ignore_doc
+    $ordered_factor_doc
   - `dtype`: The numerical concrete type of the encoded features. Default is `Float32`.
 
-# Returns (in a dict)
+# Returns as a named-tuple
 
   - `index_given_feat_level`: Maps each level for each column in a subset of the categorical features of X into an integer.
   - `encoded_features`: The subset of the categorical features of X that were encoded
@@ -37,10 +36,10 @@ function ordinal_encoder_fit(
     # 2. Pass it to generic_fit
     index_given_feat_level, encoded_features = generic_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
-        feature_mapper = feature_mapper,)
+        feature_mapper = feature_mapper)
     cache = (
-      index_given_feat_level = index_given_feat_level,
-      encoded_features = encoded_features,
+        index_given_feat_level = index_given_feat_level,
+        encoded_features = encoded_features,
     )
     return cache
 end

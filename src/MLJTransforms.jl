@@ -19,6 +19,7 @@ using OrderedCollections
 const MMI = MLJModelInterface
 
 # Functions of generic use across transformers
+include("common_docs.jl")
 include("generic.jl")
 include("utils.jl")
 

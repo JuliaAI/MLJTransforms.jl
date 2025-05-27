@@ -102,17 +102,15 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+$features_doc
+$ignore_doc
+$ordered_factor_doc
 - `min_frequency::Real=3`: Any level of a categorical feature that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
 an integer or a float which decides whether raw counts or normalized frequencies are used.
 - `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
@@ -138,7 +136,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 

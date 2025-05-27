@@ -86,23 +86,21 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+$features_doc
 - `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`, `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`.
 If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
 contrast encoding scheme for each feature
 - `buildmatrix=nothing`: A function or other callable with signature `buildmatrix(colname, k)`, 
 where `colname` is the name of the feature levels and `k` is it's length, and which returns contrast or 
 hypothesis matrix with row/column ordering consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or `:hypothesis`.
-- `ignore=true`: Whether to exclude or includes the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+$ignore_doc
+$ordered_factor_doc
 
 # Operations
 
@@ -120,7 +118,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 
