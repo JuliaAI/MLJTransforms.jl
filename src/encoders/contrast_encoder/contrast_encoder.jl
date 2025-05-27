@@ -134,10 +134,9 @@ function contrast_encoder_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
         feature_mapper = feature_mapper,
     )
-
-    cache = Dict(
-        :vector_given_value_given_feature  => vector_given_value_given_feature,
-        :encoded_features => encoded_features,
+    cache = (
+        vector_given_value_given_feature = vector_given_value_given_feature,
+        encoded_features = encoded_features,
     )
 
     return cache
@@ -157,7 +156,7 @@ Use a fitted contrast encoder to encode the levels of selected categorical varia
 
   - `X_tr`: The table with selected features after the selected features are encoded by contrast encoding.
 """
-function contrast_encoder_transform(X, cache::Dict)
-    vector_given_value_given_feature = cache[:vector_given_value_given_feature]
+function contrast_encoder_transform(X, cache::NamedTuple)
+    vector_given_value_given_feature = cache.vector_given_value_given_feature
     return generic_transform(X, vector_given_value_given_feature, single_feat = false; use_levelnames = true)
 end

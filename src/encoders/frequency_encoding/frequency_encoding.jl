@@ -39,11 +39,11 @@ function frequency_encoder_fit(
     # 2. Pass it to generic_fit
     statistic_given_feat_val, encoded_features = generic_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
-        feature_mapper = feature_mapper,
-    )
-    cache = Dict(
-        :statistic_given_feat_val => statistic_given_feat_val,
-        :encoded_features => encoded_features,
+        feature_mapper = feature_mapper,)
+        
+    cache = (
+      statistic_given_feat_val = statistic_given_feat_val,
+      encoded_features = encoded_features,
     )
     return cache
 end
@@ -62,7 +62,7 @@ Encode the levels of a categorical variable in a given table with their (normali
 
   - `X_tr`: The table with selected features after the selected features are encoded by frequency encoding.
 """
-function frequency_encoder_transform(X, cache::Dict)
-    statistic_given_feat_val = cache[:statistic_given_feat_val]
+function frequency_encoder_transform(X, cache::NamedTuple)
+    statistic_given_feat_val = cache.statistic_given_feat_val
     return generic_transform(X, statistic_given_feat_val)
 end

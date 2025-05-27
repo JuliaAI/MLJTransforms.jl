@@ -45,7 +45,9 @@ end
         X_tr = frequency_encoder_transform(X, cache)
         enc =
             (col, level) ->
-                Float32((norm) ? sum(X[col] .== level) / length(X[col]) : sum(X[col] .== level))
+                Float32(
+                    (norm) ? sum(X[col] .== level) / length(X[col]) : sum(X[col] .== level),
+                )
 
         target = (
             A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -77,10 +79,10 @@ end
 
         # fitted parameters is correct
         statistic_given_feat_val = fitted_params(mach).statistic_given_feat_val
-        @test statistic_given_feat_val == generic_cache[:statistic_given_feat_val]
+        @test statistic_given_feat_val == generic_cache.statistic_given_feat_val
 
         # Test report
-        @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+        @test report(mach) == (encoded_features = generic_cache.encoded_features,)
     end
 end
 

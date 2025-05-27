@@ -36,9 +36,9 @@ function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
         normalize = transformer.normalize,
         output_type = transformer.output_type,
     )
-    fitresult = generic_cache[:statistic_given_feat_val]
+    fitresult = generic_cache.statistic_given_feat_val
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -46,9 +46,8 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::FrequencyEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :statistic_given_feat_val =>
-            fitresult,
+    generic_cache = (
+        statistic_given_feat_val = fitresult,
     )
     Xnew_transf = frequency_encoder_transform(Xnew, generic_cache)
     return Xnew_transf

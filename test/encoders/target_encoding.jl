@@ -227,7 +227,7 @@ end
         target_encoder_fit(X, y; ignore = true, ordered_factor = false)
     X_tr = target_encoder_transform(X, cache)
 
-    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
+    enc = (col, level) -> cache.y_stat_given_feat_level[col][level]
 
     target = (
         A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -257,7 +257,7 @@ end
         target_encoder_fit(X, y)
     X_tr = target_encoder_transform(X, cache)
 
-    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
+    enc = (col, level) -> cache.y_stat_given_feat_level[col][level]
 
     target = (
         A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -276,7 +276,7 @@ end
         target_encoder_fit(X, y)
     X_tr = target_encoder_transform(X, cache)
 
-    enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
+    enc = (col, level) -> cache.y_stat_given_feat_level[col][level]
     target = (
         A_0 = [enc(:A, X[:A][i])[1] for i in 1:10],
         A_1 = [enc(:A, X[:A][i])[2] for i in 1:10],
@@ -328,23 +328,33 @@ end
         # fitted parameters is correct
         fitresult = fitted_params(mach)
         @test fitresult.y_statistic_given_feat_level ==
-              generic_cache[:y_stat_given_feat_level]
-        @test fitresult.task == generic_cache[:task]
+              generic_cache.y_stat_given_feat_level
+        @test fitresult.task == generic_cache.task
 
         # Test invalid `m`
         invalid_m = -5
         @test_throws MLJTransforms.NON_NEGATIVE_m(invalid_m) begin
-            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = 0.5, m = invalid_m)
+            t = TargetEncoder(
+                ignore = true,
+                ordered_factor = false,
+                lambda = 0.5,
+                m = invalid_m,
+            )
         end
-        
+
         # Test invalid `lambda` (value > 1)
         invalid_lambda = 1.1
         @test_throws MLJTransforms.INVALID_lambda(invalid_lambda) begin
-            t = TargetEncoder(ignore = true, ordered_factor = false, lambda = invalid_lambda, m = 1)
+            t = TargetEncoder(
+                ignore = true,
+                ordered_factor = false,
+                lambda = invalid_lambda,
+                m = 1,
+            )
         end
 
         # Test report
-        @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+        @test report(mach) == (encoded_features = generic_cache.encoded_features,)
     end
 end
 

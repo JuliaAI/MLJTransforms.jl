@@ -94,9 +94,9 @@ function missingness_encoder_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
         feature_mapper = feature_mapper,
     )
-    cache = Dict(
-        :label_for_missing_given_feature => label_for_missing_given_feature,
-        :encoded_features => encoded_features,
+    cache = (
+        label_for_missing_given_feature = label_for_missing_given_feature,
+        encoded_features = encoded_features,
     )
     return cache
 end
@@ -116,8 +116,8 @@ Apply a fitted missingness encoder to a table given the output of `missingness_e
 
   - `X_tr`: The table with selected features after the selected features are transformed by missingness encoder
 """
-function missingness_encoder_transform(X, cache::Dict)
-    label_for_missing_given_feature = cache[:label_for_missing_given_feature]
+function missingness_encoder_transform(X, cache::NamedTuple)
+    label_for_missing_given_feature = cache.label_for_missing_given_feature
     return generic_transform(
         X,
         label_for_missing_given_feature;

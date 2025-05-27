@@ -34,8 +34,8 @@ function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
         output_type = transformer.output_type,
     )
     fitresult =
-        generic_cache[:index_given_feat_level]
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+        generic_cache.index_given_feat_level
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -43,9 +43,7 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::OrdinalEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :index_given_feat_level => fitresult,
-    )
+    generic_cache = (index_given_feat_level = fitresult,)
     Xnew_transf = ordinal_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
 end

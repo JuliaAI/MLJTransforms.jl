@@ -36,9 +36,9 @@ function MMI.fit(transformer::ContrastEncoder, verbosity::Int, X)
         buildmatrix = transformer.buildmatrix,
         ordered_factor = transformer.ordered_factor,
     )
-    fitresult = generic_cache[:vector_given_value_given_feature]
+    fitresult = generic_cache.vector_given_value_given_feature
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -46,9 +46,8 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::ContrastEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :vector_given_value_given_feature =>
-            fitresult,
+    generic_cache = (
+        vector_given_value_given_feature = fitresult,
     )
     Xnew_transf = contrast_encoder_transform(Xnew, generic_cache)
     return Xnew_transf

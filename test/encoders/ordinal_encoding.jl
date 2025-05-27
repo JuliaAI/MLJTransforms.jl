@@ -77,10 +77,10 @@ end
 
         # fitted parameters is correct
         index_given_feat_level = fitted_params(mach).index_given_feat_level
-        @test index_given_feat_level == generic_cache[:index_given_feat_level]
+        @test index_given_feat_level == generic_cache.index_given_feat_level
 
         # Test report
-        @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+        @test report(mach) == (encoded_features = generic_cache.encoded_features,)
     end
 end
 

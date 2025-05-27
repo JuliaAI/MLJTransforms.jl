@@ -105,9 +105,9 @@ function cardinality_reducer_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
         feature_mapper = feature_mapper,
     )
-    cache = Dict(
-        :new_cat_given_col_val => new_cat_given_col_val,
-        :encoded_features => encoded_features,
+    cache = (
+        new_cat_given_col_val = new_cat_given_col_val,
+        encoded_features = encoded_features,
     )
     return cache
 end
@@ -128,7 +128,12 @@ Apply a fitted cardinality reducer to a table given the output of `cardinality_r
 
   - `X_tr`: The table with selected features after the selected features are transformed by cardinality reducer
 """
-function cardinality_reducer_transform(X, cache::Dict)
-    new_cat_given_col_val = cache[:new_cat_given_col_val]
-    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true, ensure_categorical = true)
+function cardinality_reducer_transform(X, cache::NamedTuple)
+    new_cat_given_col_val = cache.new_cat_given_col_val
+    return generic_transform(
+        X,
+        new_cat_given_col_val;
+        ignore_unknown = true,
+        ensure_categorical = true,
+    )
 end
