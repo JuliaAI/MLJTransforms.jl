@@ -16,7 +16,7 @@ logic?"
     - X: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
     `Multiclass` or `OrderedFactor`
     - features=[]: A list of names of categorical features given as symbols to exclude or include from encoding,
-      according to the value of `ignore`
+      according to the value of `ignore`, or a single symbol (which is treated as a vector with one symbol),
       or a callable that returns true for features to be included/excluded
     - ignore=true: Whether to exclude or includes the features given in features
     - ordered_factor=false: Whether to encode OrderedFactor or ignore them
@@ -40,8 +40,12 @@ function generic_fit(X,
     feat_names = Tables.schema(X).names
 
     #2.  Modify column_names based on features 
+    if features isa Symbol
+        features = [features]
+    end
+    
     if features isa AbstractVector{Symbol}
-         # Original behavior for vector of symbols
+        # Original behavior for vector of symbols
         feat_names =
             (ignore) ? setdiff(feat_names, features) : intersect(feat_names, features)
     else

@@ -183,3 +183,19 @@ end
     cache3 = dummy_encoder_fit(X, predicate; ignore=false, ordered_factor=true)
     @test Set(cache3[:encoded]) == Set([:A, :C, :E])
 end
+
+@testset "Single Symbol and list of one symbol equivalence" begin
+     X = dataset_forms[1]
+    feat_names = Tables.schema(X).names
+
+    # Test 1: Single Symbol
+    single_symbol = :A
+    cache1 = dummy_encoder_fit(X, single_symbol; ignore=true, ordered_factor=false)
+    @test !(:A in cache1[:encoded])
+    # Test 2: List of one symbol
+    single_symbol_list = [:A]
+    cache2 = dummy_encoder_fit(X, single_symbol_list; ignore=true, ordered_factor=false)
+    @test !(:A in cache2[:encoded])
+    # Test 3: Both should yield the same result
+    @test cache1[:encoded] == cache2[:encoded]
+end
