@@ -277,22 +277,21 @@ end
     X_tr = target_encoder_transform(X, cache)
 
     enc = (col, level) -> cache[:y_stat_given_feat_level][col][level]
-
     target = (
-        A_1 = [enc(:A, X[:A][i])[1] for i in 1:10],
-        A_2 = [enc(:A, X[:A][i])[2] for i in 1:10],
-        A_3 = [enc(:A, X[:A][i])[3] for i in 1:10],
+        A_0 = [enc(:A, X[:A][i])[1] for i in 1:10],
+        A_1 = [enc(:A, X[:A][i])[2] for i in 1:10],
+        A_2 = [enc(:A, X[:A][i])[3] for i in 1:10],
         B = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-        C_1 = [enc(:C, X[:C][i])[1] for i in 1:10],
-        C_2 = [enc(:C, X[:C][i])[2] for i in 1:10],
-        C_3 = [enc(:C, X[:C][i])[3] for i in 1:10],
-        D_1 = [enc(:D, X[:D][i])[1] for i in 1:10],
-        D_2 = [enc(:D, X[:D][i])[2] for i in 1:10],
-        D_3 = [enc(:D, X[:D][i])[3] for i in 1:10],
+        C_0 = [enc(:C, X[:C][i])[1] for i in 1:10],
+        C_1 = [enc(:C, X[:C][i])[2] for i in 1:10],
+        C_2 = [enc(:C, X[:C][i])[3] for i in 1:10],
+        D_0 = [enc(:D, X[:D][i])[1] for i in 1:10],
+        D_1 = [enc(:D, X[:D][i])[2] for i in 1:10],
+        D_2 = [enc(:D, X[:D][i])[3] for i in 1:10],
         E = [1, 2, 3, 4, 5, 6, 6, 3, 2, 1],
-        F_1 = [enc(:F, X[:F][i])[1] for i in 1:10],
-        F_2 = [enc(:F, X[:F][i])[2] for i in 1:10],
-        F_3 = [enc(:F, X[:F][i])[3] for i in 1:10],
+        F_0 = [enc(:F, X[:F][i])[1] for i in 1:10],
+        F_1 = [enc(:F, X[:F][i])[2] for i in 1:10],
+        F_2 = [enc(:F, X[:F][i])[3] for i in 1:10],
     )
     for col in keys(target)
         @test all(X_tr[col] .== target[col])
@@ -348,3 +347,43 @@ end
         @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
     end
 end
+
+
+
+@testset "Test Target Encoding Types" begin
+    # Define categorical features
+    A = ["g", "b", "g", "r", "r"]
+    B = [1.0, 2.0, 3.0, 4.0, 5.0]
+    C = ["f", "f", "f", "m", "f"]
+    D = [true, false, true, false, true]
+    E = [1, 2, 3, 4, 5]
+
+    # Define the target variable 
+    y = ["c1", "c2", "c3", "c1", "c2"]
+
+    # Combine into a named tuple
+    X = (A = A, B = B, C = C, D = D, E = E)
+
+    # Coerce A, C, D to multiclass and B to continuous and E to ordinal
+    X = coerce(X,
+        :A => Multiclass,
+        :B => Continuous,
+        :C => Multiclass,
+        :D => Multiclass,
+        :E => OrderedFactor,
+    )
+    y = coerce(y, Multiclass)
+
+    encoder = TargetEncoder(ordered_factor = false, lambda = 1.0, m = 0)
+    mach = fit!(machine(encoder, X, y))
+    Xnew = MMI.transform(mach, X)
+
+    scs = schema(Xnew).scitypes
+    ts  = schema(Xnew).types
+    # Check scitypes for previously continuos or categorical features
+    @test all(scs[1:end-1] .== Continuous)
+    @test all(t -> (t <: AbstractFloat) && isconcretetype(t), ts[1:end-1])
+    @test scs[end] === schema(X).scitypes[end]
+    @test ts[end] == schema(X).types[end]
+end
+

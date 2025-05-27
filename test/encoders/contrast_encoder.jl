@@ -64,9 +64,7 @@ end
     cache = contrast_encoder_fit(X, [:name]; ignore=false, mode = :dummy)
     k = length(levels(X.name))
     contrast_matrix = get_dummy_contrast(k)
-    print()
     for (i, level) in enumerate(levels(X.name))
-        println(cache[:vector_given_value_given_feature])
         @test cache[:vector_given_value_given_feature][:name][level] == contrast_matrix[i, :]
     end
 end
@@ -302,4 +300,40 @@ end
 
     # Test report
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+end
+
+
+@testset "Test Contrast Encoder Output Types" begin
+    X = (
+        name   = categorical(["Ben", "John", "Mary", "John"]),
+        height = [1.85, 1.67, 1.5, 1.67],
+        favnum = categorical([7, 5, 10, 1]),
+        age    = [23, 23, 14, 23],
+    )
+
+    methods =  [:contrast, :dummy, :sum, :backward_diff, :helmert, :hypothesis]
+    matrix_func = [buildrandomcontrast, nothing, nothing, nothing, nothing, buildrandomhypothesis]
+    
+    for (i, method) in enumerate(methods)
+        encoder = ContrastEncoder(
+            features = [:name, :favnum],
+            ignore = false,
+            mode = method,
+            buildmatrix=matrix_func[i]
+        )
+        mach = fit!(machine(encoder, X))
+        Xnew = MMI.transform(mach, X)
+
+        # Test Consistency with Types
+        scs = schema(Xnew).scitypes
+        ts  = schema(Xnew).types
+
+        # Check scitypes for previously continuos or categorical features
+        @test all(scs[1:end-1] .== Continuous)
+        @test all(t -> (t <: AbstractFloat) && isconcretetype(t), ts[1:end-1])
+        # Check scitypes for previously Count feature
+        last_type, last_sctype = ts[end], scs[end]
+        @test last_type <: Integer && isconcretetype(last_type)
+        @test last_sctype <: Count
+    end
 end

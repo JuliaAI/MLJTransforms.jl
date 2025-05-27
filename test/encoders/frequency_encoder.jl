@@ -9,7 +9,8 @@ using MLJTransforms: frequency_encoder_fit, frequency_encoder_transform
     for norm in normalize
         result = frequency_encoder_fit(X; normalize = norm)[:statistic_given_feat_val]
         enc =
-            (col, level) -> ((norm) ? sum(col .== level) / length(col) : sum(col .== level))
+            (col, level) ->
+                Float32((norm) ? sum(col .== level) / length(col) : sum(col .== level))
         true_output = Dict{Symbol, Dict{Any, Any}}(
             :F => Dict(
                 "m" => enc(F_col, "m"),
@@ -44,7 +45,7 @@ end
         X_tr = frequency_encoder_transform(X, cache)
         enc =
             (col, level) ->
-                ((norm) ? sum(X[col] .== level) / length(X[col]) : sum(X[col] .== level))
+                Float32((norm) ? sum(X[col] .== level) / length(X[col]) : sum(X[col] .== level))
 
         target = (
             A = [enc(:A, X[:A][i]) for i in 1:10],
@@ -81,4 +82,42 @@ end
         # Test report
         @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
     end
+end
+
+@testset "Test Frequency Encoding Output Types" begin
+    # Define categorical features
+    A = ["g", "b", "g", "r", "r"]
+    B = [1.0, 2.0, 3.0, 4.0, 5.0]
+    C = ["f", "f", "f", "m", "f"]
+    D = [true, false, true, false, true]
+    E = [1, 2, 3, 4, 5]
+
+    # Combine into a named tuple
+    X = (A = A, B = B, C = C, D = D, E = E)
+
+    # Coerce A, C, D to multiclass and B to continuous and E to ordinal
+    X = coerce(X,
+        :A => Multiclass,
+        :B => Continuous,
+        :C => Multiclass,
+        :D => Multiclass,
+        :E => OrderedFactor,
+    )
+
+    # Check scitype coercions:
+    schema(X)
+
+    encoder = FrequencyEncoder(ordered_factor = false, normalize = false)
+    mach = fit!(machine(encoder, X))
+    Xnew = MMI.transform(mach, X)
+
+
+    scs = schema(Xnew).scitypes
+    ts  = schema(Xnew).types
+    # Check scitypes correctness
+    @test all(scs[1:end-1] .== Continuous)
+    @test all(t -> (t <: AbstractFloat) && isconcretetype(t), ts[1:end-1])
+    # Ordinal column should be intact
+    @test scs[end] === schema(X).scitypes[end]
+    @test ts[end] == schema(X).types[end]
 end

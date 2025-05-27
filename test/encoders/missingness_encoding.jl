@@ -159,3 +159,34 @@ end
     # Test report
     @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
 end
+
+
+
+@testset "Test Missingness Encoder Output Types" begin
+    # Define a table with missing values
+    Xm = (
+        A = categorical(["Ben", "John", missing, missing, "Mary", "John", missing]),
+        B = [1.85, 1.67, missing, missing, 1.5, 1.67, missing],
+        C = categorical([7, 5, missing, missing, 10, 0, missing]),
+        D = categorical([23, 23, 44, 66, 14, 23, missing], ordered = true),
+        E = categorical([missing, 'g', 'r', missing, 'r', 'g', 'p']),
+    )
+
+    encoder = MissingnessEncoder()
+    mach = fit!(machine(encoder, Xm))
+    Xnew = MMI.transform(mach, Xm)
+
+    schema(Xm)
+    schema(Xnew)
+    Xnew.B
+
+    scs = schema(Xnew).scitypes
+    for (i, type) in enumerate(schema(Xm).scitypes)
+        print(nonmissingtype(type))
+        if nonmissingtype(type) <: Multiclass
+            @test scs[i] <: Multiclass
+        else
+            scs[i] == type
+        end
+    end
+end

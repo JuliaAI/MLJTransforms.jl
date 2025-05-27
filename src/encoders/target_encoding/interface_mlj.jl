@@ -51,6 +51,8 @@ struct TargetEncoderResult{
     y_stat_given_feat_level::Dict{A, A}
     task::S            # "Regression", "Classification" 
     num_classes::I     # num_classes in case of classification
+    y_classes::A      # y_classes in case of classification
+    
 end
 
 
@@ -76,6 +78,7 @@ function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
         generic_cache[:y_stat_given_feat_level],
         generic_cache[:task],
         generic_cache[:num_classes],
+        generic_cache[:y_classes],
     )
     report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
     cache = nothing
@@ -90,6 +93,7 @@ function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
             fitresult.y_stat_given_feat_level,
         :num_classes => fitresult.num_classes,
         :task => fitresult.task,
+        :y_classes => fitresult.y_classes,
     )
     Xnew_transf = target_encoder_transform(Xnew, generic_cache)
     return Xnew_transf

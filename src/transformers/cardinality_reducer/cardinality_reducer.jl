@@ -35,20 +35,20 @@ function cardinality_reducer_fit(
     features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
-    min_frequency::Real = 3,                        
-    label_for_infrequent::Dict{<:Type, <:Any} = Dict(    
+    min_frequency::Real = 3,
+    label_for_infrequent::Dict{<:Type, <:Any} = Dict(
         AbstractString => "Other",
         Char => 'O',
     ),
-)   
+)
     supportedtypes_list = [Char, AbstractString, Number]
     supportedtypes = Union{supportedtypes_list...}
 
     # 1. Define feature mapper
     function feature_mapper(col, name)
         val_to_freq = (min_frequency isa AbstractFloat) ? proportionmap(col) : countmap(col)
-        col_type = eltype(col).parameters[1]
         feat_levels = levels(col)
+        col_type = eltype(feat_levels)
 
         # Ensure column type is valid (can't test because never occurs)
         # Converting array elements to strings before wrapping in a `CategoricalArray`, as...
@@ -88,7 +88,11 @@ function cardinality_reducer_fit(
                     elseif elgrandtype == Number
                         new_cat_given_col_val[level] = minimum(feat_levels) - 1
                     else
-                        throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent)))
+                        throw(
+                            ArgumentError(
+                                UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent),
+                            ),
+                        )
                     end
                 end
             end
@@ -98,7 +102,8 @@ function cardinality_reducer_fit(
 
     # 2. Pass it to generic_fit
     new_cat_given_col_val, encoded_features = generic_fit(
-        X, features; ignore = ignore, ordered_factor = ordered_factor, feature_mapper = feature_mapper,
+        X, features; ignore = ignore, ordered_factor = ordered_factor,
+        feature_mapper = feature_mapper,
     )
     cache = Dict(
         :new_cat_given_col_val => new_cat_given_col_val,
@@ -125,5 +130,5 @@ Apply a fitted cardinality reducer to a table given the output of `cardinality_r
 """
 function cardinality_reducer_transform(X, cache::Dict)
     new_cat_given_col_val = cache[:new_cat_given_col_val]
-    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true)
+    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true, ensure_categorical = true)
 end
