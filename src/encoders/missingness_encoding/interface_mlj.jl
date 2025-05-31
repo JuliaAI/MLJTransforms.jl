@@ -39,9 +39,9 @@ function MMI.fit(transformer::MissingnessEncoder, verbosity::Int, X)
         ordered_factor = transformer.ordered_factor,
         label_for_missing = transformer.label_for_missing,
     )
-    fitresult = generic_cache[:label_for_missing_given_feature]
+    fitresult = generic_cache.label_for_missing_given_feature
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -49,9 +49,8 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::MissingnessEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :label_for_missing_given_feature =>
-            fitresult,
+    generic_cache = (
+        label_for_missing_given_feature = fitresult,
     )
     Xnew_transf = missingness_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
@@ -91,17 +90,15 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+$features_doc
+$ignore_doc
+$ordered_factor_doc
 - `label_for_missing::Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char => 'm', )`: A
 dictionary where the possible values for keys are the types in `Char`, `AbstractString`, and `Number` and where each value
 signifies the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
@@ -124,7 +121,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 

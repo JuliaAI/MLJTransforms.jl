@@ -36,9 +36,9 @@ function MMI.fit(transformer::FrequencyEncoder, verbosity::Int, X)
         normalize = transformer.normalize,
         output_type = transformer.output_type,
     )
-    fitresult = generic_cache[:statistic_given_feat_val]
+    fitresult = generic_cache.statistic_given_feat_val
 
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -46,9 +46,8 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::FrequencyEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :statistic_given_feat_val =>
-            fitresult,
+    generic_cache = (
+        statistic_given_feat_val = fitresult,
     )
     Xnew_transf = frequency_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
@@ -87,18 +86,16 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or include the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
-- `normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
+$features_doc
+$ignore_doc
+$ordered_factor_doc
+- ` normalize=false`: Whether to use normalized frequencies that sum to 1 over category values or to use raw counts.
 - `output_type=Float32`: The type of the output values. The default is `Float32`, but you can set it to `Float64` or any other type that can hold the frequency values.
 
 # Operations
@@ -117,7 +114,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 
