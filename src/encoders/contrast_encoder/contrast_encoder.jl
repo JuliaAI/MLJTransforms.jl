@@ -9,13 +9,13 @@ Where `k` is the number of levels in the feature and the returned contrast matri
 """
 ### 1. Dummy Coding
 function get_dummy_contrast(k)
-    return Matrix(1.0I, k, k-1)
+    return Matrix(1.0I, k, k - 1)
 end
 
 
 ### 2. Sum Coding
 function get_sum_contrast(k)
-    C = Matrix(1.0I, k, k-1)
+    C = Matrix(1.0I, k, k - 1)
     C[end, :] .= -1.0
     return C
 end
@@ -26,7 +26,7 @@ function create_backward_vector(index::Int, length::Int)
     vec = ones(length) .* index / length
 
     # [ -(k-i)/k -(k-i)/k -(k-i)/k .. i/k i/k]
-    vec[1:index] .= index/length - 1
+    vec[1:index] .= index / length - 1
     return vec
 end
 function get_backward_diff_contrast(k)
@@ -61,25 +61,25 @@ Fit a contrast encoing scheme on given data in `X`.
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) `Multiclass` or `OrderedFactor`
-  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
+    $X_doc
+    $features_doc
   - `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`, `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`.
-  If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
-  contrast encoding scheme for each feature
-  - `buildmatrix=nothing`: A function or other callable with signature `buildmatrix(colname, k)`, 
-  where `colname` is the name of the feature levels and `k` is it's length, and which returns contrast or 
-  hypothesis matrix with row/column ordering consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or `:hypothesis`.
-  - `ignore=true`: Whether to exclude or includes the features given in `features`
-  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+    If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
+    contrast encoding scheme for each feature
+  - `buildmatrix=nothing`: A function or other callable with signature `buildmatrix(colname, k)`,
+    where `colname` is the name of the feature levels and `k` is it's length, and which returns contrast or
+    hypothesis matrix with row/column ordering consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or `:hypothesis`.
+    $ignore_doc
+    $ordered_factor_doc
 
-# Returns (in a dict)
+# Returns as a named-tuple
 
   - `vec_given_feat_level`: Maps each level for each column in the selected categorical features to a vector
-  - `encoded_features`: The subset of the categorical features of X that were encoded
+  $encoded_features_doc
 """
 function contrast_encoder_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     mode::Union{Symbol, AbstractVector{Symbol}} = :dummy,
     buildmatrix = nothing,
     ignore::Bool = true,
@@ -90,9 +90,10 @@ function contrast_encoder_fit(
     if mode isa Vector{Symbol}
         mode_is_vector = true
         ignore && throw(ArgumentError(IGNORE_MUST_FALSE_VEC_MODE))
-        length(features) == length(mode) || throw(ArgumentError(LENGTH_MISMATCH_VEC_MODE(length(mode), length(features))))
+        length(features) == length(mode) ||
+            throw(ArgumentError(LENGTH_MISMATCH_VEC_MODE(length(mode), length(features))))
     end
-    
+
     # buildmatrix should be specified if mode is :contrast or :hypothesis
     if mode in (:contrast, :hypothesis)
         buildmatrix === nothing && throw(ArgumentError(BUILDFUNC_MUST_BE_SPECIFIED))
@@ -105,11 +106,13 @@ function contrast_encoder_fit(
         k = length(feat_levels)
         feat_mode = (mode_is_vector) ? mode[findfirst(isequal(name), features)] : mode
         if feat_mode == :contrast
-            contrastmatrix = buildmatrix(name, k)            
-            size(contrastmatrix) == (k, k-1) || throw(ArgumentError(MATRIX_SIZE_ERROR(k, size(contrastmatrix), name)))
+            contrastmatrix = buildmatrix(name, k)
+            size(contrastmatrix) == (k, k - 1) ||
+                throw(ArgumentError(MATRIX_SIZE_ERROR(k, size(contrastmatrix), name)))
         elseif feat_mode == :hypothesis
-            hypothesismatrix = buildmatrix(name, k) 
-            size(hypothesismatrix) == (k-1, k) || throw(ArgumentError(MATRIX_SIZE_ERROR_HYP(k, size(hypothesismatrix), name)))
+            hypothesismatrix = buildmatrix(name, k)
+            size(hypothesismatrix) == (k - 1, k) ||
+                throw(ArgumentError(MATRIX_SIZE_ERROR_HYP(k, size(hypothesismatrix), name)))
             contrastmatrix = pinv(hypothesismatrix)
         elseif feat_mode == :dummy
             contrastmatrix = get_dummy_contrast(k)
@@ -125,7 +128,9 @@ function contrast_encoder_fit(
             throw(ArgumentError("Mode $feat_mode is not supported."))
         end
 
-        vector_given_value_given_feature = Dict(level=>contrastmatrix[l, :] for (l, level) in enumerate(feat_levels))
+        vector_given_value_given_feature = OrderedDict(
+            level => contrastmatrix[l, :] for (l, level) in enumerate(feat_levels)
+        )
         return vector_given_value_given_feature
     end
 
@@ -134,10 +139,9 @@ function contrast_encoder_fit(
         X, features; ignore = ignore, ordered_factor = ordered_factor,
         feature_mapper = feature_mapper,
     )
-
-    cache = Dict(
-        :vector_given_value_given_feature  => vector_given_value_given_feature,
-        :encoded_features => encoded_features,
+    cache = (
+        vector_given_value_given_feature = vector_given_value_given_feature,
+        encoded_features = encoded_features,
     )
 
     return cache
@@ -157,7 +161,12 @@ Use a fitted contrast encoder to encode the levels of selected categorical varia
 
   - `X_tr`: The table with selected features after the selected features are encoded by contrast encoding.
 """
-function contrast_encoder_transform(X, cache::Dict)
-    vector_given_value_given_feature = cache[:vector_given_value_given_feature]
-    return generic_transform(X, vector_given_value_given_feature, single_feat = false)
+function contrast_encoder_transform(X, cache::NamedTuple)
+    vector_given_value_given_feature = cache.vector_given_value_given_feature
+    return generic_transform(
+        X,
+        vector_given_value_given_feature,
+        single_feat = false;
+        use_levelnames = true,
+    )
 end

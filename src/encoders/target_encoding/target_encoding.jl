@@ -114,12 +114,11 @@ Fit a target encoder on table X with target y by computing the necessary statist
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
-    `Multiclass` or `OrderedFactor`
+    $X_doc
   - `y`:  An abstract vector of labels (e.g., strings) that correspond to the observations in X
-  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the features given in `features`
-  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+    $features_doc
+    $ignore_doc
+    $ordered_factor_doc
   - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
   - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
     empirical Bayes estimation as described in [1]
@@ -132,7 +131,7 @@ Fit a target encoder on table X with target y by computing the necessary statist
 function target_encoder_fit(
     X,
     y::AbstractVector,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
     lambda::Real = 1.0,
@@ -166,8 +165,9 @@ function target_encoder_fit(
 
     # 3. Define function to compute the new value(s) for each level given a column
     function feature_mapper(col, name)
+        feat_levels = levels(col)
         y_stat_given_feat_level_for_col =
-            Dict{Any, Union{AbstractFloat, AbstractVector{<:AbstractFloat}}}()
+            Dict{eltype(feat_levels), Any}()
         for level in levels(col)
             # Get the targets of an example that belong to this level
             targets_for_level = y[col.==level]
@@ -210,11 +210,12 @@ function target_encoder_fit(
         feature_mapper = feature_mapper,
     )
 
-    cache = Dict(
-        :task => task,
-        :num_classes => (task == "Regression") ? -1 : length(y_classes),
-        :y_stat_given_feat_level => y_stat_given_feat_level,
-        :encoded_features => encoded_features,
+    cache = (
+        task = task,
+        num_classes = (task == "Regression") ? -1 : length(y_classes),
+        y_stat_given_feat_level = y_stat_given_feat_level,
+        encoded_features = encoded_features,
+        y_classes = (task == "Regression") ? nothing : y_classes,
     )
     return cache
 end
@@ -240,14 +241,16 @@ every categorical feature as well as other metadata needed for transform
 """
 
 function target_encoder_transform(X, cache)
-    task = cache[:task]
-    y_stat_given_feat_level = cache[:y_stat_given_feat_level]
-    num_classes = cache[:num_classes]
+    task = cache.task
+    y_stat_given_feat_level = cache.y_stat_given_feat_level
+    num_classes = cache.num_classes
+    y_classes = cache.y_classes
 
     return generic_transform(
         X,
         y_stat_given_feat_level;
         single_feat = task == "Regression" || (task == "Classification" && num_classes < 3),
-    )
+        use_levelnames = true,
+        custom_levels = y_classes)
 end
 

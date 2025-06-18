@@ -1,9 +1,9 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct TargetEncoder{R1 <: Real, R2 <: Real, AS <: AbstractVector{Symbol}} <:
+mutable struct TargetEncoder{R1 <: Real, R2 <: Real, A <: Any} <:
                Unsupervised
-    features::AS
+    features::A
     ignore::Bool
     ordered_factor::Bool
     lambda::R1
@@ -45,12 +45,14 @@ end
 struct TargetEncoderResult{
     I <: Integer,
     S <: AbstractString,
-    A <: Any            # Useless but likely can't do much better
+    A <: Any,            # Useless but likely can't do much better
 } <: MMI.MLJType
     # target statistic for each level of each categorical feature
     y_stat_given_feat_level::Dict{A, A}
     task::S            # "Regression", "Classification" 
     num_classes::I     # num_classes in case of classification
+    y_classes::A      # y_classes in case of classification
+
 end
 
 
@@ -73,11 +75,12 @@ function MMI.fit(transformer::TargetEncoder, verbosity::Int, X, y)
         m = transformer.m,
     )
     fitresult = TargetEncoderResult(
-        generic_cache[:y_stat_given_feat_level],
-        generic_cache[:task],
-        generic_cache[:num_classes],
+        generic_cache.y_stat_given_feat_level,
+        generic_cache.task,
+        generic_cache.num_classes,
+        generic_cache.y_classes,
     )
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -85,11 +88,11 @@ end;
 
 # 7. Transform method
 function MMI.transform(transformer::TargetEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :y_stat_given_feat_level =>
-            fitresult.y_stat_given_feat_level,
-        :num_classes => fitresult.num_classes,
-        :task => fitresult.task,
+    generic_cache = (
+        y_stat_given_feat_level = fitresult.y_stat_given_feat_level,
+        num_classes = fitresult.num_classes,
+        task = fitresult.task,
+        y_classes = fitresult.y_classes,
     )
     Xnew_transf = target_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
@@ -128,9 +131,7 @@ In MLJ (or MLJBase) bind an instance `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 - `y` is the target, which can be any `AbstractVector` whose element
   scitype is `Continuous` or `Count` for regression problems and 
@@ -140,9 +141,9 @@ Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+$features_doc
+$ignore_doc
+$ordered_factor_doc
 - `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
 - `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
  empirical Bayes estimation as described in [1]
@@ -165,7 +166,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 

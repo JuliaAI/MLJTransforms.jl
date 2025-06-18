@@ -1,19 +1,20 @@
-using MLJTransforms: contrast_encoder_fit, contrast_encoder_transform, get_dummy_contrast, get_sum_contrast, 
-create_backward_vector, get_backward_diff_contrast, get_forward_diff_contrast, create_helmert_vector, get_helmert_contrast, ContrastEncoder
+using MLJTransforms: contrast_encoder_fit, contrast_encoder_transform, get_dummy_contrast,
+    get_sum_contrast,
+    create_backward_vector, get_backward_diff_contrast, get_forward_diff_contrast,
+    create_helmert_vector, get_helmert_contrast, ContrastEncoder
 
 stable_rng = StableRNGs.StableRNG(123)
-X =     (name   = categorical(["Ben", "John", "Mary", "John"]),
-height = [1.85, 1.67, 1.5, 1.67],
-favnum = categorical([7, 5, 10, 1]),
-age    = [23, 23, 14, 23])
+X = (name   = categorical(["Ben", "John", "Mary", "John"]),
+    height = [1.85, 1.67, 1.5, 1.67],
+    favnum = categorical([7, 5, 10, 1]),
+    age    = [23, 23, 14, 23])
 
 
 @testset "Contrast Encoder Error Handling" begin
-
     # Example definitions to allow the test to run
     function dummy_buildmatrix(colname, k)
         # Simple dummy function to generate a matrix of correct size
-        return randn(k, k-1)  # Adjust dimensions as needed for the test
+        return randn(k, k - 1)  # Adjust dimensions as needed for the test
     end
 
     # Define a DataFrame or appropriate data structure to test with
@@ -23,85 +24,117 @@ age    = [23, 23, 14, 23])
     )
 
     # Test IGNORE_MUST_FALSE_VEC_MODE error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=[:contrast], ignore=true)
+    @test_throws MLJTransforms.IGNORE_MUST_FALSE_VEC_MODE begin
+        contrast_encoder_fit(data, [:A], mode = [:contrast], ignore = true)
+    end
 
     # Test LENGTH_MISMATCH_VEC_MODE error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=[:contrast, :dummy], buildmatrix=dummy_buildmatrix, ignore=false)
+    @test_throws MLJTransforms.LENGTH_MISMATCH_VEC_MODE(2, 1) begin
+        contrast_encoder_fit(
+            data,
+            [:A],
+            mode = [:contrast, :dummy],
+            buildmatrix = dummy_buildmatrix,
+            ignore = false,
+        )
+    end
 
     # Test BUILDFUNC_MUST_BE_SPECIFIED error
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:contrast, ignore=false)
+    @test_throws MLJTransforms.BUILDFUNC_MUST_BE_SPECIFIED begin
+        contrast_encoder_fit(data, [:A], mode = :contrast, ignore = false)
+    end
 
     # Test MATRIX_SIZE_ERROR
     wrong_buildmatrix = (levels, k) -> randn(k, k)  # Incorrect dimensions
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:contrast, buildmatrix=wrong_buildmatrix, ignore=false)
+    k = 3  # Number of levels in data[:A]
+    wrong_size = (k, k)
+    @test_throws MLJTransforms.MATRIX_SIZE_ERROR(k, wrong_size, :A) begin
+        contrast_encoder_fit(
+            data,
+            [:A],
+            mode = :contrast,
+            buildmatrix = wrong_buildmatrix,
+            ignore = false,
+        )
+    end
 
     # Test MATRIX_SIZE_ERROR_HYP
-    wrong_buildmatrix_hyp = (levels, k) -> randn(k, k+1)  # Incorrect dimensions for hypothesis matrix
-    @test_throws ArgumentError contrast_encoder_fit(data, [:A], mode=:hypothesis, buildmatrix=wrong_buildmatrix_hyp, ignore=false)
+    wrong_buildmatrix_hyp = (levels, k) -> randn(k, k + 1)  # Incorrect dimensions for hypothesis matrix
+    wrong_size_hyp = (k, k + 1)
+    @test_throws MLJTransforms.MATRIX_SIZE_ERROR_HYP(k, wrong_size_hyp, :A) begin
+        contrast_encoder_fit(
+            data,
+            [:A],
+            mode = :hypothesis,
+            buildmatrix = wrong_buildmatrix_hyp,
+            ignore = false,
+        )
+    end
+
 end
 
 @testset "Dummy Coding Tests" begin
     for k in 2:5  # Testing for various numbers of levels
         contrast_matrix = get_dummy_contrast(k)
-        expected_matrix = Matrix(1.0I, k, k-1)
+        expected_matrix = Matrix(1.0I, k, k - 1)
         @test contrast_matrix == expected_matrix
-        @test size(contrast_matrix) == (k, k-1)
+        @test size(contrast_matrix) == (k, k - 1)
     end
     # test that fit is correct for dummy Coding
-    cache = contrast_encoder_fit(X, [:name]; ignore=false, mode = :dummy)
+    cache = contrast_encoder_fit(X, [:name]; ignore = false, mode = :dummy)
     k = length(levels(X.name))
     contrast_matrix = get_dummy_contrast(k)
-    print()
     for (i, level) in enumerate(levels(X.name))
-        println(cache[:vector_given_value_given_feature])
-        @test cache[:vector_given_value_given_feature][:name][level] == contrast_matrix[i, :]
+        @test cache.vector_given_value_given_feature[:name][level] == contrast_matrix[i, :]
     end
 end
 
 
 @testset "Sum Coding Tests" begin
     # Manually define the expected matrix for a 4-level categorical variable
-    expected_matrix_4 = [1.0  0.0  0.0;
-                         0.0  1.0  0.0;
-                         0.0  0.0  1.0;
-                        -1.0 -1.0 -1.0]  # Sum of each column for the first three rows is zeroed by the last row
+    expected_matrix_4 = [ 1.0  0.0  0.0;
+         0.0  1.0  0.0;
+         0.0  0.0  1.0;
+        -1.0 -1.0 -1.0]  # Sum of each column for the first three rows is zeroed by the last row
     contrast_matrix_4 = get_sum_contrast(4)
     @test contrast_matrix_4 == expected_matrix_4
     @test size(contrast_matrix_4) == (4, 3)
 
     # Additional tests can be included for different levels, with each matrix defined manually
     # Example for 3 levels
-    expected_matrix_3 = [1.0  0.0;
-                         0.0  1.0;
-                        -1.0 -1.0]
+    expected_matrix_3 = [ 1.0  0.0;
+         0.0  1.0;
+        -1.0 -1.0]
     contrast_matrix_3 = get_sum_contrast(3)
     @test contrast_matrix_3 == expected_matrix_3
     @test size(contrast_matrix_3) == (3, 2)
     # test that fit is correct for sum Coding
-    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore=false, mode = :sum)
+    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :sum)
     k = length(levels(X.favnum))
     contrast_matrix = get_sum_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
+        @test cache.vector_given_value_given_feature[:favnum][level] ==
+              contrast_matrix[i, :]
     end
 end
 
 @testset "Backward Difference Coding Tests" begin
     # Manually define the expected matrix for a 4 level categorical variable
     expected_matrix_4 = [-0.75  -0.5  -0.25;
-                          0.25  -0.5  -0.25;
-                          0.25   0.5  -0.25;
-                          0.25   0.5   0.75]
+         0.25  -0.5  -0.25;
+         0.25   0.5  -0.25;
+         0.25   0.5   0.75]
     contrast_matrix_4 = get_backward_diff_contrast(4)
     @test contrast_matrix_4 == expected_matrix_4
     @test size(contrast_matrix_4) == (4, 3)
 
     # Test that fit is correct for backward Coding
-    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore=false, mode = :backward_diff)
+    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :backward_diff)
     k = length(levels(X.favnum))
     contrast_matrix = get_backward_diff_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
+        @test cache.vector_given_value_given_feature[:favnum][level] ==
+              contrast_matrix[i, :]
     end
 end
 
@@ -110,15 +143,16 @@ end
         backward_matrix = get_backward_diff_contrast(k)
         forward_matrix = get_forward_diff_contrast(k)
         @test forward_matrix == -backward_matrix
-        @test size(forward_matrix) == (k, k-1)
+        @test size(forward_matrix) == (k, k - 1)
     end
 
     # Test that fit is correct for forward Coding
-    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore=false, mode = :forward_diff)
+    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :forward_diff)
     k = length(levels(X.favnum))
     contrast_matrix = get_forward_diff_contrast(k)
     for (i, level) in enumerate(levels(X.favnum))
-        @test cache[:vector_given_value_given_feature][:favnum][level] == contrast_matrix[i, :]
+        @test cache.vector_given_value_given_feature[:favnum][level] ==
+              contrast_matrix[i, :]
     end
 end
 
@@ -130,18 +164,18 @@ end
     @test create_helmert_vector(1, 3) == [-1.0, 1.0, 0.0]
     @test create_helmert_vector(2, 3) == [-1.0, -1.0, 2.0]
     k = 4
-    @test get_helmert_contrast(k) ==  [
-    -1.0  -1.0  -1.0
-     1.0  -1.0  -1.0
-     0.0   2.0  -1.0
-     0.0   0.0   3.0]
-     # test that fit is correct for helmert Coding
-     cache = contrast_encoder_fit(X, [:name, :favnum]; ignore=false, mode = :helmert)
-     k = length(levels(X.name))
-     contrast_matrix = get_helmert_contrast(k)
-     for (i, level) in enumerate(levels(X.name))
-         @test cache[:vector_given_value_given_feature][:name][level] == contrast_matrix[i, :]
-     end
+    @test get_helmert_contrast(k) == [
+        -1.0  -1.0  -1.0
+         1.0  -1.0  -1.0
+         0.0   2.0  -1.0
+         0.0   0.0   3.0]
+    # test that fit is correct for helmert Coding
+    cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :helmert)
+    k = length(levels(X.name))
+    contrast_matrix = get_helmert_contrast(k)
+    for (i, level) in enumerate(levels(X.name))
+        @test cache.vector_given_value_given_feature[:name][level] == contrast_matrix[i, :]
+    end
 end
 
 
@@ -150,23 +184,27 @@ end
 
 
     function buildrandomcontrast(colname, k)
-        return rand(StableRNGs.StableRNG(123), k, k-1)
+        return rand(StableRNGs.StableRNG(123), k, k - 1)
     end
 
-    cache = contrast_encoder_fit(X; mode=:contrast, buildmatrix=buildrandomcontrast)
+    cache = contrast_encoder_fit(X; mode = :contrast, buildmatrix = buildrandomcontrast)
 
     X_tr = contrast_encoder_transform(X, cache)
-    X_tr_mlj = Tables.matrix(X_tr)[:,1:end-1]
+    X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
 
 
     df = DataFrame(X)
 
-    mf = ModelFrame(@formula(age ~ (name + height + favnum)), df, contrasts = Dict(
-        :name => StatsModels.ContrastsCoding(buildrandomcontrast(nothing, 3)),
-        :favnum=> StatsModels.ContrastsCoding(buildrandomcontrast(nothing, 4))
-        ))
+    mf = ModelFrame(
+        @formula(age ~ (name + height + favnum)),
+        df,
+        contrasts = Dict(
+            :name => StatsModels.ContrastsCoding(buildrandomcontrast(nothing, 3)),
+            :favnum => StatsModels.ContrastsCoding(buildrandomcontrast(nothing, 4)),
+        ),
+    )
 
-    X_tr_sm =  ModelMatrix(mf).m[:, 2:end]
+    X_tr_sm = ModelMatrix(mf).m[:, 2:end]
 
     @test X_tr_mlj == X_tr_sm
 end
@@ -175,31 +213,43 @@ end
 @testset "hypothesis mode end-to-end test" begin
 
     function buildrandomhypothesis(colname, k)
-        return rand(StableRNGs.StableRNG(123), k-1, k)
-    end    
+        return rand(StableRNGs.StableRNG(123), k - 1, k)
+    end
 
-    cache = contrast_encoder_fit(X; mode=:hypothesis, buildmatrix=buildrandomhypothesis)
+    cache = contrast_encoder_fit(X; mode = :hypothesis, buildmatrix = buildrandomhypothesis)
     X_tr = contrast_encoder_transform(X, cache)
-    X_tr_mlj = Tables.matrix(X_tr)[:,1:end-1]
+    X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
     df = DataFrame(X)
 
-    mf = ModelFrame(@formula(age ~ (name + height + favnum)), df, contrasts = Dict(
-        :name => HypothesisCoding(buildrandomhypothesis(nothing, 3); levels=levels(X.name), labels=[]),
-        :favnum=> HypothesisCoding(buildrandomhypothesis(nothing, 4); levels=levels(X.favnum), labels=[])
-        ))
+    mf = ModelFrame(
+        @formula(age ~ (name + height + favnum)),
+        df,
+        contrasts = Dict(
+            :name => HypothesisCoding(
+                buildrandomhypothesis(nothing, 3);
+                levels = levels(X.name),
+                labels = [],
+            ),
+            :favnum => HypothesisCoding(
+                buildrandomhypothesis(nothing, 4);
+                levels = levels(X.favnum),
+                labels = [],
+            ),
+        ),
+    )
 
-    X_tr_sm =  ModelMatrix(mf).m[:, 2:end]
+    X_tr_sm = ModelMatrix(mf).m[:, 2:end]
 
     @test X_tr_mlj == X_tr_sm
 end
 
 
 function buildrandomhypothesis(colname, k)
-    return rand(StableRNGs.StableRNG(123), k-1, k)
-end    
+    return rand(StableRNGs.StableRNG(123), k - 1, k)
+end
 
 function buildrandomcontrast(colname, k)
-    return rand(StableRNGs.StableRNG(123), k, k-1)
+    return rand(StableRNGs.StableRNG(123), k, k - 1)
 end
 
 @testset "single-mode end-to-end test with StatsModels" begin
@@ -207,29 +257,38 @@ end
     for ind in 1:6
         stats_models(k, ind) = [
             StatsModels.ContrastsCoding(buildrandomcontrast(nothing, k)),
-            DummyCoding(; base=(k == 3) ? "Mary" : 10),
-            EffectsCoding(; base=(k == 3) ? "Mary" : 10),
+            DummyCoding(; base = (k == 3) ? "Mary" : 10),
+            EffectsCoding(; base = (k == 3) ? "Mary" : 10),
             SeqDiffCoding(),
             HelmertCoding(),
-            HypothesisCoding(buildrandomhypothesis(nothing, k); levels=(k == 3) ? levels(X.name) : levels(X.favnum), labels=[]),
+            HypothesisCoding(
+                buildrandomhypothesis(nothing, k);
+                levels = (k == 3) ? levels(X.name) : levels(X.favnum),
+                labels = [],
+            ),
         ][ind]
         modes = [:contrast, :dummy, :sum, :backward_diff, :helmert, :hypothesis]
-        matrix_func = [buildrandomcontrast, nothing, nothing, nothing, nothing, buildrandomhypothesis]
+        matrix_func =
+            [buildrandomcontrast, nothing, nothing, nothing, nothing, buildrandomhypothesis]
 
         # Try MLJTransforms
-        cache = contrast_encoder_fit(X; mode=modes[ind], buildmatrix=matrix_func[ind])
+        cache = contrast_encoder_fit(X; mode = modes[ind], buildmatrix = matrix_func[ind])
         X_tr = contrast_encoder_transform(X, cache)
 
         df = DataFrame(X)
 
-        mf = ModelFrame(@formula(age ~ (name + height + favnum)), df, contrasts = Dict(
-            :name => stats_models(3, ind),
-            :favnum=> stats_models(4, ind),
-            ))
+        mf = ModelFrame(
+            @formula(age ~ (name + height + favnum)),
+            df,
+            contrasts = Dict(
+                :name => stats_models(3, ind),
+                :favnum => stats_models(4, ind),
+            ),
+        )
 
-        X_tr_mlj = Tables.matrix(X_tr)[:,1:end-1]
-        X_tr_sm =  ModelMatrix(mf).m[:, 2:end]
-        @test X_tr_mlj ≈  X_tr_sm
+        X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
+        X_tr_sm = ModelMatrix(mf).m[:, 2:end]
+        @test X_tr_mlj ≈ X_tr_sm
     end
 end
 
@@ -239,31 +298,52 @@ end
         for ind2 in 2:5
             stats_models(k, ind) = [
                 StatsModels.ContrastsCoding(buildrandomcontrast(nothing, k)),
-                DummyCoding(; base=(k == 3) ? "Mary" : 10),
-                EffectsCoding(; base=(k == 3) ? "Mary" : 10),
+                DummyCoding(; base = (k == 3) ? "Mary" : 10),
+                EffectsCoding(; base = (k == 3) ? "Mary" : 10),
                 SeqDiffCoding(),
                 HelmertCoding(),
-                HypothesisCoding(buildrandomhypothesis(nothing, k); levels=(k == 3) ? levels(X.name) : levels(X.favnum), labels=[]),
+                HypothesisCoding(
+                    buildrandomhypothesis(nothing, k);
+                    levels = (k == 3) ? levels(X.name) : levels(X.favnum),
+                    labels = [],
+                ),
             ][ind]
 
             modes = [:contrast, :dummy, :sum, :backward_diff, :helmert, :hypothesis]
-            matrix_func = [buildrandomcontrast, nothing, nothing, nothing, nothing, buildrandomhypothesis]
+            matrix_func = [
+                buildrandomcontrast,
+                nothing,
+                nothing,
+                nothing,
+                nothing,
+                buildrandomhypothesis,
+            ]
 
             # Try MLJTransforms
-            cache = contrast_encoder_fit(X, [:name, :favnum]; ignore=false, mode=[modes[ind1], modes[ind2]], buildmatrix=matrix_func[ind1])
+            cache = contrast_encoder_fit(
+                X,
+                [:name, :favnum];
+                ignore = false,
+                mode = [modes[ind1], modes[ind2]],
+                buildmatrix = matrix_func[ind1],
+            )
             X_tr = contrast_encoder_transform(X, cache)
 
             df = DataFrame(X)
 
-            mf = ModelFrame(@formula(age ~ (name + height + favnum)), df, contrasts = Dict(
-                :name => stats_models(3, ind1),
-                :favnum=> stats_models(4, ind2),
-                ))
+            mf = ModelFrame(
+                @formula(age ~ (name + height + favnum)),
+                df,
+                contrasts = Dict(
+                    :name => stats_models(3, ind1),
+                    :favnum => stats_models(4, ind2),
+                ),
+            )
 
-            X_tr_mlj = Tables.matrix(X_tr)[:,1:end-1]
-            X_tr_sm =  ModelMatrix(mf).m[:, 2:end]
+            X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
+            X_tr_sm = ModelMatrix(mf).m[:, 2:end]
 
-            @test X_tr_mlj ≈  X_tr_sm
+            @test X_tr_mlj ≈ X_tr_sm
         end
     end
 end
@@ -285,8 +365,45 @@ end
 
     # fitted parameters is correct
     vector_given_value_given_feature = fitted_params(mach).vector_given_value_given_feature
-    @test vector_given_value_given_feature == generic_cache[:vector_given_value_given_feature]
+    @test vector_given_value_given_feature == generic_cache.vector_given_value_given_feature
 
     # Test report
-    @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+    @test report(mach) == (encoded_features = generic_cache.encoded_features,)
+end
+
+
+@testset "Test Contrast Encoder Output Types" begin
+    X = (
+        name   = categorical(["Ben", "John", "Mary", "John"]),
+        height = [1.85, 1.67, 1.5, 1.67],
+        favnum = categorical([7, 5, 10, 1]),
+        age    = [23, 23, 14, 23],
+    )
+
+    methods = [:contrast, :dummy, :sum, :backward_diff, :helmert, :hypothesis]
+    matrix_func =
+        [buildrandomcontrast, nothing, nothing, nothing, nothing, buildrandomhypothesis]
+
+    for (i, method) in enumerate(methods)
+        encoder = ContrastEncoder(
+            features = [:name, :favnum],
+            ignore = false,
+            mode = method,
+            buildmatrix = matrix_func[i],
+        )
+        mach = fit!(machine(encoder, X))
+        Xnew = MMI.transform(mach, X)
+
+        # Test Consistency with Types
+        scs = schema(Xnew).scitypes
+        ts  = schema(Xnew).types
+
+        # Check scitypes for previously continuos or categorical features
+        @test all(scs[1:end-1] .== Continuous)
+        @test all(t -> (t <: AbstractFloat) && isconcretetype(t), ts[1:end-1])
+        # Check scitypes for previously Count feature
+        last_type, last_sctype = ts[end], scs[end]
+        @test last_type <: Integer && isconcretetype(last_type)
+        @test last_sctype <: Count
+    end
 end

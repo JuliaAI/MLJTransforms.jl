@@ -11,11 +11,10 @@ types that are in `Char`, `AbstractString`, and `Number`.
 
 # Arguments
 
-  - `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
-    `Multiclass` or `OrderedFactor`
-  - `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-  - `ignore=true`: Whether to exclude or includes the features given in `features`
-  - `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+    $X_doc
+    $features_doc
+    $ignore_doc
+    $ordered_factor_doc
   - `min_frequency::Real=3`: Any level of a categorical feature that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
     an integer or a float which decides whether raw counts or normalized frequencies are used.
   - `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
@@ -24,30 +23,31 @@ types that are in `Char`, `AbstractString`, and `Number`.
     then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
     and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
 
-# Returns (in a dict)
+# Returns as a named-tuple
 
   - `new_cat_given_col_val`: A dictionary that maps each level in a
     categorical feature to a new level (either itself or the new level specified in `label_for_infrequent`)
-  - `encoded_features`: The subset of the categorical features of X that were encoded
+  $encoded_features_doc
 """
 function cardinality_reducer_fit(
     X,
-    features::AbstractVector{Symbol} = Symbol[];
+    features = Symbol[];
     ignore::Bool = true,
     ordered_factor::Bool = false,
-    min_frequency::Real = 3,                        
-    label_for_infrequent::Dict{<:Type, <:Any} = Dict(    
+    min_frequency::Real = 3,
+    label_for_infrequent::Dict{<:Type, <:Any} = Dict(
         AbstractString => "Other",
         Char => 'O',
     ),
-)   
-    supportedtypes = Union{Char, AbstractString, Number}
+)
+    supportedtypes_list = [Char, AbstractString, Number]
+    supportedtypes = Union{supportedtypes_list...}
 
     # 1. Define feature mapper
     function feature_mapper(col, name)
         val_to_freq = (min_frequency isa AbstractFloat) ? proportionmap(col) : countmap(col)
-        col_type = eltype(col).parameters[1]
         feat_levels = levels(col)
+        col_type = eltype(feat_levels)
 
         # Ensure column type is valid (can't test because never occurs)
         # Converting array elements to strings before wrapping in a `CategoricalArray`, as...
@@ -57,7 +57,7 @@ function cardinality_reducer_fit(
 
         # Ensure label_for_infrequent keys are valid types
         for possible_col_type in keys(label_for_infrequent)
-            if !(possible_col_type in union_types(supportedtypes))
+            if !(possible_col_type in supportedtypes_list)
                 throw(ArgumentError(VALID_TYPES_NEW_VAL(possible_col_type)))
             end
         end
@@ -71,7 +71,7 @@ function cardinality_reducer_fit(
 
         # Get ancestor type of column
         elgrandtype = nothing
-        for allowed_type in union_types(supportedtypes)
+        for allowed_type in supportedtypes_list
             if col_type <: allowed_type
                 elgrandtype = allowed_type
                 break
@@ -87,7 +87,11 @@ function cardinality_reducer_fit(
                     elseif elgrandtype == Number
                         new_cat_given_col_val[level] = minimum(feat_levels) - 1
                     else
-                        throw(ArgumentError(UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent)))
+                        throw(
+                            ArgumentError(
+                                UNSPECIFIED_COL_TYPE(col_type, label_for_infrequent),
+                            ),
+                        )
                     end
                 end
             end
@@ -97,11 +101,12 @@ function cardinality_reducer_fit(
 
     # 2. Pass it to generic_fit
     new_cat_given_col_val, encoded_features = generic_fit(
-        X, features; ignore = ignore, ordered_factor = ordered_factor, feature_mapper = feature_mapper,
+        X, features; ignore = ignore, ordered_factor = ordered_factor,
+        feature_mapper = feature_mapper,
     )
-    cache = Dict(
-        :new_cat_given_col_val => new_cat_given_col_val,
-        :encoded_features => encoded_features,
+    cache = (
+        new_cat_given_col_val = new_cat_given_col_val,
+        encoded_features = encoded_features,
     )
     return cache
 end
@@ -122,7 +127,12 @@ Apply a fitted cardinality reducer to a table given the output of `cardinality_r
 
   - `X_tr`: The table with selected features after the selected features are transformed by cardinality reducer
 """
-function cardinality_reducer_transform(X, cache::Dict)
-    new_cat_given_col_val = cache[:new_cat_given_col_val]
-    return generic_transform(X, new_cat_given_col_val; ignore_unknown = true)
+function cardinality_reducer_transform(X, cache::NamedTuple)
+    new_cat_given_col_val = cache.new_cat_given_col_val
+    return generic_transform(
+        X,
+        new_cat_given_col_val;
+        ignore_unknown = true,
+        ensure_categorical = true,
+    )
 end

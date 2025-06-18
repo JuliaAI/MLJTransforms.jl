@@ -1,10 +1,11 @@
 ### OrdinalEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct OrdinalEncoder{AS <: AbstractVector{Symbol}} <: Unsupervised
-    features::AS
+mutable struct OrdinalEncoder{A <: Any} <: Unsupervised
+    features::A
     ignore::Bool
     ordered_factor::Bool
+    output_type::Type
 end;
 
 # 2. Constructor
@@ -12,8 +13,9 @@ function OrdinalEncoder(;
     features = Symbol[],
     ignore = true,
     ordered_factor = false,
+    output_type = Float32,
 )
-    return OrdinalEncoder(features, ignore, ordered_factor)
+    return OrdinalEncoder(features, ignore, ordered_factor, output_type)
 end;
 
 
@@ -29,10 +31,11 @@ function MMI.fit(transformer::OrdinalEncoder, verbosity::Int, X)
         transformer.features;
         ignore = transformer.ignore,
         ordered_factor = transformer.ordered_factor,
+        output_type = transformer.output_type,
     )
     fitresult =
-        generic_cache[:index_given_feat_level]
-    report = (encoded_features = generic_cache[:encoded_features],)        # report only has list of encoded features
+        generic_cache.index_given_feat_level
+    report = (encoded_features = generic_cache.encoded_features,)        # report only has list of encoded features
     cache = nothing
     return fitresult, cache, report
 end;
@@ -40,9 +43,7 @@ end;
 
 # 6. Transform method
 function MMI.transform(transformer::OrdinalEncoder, fitresult, Xnew)
-    generic_cache = Dict(
-        :index_given_feat_level => fitresult,
-    )
+    generic_cache = (index_given_feat_level = fitresult,)
     Xnew_transf = ordinal_encoder_transform(Xnew, generic_cache)
     return Xnew_transf
 end
@@ -81,17 +82,16 @@ In MLJ (or MLJBase) bind an instance unsupervised `model` to data with
 
 Here:
 
-- `X` is any table of input features (eg, a `DataFrame`). Features to be transformed must
-   have element scitype `Multiclass` or `OrderedFactor`. Use `schema(X)` to 
-   check scitypes. 
+$X_doc_mlj
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
-- `features=[]`: A list of names of categorical features given as symbols to exclude or include from encoding
-- `ignore=true`: Whether to exclude or includes the features given in `features`
-- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
+$features_doc
+$ignore_doc
+$ordered_factor_doc
+- `output_type`: The numerical concrete type of the encoded features. Default is `Float32`.
 
 # Operations
 
@@ -109,7 +109,7 @@ The fields of `fitted_params(mach)` are:
 
 The fields of `report(mach)` are:
 
-- `encoded_features`: The subset of the categorical features of X that were encoded
+$encoded_features_doc
 
 # Examples
 

@@ -1,21 +1,26 @@
 using MLJTransforms: missingness_encoder_fit, missingness_encoder_transform
 
-@testset "Throws errors when needed" begin
-    @test_throws ArgumentError begin
-        X = generate_X_with_missingness(;john_name="missing")
+@testset "Missingness Encoder Error Handling" begin
+    # Test COLLISION_NEW_VAL_ME error - when label_for_missing value already exists in levels
+    @test_throws MLJTransforms.COLLISION_NEW_VAL_ME("missing") begin
+        X = generate_X_with_missingness(; john_name = "missing")
         cache = missingness_encoder_fit(
             X;
             label_for_missing = Dict(AbstractString => "missing", Char => 'm'),
         )
     end
-    @test_throws ArgumentError begin
+
+    # Test VALID_TYPES_NEW_VAL_ME error - when label_for_missing key is not a supported type
+    @test_throws MLJTransforms.VALID_TYPES_NEW_VAL_ME(Bool) begin
         X = generate_X_with_missingness()
         cache = missingness_encoder_fit(
             X;
             label_for_missing = Dict(AbstractString => "Other", Bool => 'X'),
         )
     end
-    @test_throws ArgumentError begin
+
+    # Test UNSPECIFIED_COL_TYPE_ME error - when column type isn't in label_for_missing
+    @test_throws MLJTransforms.UNSPECIFIED_COL_TYPE_ME(Char, Dict(AbstractString => "X")) begin
         X = generate_X_with_missingness()
         cache = missingness_encoder_fit(
             X;
@@ -28,15 +33,22 @@ end
 @testset "Default for Numbers Set Correctly" begin
     X = generate_X_with_missingness()
     cache = missingness_encoder_fit(X)
-    label_for_missing_given_feature = cache[:label_for_missing_given_feature]
+    label_for_missing_given_feature = cache.label_for_missing_given_feature
     @test label_for_missing_given_feature[:C][missing] == minimum(levels(X.C)) - 1
 end
 
 
 @testset "End-to-end test" begin
     X = generate_X_with_missingness()
-    
-    cache = missingness_encoder_fit(X; label_for_missing = Dict(AbstractString => "missing-item", Char => 'i', Number => -99))
+
+    cache = missingness_encoder_fit(
+        X;
+        label_for_missing = Dict(
+            AbstractString => "missing-item",
+            Char => 'i',
+            Number => -99,
+        ),
+    )
     X_tr = missingness_encoder_transform(X, cache)
 
     for col in [:A, :B, :C, :D, :E]
@@ -49,14 +61,18 @@ end
     @test levels(X[:B]) == levels(X_tr[:B])
     @test levels(X[:D]) == levels(X_tr[:D])
 end
- 
+
 
 @testset "Missingness Encoder Fit" begin
     X = generate_X_with_missingness()
 
     result = missingness_encoder_fit(
         X;
-        label_for_missing = Dict(AbstractString => "MissingOne", Char => 'X', Number => -90),
+        label_for_missing = Dict(
+            AbstractString => "MissingOne",
+            Char => 'X',
+            Number => -90,
+        ),
     )[:label_for_missing_given_feature]
 
     true_output = Dict{Symbol, Dict{Any, Any}}(
@@ -72,12 +88,16 @@ end
     X = generate_X_with_missingness()
     cache = missingness_encoder_fit(
         X;
-        label_for_missing = Dict(AbstractString => "MissingOne", Char => 'X', Number => -90),
+        label_for_missing = Dict(
+            AbstractString => "MissingOne",
+            Char => 'X',
+            Number => -90,
+        ),
     )
 
-    enc_char = (col, level) ->  ismissing(level) ? 'X' : level
-    enc_num = (col, level) ->  ismissing(level) ? -90 : level
-    enc_str = (col, level) ->  ismissing(level) ? "MissingOne" : level
+    enc_char = (col, level) -> ismissing(level) ? 'X' : level
+    enc_num = (col, level) -> ismissing(level) ? -90 : level
+    enc_str = (col, level) -> ismissing(level) ? "MissingOne" : level
     enc_idn = (col, level) -> level
 
     X_tr = missingness_encoder_transform(X, cache)
@@ -97,7 +117,7 @@ end
         ],
         E = [
             enc_char(X[:E], X[:E][i]) for i in 1:7
-        ]
+        ],
     )
 
     @test isequal(target, X_tr)
@@ -105,10 +125,14 @@ end
 
 @testset "Schema doesn't change after transform" begin
     X = generate_X_with_missingness()
-    
+
     cache = missingness_encoder_fit(
         X;
-        label_for_missing = Dict(AbstractString => "MissingOne", Char => 'X', Number => -90),
+        label_for_missing = Dict(
+            AbstractString => "MissingOne",
+            Char => 'X',
+            Number => -90,
+        ),
     )
 
     X_tr = missingness_encoder_transform(X, cache)
@@ -126,7 +150,11 @@ end
 
     cache = missingness_encoder_fit(
         X;
-        label_for_missing = Dict(AbstractString => "MissingOne", Char => 'X', Number => -90),
+        label_for_missing = Dict(
+            AbstractString => "MissingOne",
+            Char => 'X',
+            Number => -90,
+        ),
     )
     X_tr = missingness_encoder_transform(X, cache)
 
@@ -149,8 +177,39 @@ end
 
     # fitted parameters is correct
     label_for_missing_given_feature = fitted_params(mach).label_for_missing_given_feature
-    @test label_for_missing_given_feature == generic_cache[:label_for_missing_given_feature]
+    @test label_for_missing_given_feature == generic_cache.label_for_missing_given_feature
 
     # Test report
-    @test report(mach) == (encoded_features = generic_cache[:encoded_features],)
+    @test report(mach) == (encoded_features = generic_cache.encoded_features,)
+end
+
+
+
+@testset "Test Missingness Encoder Output Types" begin
+    # Define a table with missing values
+    Xm = (
+        A = categorical(["Ben", "John", missing, missing, "Mary", "John", missing]),
+        B = [1.85, 1.67, missing, missing, 1.5, 1.67, missing],
+        C = categorical([7, 5, missing, missing, 10, 0, missing]),
+        D = categorical([23, 23, 44, 66, 14, 23, missing], ordered = true),
+        E = categorical([missing, 'g', 'r', missing, 'r', 'g', 'p']),
+    )
+
+    encoder = MissingnessEncoder()
+    mach = fit!(machine(encoder, Xm))
+    Xnew = MMI.transform(mach, Xm)
+
+    schema(Xm)
+    schema(Xnew)
+    Xnew.B
+
+    scs = schema(Xnew).scitypes
+    for (i, type) in enumerate(schema(Xm).scitypes)
+        print(nonmissingtype(type))
+        if nonmissingtype(type) <: Multiclass
+            @test scs[i] <: Multiclass
+        else
+            scs[i] == type
+        end
+    end
 end

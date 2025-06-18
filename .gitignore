@@ -27,3 +27,4 @@ meh/*.ipynb
 .DS_Store
 /*.jl
 scratchpad/
+examples/test.jl
