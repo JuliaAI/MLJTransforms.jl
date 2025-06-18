@@ -31,6 +31,7 @@ makedocs(
             "Contrast Encoders"=>"transformers/contrast.md",
             "Utility Encoders"=>"transformers/utility.md",
             "Other Transformers"=>"transformers/others.md",
+            "API Index" => "transformers/all_transformers.md",
         ],
         "Extended Examples" => Any[
             "Tutorial A" => "tutorials/T1.md",
