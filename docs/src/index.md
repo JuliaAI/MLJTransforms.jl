@@ -37,6 +37,8 @@ Xnew = transform(mach, X)
 ```
 
 ## Available Transformers
+See [complete list](transformers/all_transformers) of transformers in this package.
+
 In `MLJTransforms` we denote transformers that can operate on columns with `Continuous` and/or `Count` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/) as numerical transformers. Meanwhile, categorical transformers operate on `Multiclass` and/or `OrderedFactor` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/). Most categorical transformers in this package operate by converting categorical values into numerical values or vectors, and are therefore considered categorical encoders.
 
 Based on this, we categorize the methods in this package as follows, with further distinctions for categorical encoders:
