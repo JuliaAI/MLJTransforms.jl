@@ -4,7 +4,9 @@ name: Update README from docs index
 on:
   push:
     branches:
-      - main     # or your primary branch name
+      - dev     # or your primary branch name
+      - docs     
+      - master   
 
 jobs:
   sync-readme:
