@@ -18,7 +18,7 @@
 | [ForwardDifferenceEncoder](@ref) | Encodes by comparing adjacent levels of a variable (each level minus the next level)
 | [ContrastEncoder](@ref) | Allows defining a custom contrast encoder via a contrast matrix | 
 | [HypothesisEncoder](@ref) | Allows defining a custom contrast encoder via a hypothesis matrix | 
-| [EntityEmbedders](@ref) | Encode categorical variables into dense embedding vectors |
+| [EntityEmbedder](@ref) | Encode categorical variables into dense embedding vectors |
 | [CardinalityReducer](@ref) | Reduce cardinality of high cardinality categorical features by grouping infrequent categories |
 | [MissingnessEncoder](@ref) | Encode missing values of categorical features into new values |
 

@@ -1,8 +1,9 @@
 using Documenter
 using MLJTransforms
+using MLJFlux
 
 DocMeta.setdocmeta!(MLJTransforms, :DocTestSetup, :(using MLJTransforms); recursive = true)
-
+DocMeta.setdocmeta!(MLJFlux, :DocTestSetup, :(using MLJFlux); recursive = true)
 makedocs(
     sitename = "MLJTransforms",
     format = Documenter.HTML(
@@ -10,7 +11,7 @@ makedocs(
         assets = [
             "assets/favicon.ico",
             asset(
-                "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
+                "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap",
                 class = :css,
             ),
             asset(
@@ -20,26 +21,26 @@ makedocs(
         ],
         repolink = "https://github.com/JuliaAI/MLJTransforms.jl",
     ),
-    modules = [MLJTransforms],
+    modules = [MLJTransforms, MLJFlux],
     warnonly = true,
     pages = [
         "Introduction" => "index.md",
         "Transformers" => Any[
-            "Numerical Transformers"=>"transformers/numerical.md",
-            "Classical Encoders"=>"transformers/classical.md",
-            "Neural-based Encoders"=>"transformers/neural.md",
-            "Contrast Encoders"=>"transformers/contrast.md",
-            "Utility Encoders"=>"transformers/utility.md",
-            "Other Transformers"=>"transformers/others.md",
-            "API Index" => "transformers/all_transformers.md",
+            "All Transformers" => "transformers/all_transformers.md",
+            "Encoders" => Any[
+                "Classical Encoders"    => "transformers/classical.md",
+                "Neural-based Encoders" => "transformers/neural.md",
+                "Contrast Encoders"     => "transformers/contrast.md",
+                "Utility Encoders"      => "transformers/utility.md",
+            ],
         ],
         "Extended Examples" => Any[
             "Tutorial A" => "tutorials/T1.md",
             "Tutorial B" => "tutorials/T1.md",
         ],
-        "Contributing" => "contributing.md"],
+        "Contributing" => "contributing.md",
+    ],
     doctest = false,
 )
 
-# Documenter can also automatically deploy documentation to gh-pages.
 deploydocs(repo = "github.com/JuliaAI/MLJTransforms.jl.git", devbranch = "dev")
