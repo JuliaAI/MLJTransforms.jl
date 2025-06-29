@@ -1,5 +1,8 @@
 # MLJTransforms.jl
 
+![logg](https://github.com/JuliaAI/MLJTransforms/assets/49572294/8d119672-e641-4971-884d-dcb793ba0c05)
+
+
 A Julia package providing a wide range of categorical encoders and data transformers to be used with the [MLJ](https://juliaai.github.io/MLJ.jl/dev/) package.
 
 [![Build Status](https://github.com/JuliaAI/Imbalance.jl/workflows/CI/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions)
