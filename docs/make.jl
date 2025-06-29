@@ -39,6 +39,7 @@ makedocs(
             "Tutorial B" => "tutorials/T1.md",
         ],
         "Contributing" => "contributing.md",
+        "About" => "about.md",
     ],
     doctest = false,
 )
