@@ -150,7 +150,7 @@ $ordered_factor_doc
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or `OrderedFactor features of `Xnew` specified by hyper-parameters, and 
+- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
    return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
    are always left unchanged.
 

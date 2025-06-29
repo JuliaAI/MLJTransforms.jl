@@ -1,28 +1,43 @@
 # generic functions go here; such function can be used  throughout multiple methods
 
 """
-**Private method.**
+```julia
+generic_fit(X,
+    features = Symbol[],
+    args...;
+    ignore::Bool = true,
+    ordered_factor::Bool = false,
+    feature_mapper,
+    kwargs...,
+)
+```
 
-A generic function to fit a class of transformers where its convenient to define a single `feature_mapper` function that
-takes the column as a vector and potentially other arguments (as passed in ...args and ...kwargs) and returns
-a dictionary that maps each level of the categorical feature to a scalar or vector
-according to the transformation logic. In other words, the `feature_mapper` simply answers the question "For level n of
-the current categorical feature c, what should the new value or vector (multiple features) be as defined by the transformation
-logic?"
+Given a `feature_mapper` (see definition below), this method applies 
+    `feature_mapper` across a specified subset of categorical columns in X and returns a dictionary 
+    whose keys are the feature names, and each value is the corresponding 
+    level‑to‑value mapping produced by `feature_mapper`. 
+
+In essence, it spares effort of looping over each column and applying the `feature_mapper` function manually as well as handling the feature selection logic.
+
 
 # Arguments
 
-    $X_doc
-    $features_doc
-    $ignore_doc
-    $ordered_factor_doc
-    - feature_mapper: Defined above. 
+$X_doc
+$features_doc
+$ignore_doc
+$ordered_factor_doc
+- feature_mapper: function that, for a given vector (eg, corresponding to a categorical column from the dataset `X`), 
+    produces a mapping from each category level name in this vector to a scalar or vector according to specified transformation logic.
+
+# Note
+
+- Any additional arguments (whether keyword or not) provided to this function are passed to the `feature_mapper` function which
+    is helpful when `feature_mapper` requires additional arguments to compute the mapping (eg, hyperparameters).
 
 # Returns
-
-    - mapping_per_feat_level: Maps each level for each feature in a subset of the categorical features of
-     X into a scalar or a vector. 
-    $encoded_features_doc
+- `mapping_per_feat_level`: Maps each level for each feature in a subset of the categorical features of
+    X into a scalar or a vector. 
+$encoded_features_doc
 """
 function generic_fit(X,
     features = Symbol[],
@@ -116,25 +131,47 @@ end
 
 
 """
-**Private method.**
+```julia
+generic_transform(
+    X,
+    mapping_per_feat_level;
+    single_feat::Bool = true,
+    ignore_unknown::Bool = false,
+    use_levelnames::Bool = false,
+    custom_levels = nothing,
+    ensure_categorical::Bool = false,
+)
+```
 
-Given a table `X` and a dictionary `mapping_per_feat_level` which maps each level for each column in
-a subset of categorical features of X into a scalar or a vector (as specified in `single_feat`)
 
-  - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
-    into a scalar (`single_feat=true`)
+Apply a per‐level feature mapping to selected categorical columns in `X`, returning a new table of the same type.
 
-  - transforms each value (some level) in each column in `X` using the function in `mapping_per_feat_level`
-    into a set of `k` features where `k` is the length of the vector (`single_feat=false`)
-  - In both cases it attempts to preserve the type of the table.
-  - In the latter case, it assumes that all levels under the same category are mapped to vectors of the same length. Such
-    assumption is necessary because any column in X must correspond to a constant number of features
-    in the output table (which is equal to k).
-  - Features not in the dictionary are mapped to themselves (i.e., not changed).
-  - Levels not in the nested dictionary are mapped to themselves if `identity_map_unknown` is true else raise an error.
-  - use_levelnames: if true, the new feature names are generated using the level names when the transform generates multiple features;
-    else they are generated using the indices of the levels.
-  - custom_levels: if not `nothing`, then the levels of the categorical features are replaced by the custom_levels
+# Arguments
+
+$X_doc
+- `mapping_per_feat_level::Dict{Symbol,Dict}`:
+    A dict whose keys are feature names (`Symbol`) and values are themselves dictionaries 
+    mapping each observed level to either a scalar (if `single_feat=true`) or a fixed‐length vector 
+        (if `single_feat=false`). Only columns whose names appear in `mapping_per_feat_level` are 
+            transformed; others pass through unchanged.
+- `single_feat::Bool=true`:
+    If `true`, each input level is mapped to a single scalar feature; if `false`,
+    each input level is mapped to a length‑`k` vector, producing `k` output columns.
+- `ignore_unknown::Bool=false`:
+    If `false`, novel levels in `X` (not seen during fit) will raise an error; 
+    if `true`, novel levels will be left unchanged (identity mapping).
+- `use_levelnames::Bool=false`:
+    When `single_feat=false`, controls naming of the expanded columns: `true`: use actual level names (e.g. `:color_red`, `:color_blue`), 
+    `false`: use numeric indices (e.g. `:color_1`, `:color_2`).
+- `custom_levels::Union{Nothing,Vector}`:
+    If not `nothing`, overrides the names of levels used to generate feature names when `single_feat=false`.
+- `ensure_categorical::Bool=false`:
+    Only when `single_feat=true` and if `true`, preserves the categorical type of the column after 
+        recoding (eg, feature should still be recognized as `Multiclass` after transformation)
+
+# Returns
+
+A new table of potentially similar to `X` but with categorical columns transformed according to `mapping_per_feat_level`.
 """
 function generic_transform(
     X,
