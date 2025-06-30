@@ -192,7 +192,7 @@ metadata_model(UnivariateFillImputer,
 metadata_model(FillImputer,
     input_scitype   = Table,
     output_scitype = Table,
-    load_path    = "MLJModels.FillImputer")
+    load_path = "MLJTransforms.FillImputer")
 
 """
 $(MLJModelInterface.doc_header(UnivariateFillImputer))
