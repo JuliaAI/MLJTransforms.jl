@@ -91,7 +91,7 @@ metadata_model(UnivariateBoxCoxTransformer,
     input_scitype   = AbstractVector{Continuous},
     output_scitype = AbstractVector{Continuous},
     human_name = "single variable Box-Cox transformer",
-    load_path    = "MLJModels.UnivariateBoxCoxTransformer")
+    load_path = "MLJTransforms.UnivariateBoxCoxTransformer")
 
 """
 $(MLJModelInterface.doc_header(UnivariateBoxCoxTransformer))

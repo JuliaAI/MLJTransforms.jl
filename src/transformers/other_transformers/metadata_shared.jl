@@ -13,8 +13,8 @@ metadata_pkg.(
         UnivariateTimeTypeToContinuous,
         InteractionTransformer
     ),
-    package_name       = "MLJModels",
-    package_uuid       = "d491faf4-2d78-11e9-2867-c94bc002c0b7",
-    package_url        = "https://github.com/JuliaAI/MLJModels.jl",
+    package_name       = "MLJTransforms",
+    package_uuid       = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6",
+    package_url        = "https://github.com/JuliaAI/MLJTransforms.jl",
     is_pure_julia      = true,
     package_license    = "MIT")

@@ -38,7 +38,7 @@ metadata_model(InteractionTransformer,
     input_scitype   = Tuple{Table},
     output_scitype = Table,
     human_name = "interaction transformer",
-    load_path    = "MLJModels.InteractionTransformer")
+    load_path = "MLJTransforms.InteractionTransformer")
 
 """
 $(MLJModelInterface.doc_header(InteractionTransformer))

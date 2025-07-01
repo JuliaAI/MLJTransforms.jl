@@ -129,7 +129,7 @@ metadata_model(UnivariateTimeTypeToContinuous,
     output_scitype = AbstractVector{Continuous},
     human_name ="single variable transformer that creates "*
          "continuous representations of temporally typed data",
-    load_path    = "MLJModels.UnivariateTimeTypeToContinuous")
+    load_path = "MLJTransforms.UnivariateTimeTypeToContinuous")
 
 """
 $(MLJModelInterface.doc_header(UnivariateTimeTypeToContinuous))
