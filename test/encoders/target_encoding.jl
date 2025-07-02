@@ -368,7 +368,7 @@ end
     D = [true, false, true, false, true]
     E = [1, 2, 3, 4, 5]
 
-    # Define the target variable 
+    # Define the target variable
     y = ["c1", "c2", "c3", "c1", "c2"]
 
     # Combine into a named tuple
@@ -396,4 +396,3 @@ end
     @test scs[end] === schema(X).scitypes[end]
     @test ts[end] == schema(X).types[end]
 end
-

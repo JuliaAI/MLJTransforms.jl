@@ -195,8 +195,8 @@ end
 
     df = DataFrame(X)
 
-    mf = ModelFrame(
-        @formula(age ~ (name + height + favnum)),
+    mf = StatsModels.ModelFrame(
+        StatsModels.@formula(age ~ (name + height + favnum)),
         df,
         contrasts = Dict(
             :name => StatsModels.ContrastsCoding(buildrandomcontrast(nothing, 3)),
@@ -204,7 +204,7 @@ end
         ),
     )
 
-    X_tr_sm = ModelMatrix(mf).m[:, 2:end]
+    X_tr_sm = StatsModels.ModelMatrix(mf).m[:, 2:end]
 
     @test X_tr_mlj == X_tr_sm
 end
@@ -221,16 +221,16 @@ end
     X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
     df = DataFrame(X)
 
-    mf = ModelFrame(
-        @formula(age ~ (name + height + favnum)),
+    mf = StatsModels.ModelFrame(
+        StatsModels.@formula(age ~ (name + height + favnum)),
         df,
         contrasts = Dict(
-            :name => HypothesisCoding(
+            :name => StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, 3);
                 levels = levels(X.name),
                 labels = [],
             ),
-            :favnum => HypothesisCoding(
+            :favnum => StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, 4);
                 levels = levels(X.favnum),
                 labels = [],
@@ -238,7 +238,7 @@ end
         ),
     )
 
-    X_tr_sm = ModelMatrix(mf).m[:, 2:end]
+    X_tr_sm = StatsModels.ModelMatrix(mf).m[:, 2:end]
 
     @test X_tr_mlj == X_tr_sm
 end
@@ -257,11 +257,11 @@ end
     for ind in 1:6
         stats_models(k, ind) = [
             StatsModels.ContrastsCoding(buildrandomcontrast(nothing, k)),
-            DummyCoding(; base = (k == 3) ? "Mary" : 10),
-            EffectsCoding(; base = (k == 3) ? "Mary" : 10),
-            SeqDiffCoding(),
-            HelmertCoding(),
-            HypothesisCoding(
+            StatsModels.DummyCoding(; base = (k == 3) ? "Mary" : 10),
+            StatsModels.EffectsCoding(; base = (k == 3) ? "Mary" : 10),
+            StatsModels.SeqDiffCoding(),
+            StatsModels.HelmertCoding(),
+            StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, k);
                 levels = (k == 3) ? levels(X.name) : levels(X.favnum),
                 labels = [],
@@ -277,8 +277,8 @@ end
 
         df = DataFrame(X)
 
-        mf = ModelFrame(
-            @formula(age ~ (name + height + favnum)),
+        mf = StatsModels.ModelFrame(
+            StatsModels.@formula(age ~ (name + height + favnum)),
             df,
             contrasts = Dict(
                 :name => stats_models(3, ind),
@@ -287,7 +287,7 @@ end
         )
 
         X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
-        X_tr_sm = ModelMatrix(mf).m[:, 2:end]
+        X_tr_sm = StatsModels.ModelMatrix(mf).m[:, 2:end]
         @test X_tr_mlj ≈ X_tr_sm
     end
 end
@@ -298,11 +298,11 @@ end
         for ind2 in 2:5
             stats_models(k, ind) = [
                 StatsModels.ContrastsCoding(buildrandomcontrast(nothing, k)),
-                DummyCoding(; base = (k == 3) ? "Mary" : 10),
-                EffectsCoding(; base = (k == 3) ? "Mary" : 10),
-                SeqDiffCoding(),
-                HelmertCoding(),
-                HypothesisCoding(
+                StatsModels.DummyCoding(; base = (k == 3) ? "Mary" : 10),
+                StatsModels.EffectsCoding(; base = (k == 3) ? "Mary" : 10),
+                StatsModels.SeqDiffCoding(),
+                StatsModels.HelmertCoding(),
+                StatsModels.HypothesisCoding(
                     buildrandomhypothesis(nothing, k);
                     levels = (k == 3) ? levels(X.name) : levels(X.favnum),
                     labels = [],
@@ -331,8 +331,8 @@ end
 
             df = DataFrame(X)
 
-            mf = ModelFrame(
-                @formula(age ~ (name + height + favnum)),
+            mf = StatsModels.ModelFrame(
+                StatsModels.@formula(age ~ (name + height + favnum)),
                 df,
                 contrasts = Dict(
                     :name => stats_models(3, ind1),
@@ -341,7 +341,7 @@ end
             )
 
             X_tr_mlj = Tables.matrix(X_tr)[:, 1:end-1]
-            X_tr_sm = ModelMatrix(mf).m[:, 2:end]
+            X_tr_sm = StatsModels.ModelMatrix(mf).m[:, 2:end]
 
             @test X_tr_mlj ≈ X_tr_sm
         end
