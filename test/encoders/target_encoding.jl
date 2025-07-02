@@ -63,7 +63,7 @@ end
     X, y = classification_forms[1]
     n = length(y)
 
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict(
             "m" => sum(y[F_col.=="m"] .== 0) / length(y[F_col.=="m"]),
@@ -119,7 +119,7 @@ end
     n = length(y)
     μ̂ = mean(y)
 
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict(
             "m" => mean(y[F_col.=="m"]),
@@ -172,7 +172,7 @@ end
     y_classes = classes(y)
     n = length(y)
 
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     true_output = Dict{Symbol, Dict{Any, AbstractVector{AbstractFloat}}}(
         :F => Dict(
             "m" =>
@@ -320,7 +320,7 @@ end
             TargetEncoder(ignore = true, ordered_factor = false, lambda = 0.5, m = 1.0)
         mach = machine(encoder, X, y)
         fit!(mach)
-        Xnew_transf = MMI.transform(mach, X)
+        Xnew_transf = MLJBase.transform(mach, X)
 
         # same output
         @test X_transf == Xnew_transf
@@ -386,7 +386,7 @@ end
 
     encoder = TargetEncoder(ordered_factor = false, lambda = 1.0, m = 0)
     mach = fit!(machine(encoder, X, y))
-    Xnew = MMI.transform(mach, X)
+    Xnew = MLJBase.transform(mach, X)
 
     scs = schema(Xnew).scitypes
     ts  = schema(Xnew).types

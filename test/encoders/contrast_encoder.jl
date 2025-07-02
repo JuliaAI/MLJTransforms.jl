@@ -358,7 +358,7 @@ end
     encoder = ContrastEncoder(ignore = true, ordered_factor = false)
     mach = machine(encoder, X)
     fit!(mach)
-    Xnew_transf = MMI.transform(mach, X)
+    Xnew_transf = MLJBase.transform(mach, X)
 
     # same output
     @test X_transf == Xnew_transf
@@ -392,7 +392,7 @@ end
             buildmatrix = matrix_func[i],
         )
         mach = fit!(machine(encoder, X))
-        Xnew = MMI.transform(mach, X)
+        Xnew = MLJBase.transform(mach, X)
 
         # Test Consistency with Types
         scs = schema(Xnew).scitypes

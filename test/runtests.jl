@@ -7,8 +7,6 @@ using StatsBase
 using LinearAlgebra
 import StatsModels
 using Random
-import MLJModelInterface
-const MMI = MLJModelInterface
 using LinearAlgebra
 
 # Other transformers
