@@ -5,7 +5,7 @@ using MLJTransforms: frequency_encoder_fit, frequency_encoder_transform
 
     X = dataset_forms[1]
     normalize = [false, true]
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     for norm in normalize
         result = frequency_encoder_fit(X; normalize = norm)[:statistic_given_feat_val]
         enc =
@@ -72,7 +72,7 @@ end
         encoder = FrequencyEncoder(ignore = true, ordered_factor = false)
         mach = machine(encoder, X)
         fit!(mach)
-        Xnew_transf = MMI.transform(mach, X)
+        Xnew_transf = MLJBase.transform(mach, X)
 
         # same output
         @test X_transf == Xnew_transf
@@ -111,7 +111,7 @@ end
 
     encoder = FrequencyEncoder(ordered_factor = false, normalize = false)
     mach = fit!(machine(encoder, X))
-    Xnew = MMI.transform(mach, X)
+    Xnew = MLJBase.transform(mach, X)
 
 
     scs = schema(Xnew).scitypes

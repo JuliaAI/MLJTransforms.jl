@@ -208,7 +208,7 @@ end
     encoder = CardinalityReducer(min_frequency = 0.1, ignore = true, ordered_factor = false)
     mach = machine(encoder, X)
     fit!(mach)
-    Xnew_transf = MMI.transform(mach, X)
+    Xnew_transf = MLJBase.transform(mach, X)
 
     # same output
     @test X_transf == Xnew_transf
@@ -240,7 +240,7 @@ end
 
     encoder = CardinalityReducer(ordered_factor = false, min_frequency = 3)
     mach = fit!(machine(encoder, X))
-    Xnew = MMI.transform(mach, X)
+    Xnew = MLJBase.transform(mach, X)
     @test schema(X).types == schema(Xnew).types
     @test all(s -> (s <: Multiclass), schema(Xnew).scitypes)
 end

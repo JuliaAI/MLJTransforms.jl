@@ -142,7 +142,7 @@ end
 
 @testset "Test generic fit output" begin
     X = dataset_forms[1]
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     result = dummy_encoder_fit(X)[:hash_given_feat_val]
     enc = (col, level) -> (hash(level))
     true_output = Dict{Symbol, Dict{Any, Any}}(

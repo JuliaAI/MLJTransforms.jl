@@ -170,7 +170,7 @@ end
     encoder = MissingnessEncoder(ignore = true, ordered_factor = false)
     mach = machine(encoder, X)
     fit!(mach)
-    Xnew_transf = MMI.transform(mach, X)
+    Xnew_transf =  MLJBase.transform(mach, X)
 
     # same output
     @test isequal(X_transf, Xnew_transf)
@@ -197,7 +197,7 @@ end
 
     encoder = MissingnessEncoder()
     mach = fit!(machine(encoder, Xm))
-    Xnew = MMI.transform(mach, Xm)
+    Xnew = MLJBase.transform(mach, Xm)
 
     schema(Xm)
     schema(Xnew)
