@@ -73,7 +73,7 @@ end
 metadata_model(ContinuousEncoder,
     input_scitype   = Table,
     output_scitype = Table(Continuous),
-    load_path    = "MLJModels.ContinuousEncoder")
+    load_path    = "MLJTransforms.ContinuousEncoder")
 
 """
 $(MLJModelInterface.doc_header(ContinuousEncoder))

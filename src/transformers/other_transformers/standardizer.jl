@@ -229,7 +229,7 @@ metadata_model(UnivariateStandardizer,
     input_scitype   = AbstractVector{<:Infinite},
     output_scitype = AbstractVector{Continuous},
     human_name = "single variable discretizer",
-    load_path    = "MLJModels.UnivariateStandardizer")
+    load_path    = "MLJTransforms.UnivariateStandardizer")
 
 metadata_model(Standardizer,
     input_scitype   = Union{Table, AbstractVector{<:Continuous}},
