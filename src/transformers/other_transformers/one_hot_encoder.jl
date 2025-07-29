@@ -163,7 +163,7 @@ metadata_model(OneHotEncoder,
     input_scitype   = Table,
     output_scitype = Table,
     human_name = "one-hot encoder",
-    load_path    = "MLJModels.OneHotEncoder")
+    load_path = "MLJTransforms.OneHotEncoder")
 
 """
 $(MLJModelInterface.doc_header(OneHotEncoder))

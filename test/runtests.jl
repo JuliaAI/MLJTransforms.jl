@@ -1,21 +1,16 @@
 using MLJTransforms
 using Test
 using DataFrames
-using ScientificTypes
 using CategoricalArrays
-using MLJModelInterface
 using MLJBase
 using StatsBase
 using LinearAlgebra
-using StatsModels
+import StatsModels
 using Random
-const MMI = MLJModelInterface
 using LinearAlgebra
-using StatsModels
 
 # Other transformers
 using Tables, CategoricalArrays
-using ScientificTypes: scitype, schema
 using Statistics
 using StableRNGs
 stable_rng = StableRNGs.StableRNG(123)
