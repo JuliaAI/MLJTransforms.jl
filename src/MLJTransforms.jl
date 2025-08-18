@@ -1,9 +1,12 @@
 module MLJTransforms
 using Tables
-using ScientificTypes
-using ScientificTypes: scitype
+# Note: The `scitype` in
+# MLJModelInterface clashes with the `scitype` in ScientificTypes. See also
+# https://github.com/JuliaAI/MLJBase.jl/issues/1002
+import ScientificTypes: elscitype, schema, coerce, ScientificTimeType
+using MLJModelInterface # exports `scitype`, which will call `ScientificTypes.scitype`,
+                        # once MLJBase is loaded (but this is not a dependency!)
 using CategoricalArrays
-using MLJModelInterface
 using TableOperations
 using StatsBase
 using LinearAlgebra
@@ -14,7 +17,6 @@ import Distributions
 using Parameters
 using Dates
 using OrderedCollections
-
 
 const MMI = MLJModelInterface
 

@@ -94,7 +94,7 @@ metadata_model(UnivariateDiscretizer,
     input_scitype   = AbstractVector{<:Continuous},
     output_scitype = AbstractVector{<:OrderedFactor},
     human_name = "single variable discretizer",
-    load_path    = "MLJModels.UnivariateDiscretizer")
+    load_path = "MLJTransforms.UnivariateDiscretizer")
 
 
 """

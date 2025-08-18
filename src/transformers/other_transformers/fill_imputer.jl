@@ -187,12 +187,12 @@ metadata_model(UnivariateFillImputer,
                   AbstractVector{<:Count},
                   AbstractVector{<:Finite}},
     human_name = "single variable fill imputer",
-    load_path  = "MLJModels.UnivariateFillImputer")
+    load_path  = "MLJTransforms.UnivariateFillImputer")
 
 metadata_model(FillImputer,
     input_scitype   = Table,
     output_scitype = Table,
-    load_path    = "MLJModels.FillImputer")
+    load_path = "MLJTransforms.FillImputer")
 
 """
 $(MLJModelInterface.doc_header(UnivariateFillImputer))

@@ -15,7 +15,7 @@ push!(
     @test ordinal_encoder_fit(dataset_forms[1]) == ordinal_encoder_fit(dataset_forms[2])
     X = dataset_forms[1]
     result = ordinal_encoder_fit(X)[:index_given_feat_level]
-    A_col, C_col, D_col, F_col = MMI.selectcols(X, [1, 3, 4, 6])
+    A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict(
             "m" => findfirst(==("m"), levels(F_col)),
@@ -70,7 +70,7 @@ end
         encoder = OrdinalEncoder(ignore = true, ordered_factor = false)
         mach = machine(encoder, X)
         fit!(mach)
-        Xnew_transf = MMI.transform(mach, X)
+        Xnew_transf = MLJBase.transform(mach, X)
 
         # same output
         @test X_transf == Xnew_transf
@@ -108,7 +108,7 @@ end
 
     encoder = OrdinalEncoder(ordered_factor = false)
     mach = fit!(machine(encoder, X))
-    Xnew = MMI.transform(mach, X)
+    Xnew = MLJBase.transform(mach, X)
 
     scs = schema(Xnew).scitypes
     ts  = schema(Xnew).types
@@ -123,7 +123,7 @@ end
     ## Int32 case
     encoder = OrdinalEncoder(ordered_factor = false, output_type = Int32)
     mach = fit!(machine(encoder, X))
-    Xnew = MMI.transform(mach, X)
+    Xnew = MLJBase.transform(mach, X)
     scs = schema(Xnew).scitypes
     ts = schema(Xnew).types
     # Check scitypes for previously categorical features
