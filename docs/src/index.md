@@ -15,7 +15,7 @@ Pkg.add(["MLJ", "MLJTransforms"])
 For the following demo, you will need to additionally run `Pkg.add("RDatasets")`.
 
 ```julia
-using MLJ, MLJTransforms
+using MLJ
 import RDatasets
 
 # 1. Load Data
