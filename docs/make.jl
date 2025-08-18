@@ -26,8 +26,8 @@ makedocs(
     pages = [
         "Introduction" => "index.md",
         "Transformers" => Any[
-            "All Transformers" => "transformers/all_transformers.md",
-            "Encoders" => Any[
+            "All Transformers"=>"transformers/all_transformers.md",
+            "Encoders"=>Any[
                 "Classical Encoders"    => "transformers/classical.md",
                 "Neural-based Encoders" => "transformers/neural.md",
                 "Contrast Encoders"     => "transformers/contrast.md",
@@ -35,8 +35,10 @@ makedocs(
             ],
         ],
         "Extended Examples" => Any[
-            "Tutorial A" => "tutorials/T1.md",
-            "Tutorial B" => "tutorials/T1.md",
+            "Standardization Impact"=>"tutorials/standardization/notebook.md",
+            "Milk Quality Classification"=>"tutorials/classic_comparison/notebook.md",
+            "Wine Quality Prediction"=>"tutorials/wine_example/notebook.md",
+            "Entity Embeddings Tutorial"=>"tutorials/entity_embeddings/notebook.md",
         ],
         "Contributing" => "contributing.md",
         "About" => "about.md",
