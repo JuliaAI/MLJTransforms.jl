@@ -906,10 +906,10 @@ uuid = "d491faf4-2d78-11e9-2867-c94bc002c0b7"
 version = "0.17.9"
 
 [[deps.MLJTransforms]]
-deps = ["BitBasis", "CategoricalArrays", "Combinatorics", "Dates", "Distributions", "LinearAlgebra", "MLJModelInterface", "OrderedCollections", "Parameters", "ScientificTypes", "Statistics", "StatsBase", "TableOperations", "Tables"]
+deps = ["BitBasis", "CategoricalArrays", "Combinatorics", "Dates", "Distributions", "LinearAlgebra", "MLJModelInterface", "OrderedCollections", "Parameters", "ScientificTypes", "ScientificTypesBase", "Statistics", "StatsBase", "TableOperations", "Tables"]
 path = ".."
 uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6"
-version = "0.1.4"
+version = "0.1.1"
 
 [[deps.MLJTuning]]
 deps = ["ComputationalResources", "Distributed", "Distributions", "LatinHypercubeSampling", "MLJBase", "ProgressMeter", "Random", "RecipesBase", "StatisticalMeasuresBase"]
