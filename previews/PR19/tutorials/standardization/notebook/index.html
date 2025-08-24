@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Standardization Impact · MLJTransforms</title><meta name="title" content="Standardization Impact · MLJTransforms"/><meta property="og:title" content="Standardization Impact · MLJTransforms"/><meta property="twitter:title" content="Standardization Impact · MLJTransforms"/><meta name="description" content="Documentation for MLJTransforms."/><meta property="og:description" content="Documentation for MLJTransforms."/><meta property="twitter:description" content="Documentation for MLJTransforms."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;display=swap" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="MLJTransforms logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">MLJTransforms</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox"/><label class="tocitem" for="menuitem-2"><span class="docs-label">Transformers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../transformers/all_transformers/">All Transformers</a></li><li><input class="collapse-toggle" id="menuitem-2-2" type="checkbox"/><label class="tocitem" for="menuitem-2-2"><span class="docs-label">Encoders</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../transformers/classical/">Classical Encoders</a></li><li><a class="tocitem" href="../../../transformers/neural/">Neural-based Encoders</a></li><li><a class="tocitem" href="../../../transformers/contrast/">Contrast Encoders</a></li><li><a class="tocitem" href="../../../transformers/utility/">Utility Encoders</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox" checked/><label class="tocitem" for="menuitem-3"><span class="docs-label">Extended Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li class="is-active"><a class="tocitem" href>Standardization Impact</a><ul class="internal"><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Data-Preparation"><span>Data Preparation</span></a></li><li><a class="tocitem" href="#Feature-Extraction-and-Data-Splitting"><span>Feature Extraction and Data Splitting</span></a></li><li><a class="tocitem" href="#Model-Setup"><span>Model Setup</span></a></li><li><a class="tocitem" href="#Model-Evaluation"><span>Model Evaluation</span></a></li><li><a class="tocitem" href="#Results-Visualization"><span>Results Visualization</span></a></li><li><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li><li><a class="tocitem" href="#Further-Resources"><span>Further Resources</span></a></li></ul></li><li><a class="tocitem" href="../../classic_comparison/notebook/">Milk Quality Classification</a></li><li><a class="tocitem" href="../../wine_example/notebook/">Wine Quality Prediction</a></li><li><a class="tocitem" href="../../entity_embeddings/notebook/">Entity Embeddings Tutorial</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Extended Examples</a></li><li class="is-active"><a href>Standardization Impact</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Standardization Impact</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/MLJTransforms.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaAI/MLJTransforms.jl/blob/dev/docs/src/tutorials/standardization/notebook.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Effects-of-Feature-Standardization-on-Model-Performance"><a class="docs-heading-anchor" href="#Effects-of-Feature-Standardization-on-Model-Performance">Effects of Feature Standardization on Model Performance</a><a id="Effects-of-Feature-Standardization-on-Model-Performance-1"></a><a class="docs-heading-anchor-permalink" href="#Effects-of-Feature-Standardization-on-Model-Performance" title="Permalink"></a></h1><p>Welcome to this tutorial on feature standardization in machine learning! In this tutorial, we&#39;ll explore how standardizing features can significantly impact the performance of different machine learning models.</p><p>We&#39;ll compare Logistic Regression and Support Vector Machine (SVM) models, both with and without feature standardization. This will help us understand when and why preprocessing is important for model performance.</p><p>This demonstration is available as a Jupyter notebook or julia script <a href="https://github.com/essamwise/MLJTransforms.jl/tree/main/docs/src/tutorials/standardization">here</a>.</p><pre><code class="language-julia hljs">using Pkg
+Pkg.activate(@__DIR__);
+Pkg.instantiate();</code></pre><pre><code class="nohighlight hljs">  Activating project at `~/Documents/GitHub/MLJTransforms/docs/src/tutorials/standardization`
+</code></pre><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><p>First, let&#39;s make sure we&#39;re using a compatible Julia version. This code was tested with Julia 1.10. Let&#39;s import all the packages we&#39;ll need for this tutorial.</p><pre><code class="language-julia hljs"># Load the necessary packages
+using MLJ                   # Core MLJ framework
+using LIBSVM                # For Support Vector Machine
+using DataFrames            # For displaying results
+using RDatasets             # To load sample datasets
+using Random                # For reproducibility
+using ScientificTypes       # For proper data typing
+using Plots                 # For visualizations
+using MLJLinearModels       # For Logistic Regression</code></pre><h2 id="Data-Preparation"><a class="docs-heading-anchor" href="#Data-Preparation">Data Preparation</a><a id="Data-Preparation-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Preparation" title="Permalink"></a></h2><p>Let&#39;s load the Pima Indians Diabetes Dataset. This is a classic dataset for binary classification, where we predict diabetes status based on various health metrics.</p><p>The interesting thing about this dataset is that different features have very different scales. We&#39;ll artificially exaggerate this by adding a large constant to the glucose values.</p><pre><code class="language-julia hljs"># Load the dataset and modify it to have extreme scale differences
+df = RDatasets.dataset(&quot;MASS&quot;, &quot;Pima.tr&quot;)
+df.Glu .+= 10000.0;  # Artificially increase the scale of glucose values</code></pre><p>Let&#39;s examine the first few rows of our dataset:</p><pre><code class="language-julia hljs">first(df, 5)</code></pre><div><div style = "float: left;"><span>5×8 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">NPreg</th><th style = "text-align: left;">Glu</th><th style = "text-align: left;">BP</th><th style = "text-align: left;">Skin</th><th style = "text-align: left;">BMI</th><th style = "text-align: left;">Ped</th><th style = "text-align: left;">Age</th><th style = "text-align: left;">Type</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "CategoricalArrays.CategoricalValue{String, UInt8}" style = "text-align: left;">Cat…</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10086.0</td><td style = "text-align: right;">68</td><td style = "text-align: right;">28</td><td style = "text-align: right;">30.2</td><td style = "text-align: right;">0.364</td><td style = "text-align: right;">24</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: right;">7</td><td style = "text-align: right;">10195.0</td><td style = "text-align: right;">70</td><td style = "text-align: right;">33</td><td style = "text-align: right;">25.1</td><td style = "text-align: right;">0.163</td><td style = "text-align: right;">55</td><td style = "text-align: left;">Yes</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10077.0</td><td style = "text-align: right;">82</td><td style = "text-align: right;">41</td><td style = "text-align: right;">35.8</td><td style = "text-align: right;">0.156</td><td style = "text-align: right;">35</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10165.0</td><td style = "text-align: right;">76</td><td style = "text-align: right;">43</td><td style = "text-align: right;">47.9</td><td style = "text-align: right;">0.259</td><td style = "text-align: right;">26</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">5</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10107.0</td><td style = "text-align: right;">60</td><td style = "text-align: right;">25</td><td style = "text-align: right;">26.4</td><td style = "text-align: right;">0.133</td><td style = "text-align: right;">23</td><td style = "text-align: left;">No</td></tr></tbody></table></div><h3 id="Data-Type-Conversion"><a class="docs-heading-anchor" href="#Data-Type-Conversion">Data Type Conversion</a><a id="Data-Type-Conversion-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Type-Conversion" title="Permalink"></a></h3><p>In MLJ, it&#39;s important to ensure that our data has the correct scientific types. This helps the framework understand how to properly handle each column.</p><p>We&#39;ll convert our columns to their appropriate types:</p><ul><li><code>Count</code> for discrete count data</li><li><code>Continuous</code> for continuous numerical data</li><li><code>Multiclass</code> for our target variable</li></ul><pre><code class="language-julia hljs"># Coerce columns to the right scientific types
+df = coerce(df,
+    :NPreg =&gt; Count,      # Number of pregnancies is a count
+    :Glu =&gt; Continuous,   # Glucose level is continuous
+    :BP =&gt; Continuous,    # Blood pressure is continuous
+    :Skin =&gt; Continuous,  # Skin thickness is continuous
+    :BMI =&gt; Continuous,   # Body mass index is continuous
+    :Ped =&gt; Continuous,   # Diabetes pedigree is continuous
+    :Age =&gt; Continuous,   # Age is continuous
+    :Type =&gt; Multiclass,  # Diabetes status is our target (Yes/No)
+);</code></pre><p>Let&#39;s verify that our schema looks correct:</p><pre><code class="language-julia hljs">ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌───────┬───────────────┬─────────────────────────────────┐
+│ names │ scitypes      │ types                           │
+├───────┼───────────────┼─────────────────────────────────┤
+│ NPreg │ Count         │ Int32                           │
+│ Glu   │ Continuous    │ Float64                         │
+│ BP    │ Continuous    │ Float64                         │
+│ Skin  │ Continuous    │ Float64                         │
+│ BMI   │ Continuous    │ Float64                         │
+│ Ped   │ Continuous    │ Float64                         │
+│ Age   │ Continuous    │ Float64                         │
+│ Type  │ Multiclass{2} │ CategoricalValue{String, UInt8} │
+└───────┴───────────────┴─────────────────────────────────┘
+</code></pre><h2 id="Feature-Extraction-and-Data-Splitting"><a class="docs-heading-anchor" href="#Feature-Extraction-and-Data-Splitting">Feature Extraction and Data Splitting</a><a id="Feature-Extraction-and-Data-Splitting-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Extraction-and-Data-Splitting" title="Permalink"></a></h2><p>Now we&#39;ll separate our features from our target variable. In MLJ, this is done with the <code>unpack</code> function.</p><pre><code class="language-julia hljs"># Unpack features (X) and target (y)
+y, X = unpack(df, ==(:Type); rng = 123);</code></pre><p>Next, we&#39;ll split our data into training and testing sets. We&#39;ll use 70% for training and 30% for testing.</p><pre><code class="language-julia hljs"># Split data into train and test sets
+train, test = partition(eachindex(y), 0.7, shuffle = true, rng = 123);</code></pre><h2 id="Model-Setup"><a class="docs-heading-anchor" href="#Model-Setup">Model Setup</a><a id="Model-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Setup" title="Permalink"></a></h2><p>We&#39;ll compare two different models:</p><ol><li>Logistic Regression: A linear model good for binary classification</li><li>Support Vector Machine (SVM): A powerful non-linear classifier</li></ol><p>For each model, we&#39;ll create two versions:</p><ul><li>One without standardization</li><li>One with standardization</li></ul><p>The <code>Standardizer</code> transformer will rescale our features to have mean 0 and standard deviation 1.</p><pre><code class="language-julia hljs"># Load our models from their respective packages
+logreg = @load LogisticClassifier pkg = MLJLinearModels
+svm = @load SVC pkg = LIBSVM
+stand = Standardizer()  # This is our standardization transformer
+
+# Create pipelines for each model variant
+logreg_pipe = logreg()  # Plain logistic regression
+logreg_std_pipe = Pipeline(stand, logreg())  # Logistic regression with standardization
+svm_pipe = svm()  # Plain SVM
+svm_std_pipe = Pipeline(stand, svm())  # SVM with standardization</code></pre><pre><code class="nohighlight hljs">DeterministicPipeline(
+  standardizer = Standardizer(
+        features = Symbol[], 
+        ignore = false, 
+        ordered_factor = false, 
+        count = false), 
+  svc = SVC(
+        kernel = LIBSVM.Kernel.RadialBasis, 
+        gamma = 0.0, 
+        cost = 1.0, 
+        cachesize = 200.0, 
+        degree = 3, 
+        coef0 = 0.0, 
+        tolerance = 0.001, 
+        shrinking = true), 
+  cache = true)</code></pre><h2 id="Model-Evaluation"><a class="docs-heading-anchor" href="#Model-Evaluation">Model Evaluation</a><a id="Model-Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Evaluation" title="Permalink"></a></h2><p>Let&#39;s set up a vector of our models so we can evaluate them all using the same process. For each model, we&#39;ll store its name and the corresponding pipeline.</p><pre><code class="language-julia hljs"># Create a list of models to evaluate
+models = [
+    (&quot;Logistic Regression&quot;, logreg_pipe),
+    (&quot;Logistic Regression (standardized)&quot;, logreg_std_pipe),
+    (&quot;SVM&quot;, svm_pipe),
+    (&quot;SVM (standardized)&quot;, svm_std_pipe),
+]</code></pre><pre><code class="nohighlight hljs">4-element Vector{Tuple{String, MLJModelInterface.Supervised}}:
+ (&quot;Logistic Regression&quot;, LogisticClassifier(lambda = 2.220446049250313e-16, …))
+ (&quot;Logistic Regression (standardized)&quot;, ProbabilisticPipeline(standardizer = Standardizer(features = Symbol[], …), …))
+ (&quot;SVM&quot;, SVC(kernel = RadialBasis, …))
+ (&quot;SVM (standardized)&quot;, DeterministicPipeline(standardizer = Standardizer(features = Symbol[], …), …))</code></pre><p>Now we&#39;ll loop through each model, train it, make predictions, and calculate accuracy. This will help us compare how standardization affects each model&#39;s performance.</p><pre><code class="language-julia hljs"># Train and evaluate each model
+results = DataFrame(model = String[], accuracy = Float64[])
+for (name, model) in models
+    # Create a machine learning model
+    mach = machine(model, X, y)
+
+    # Train the model on the training data
+    MLJ.fit!(mach, rows = train)
+
+    # Make predictions on the test data
+    # Note: Logistic regression returns probabilities, so we need to get the mode
+    yhat =
+        occursin(&quot;Logistic Regression&quot;, name) ?
+        MLJ.predict_mode(mach, rows = test) :  # Get most likely class for logistic regression
+        MLJ.predict(mach, rows = test)         # SVM directly predicts the class
+
+    # Calculate accuracy
+    acc = accuracy(yhat, y[test])
+
+    # Store the results
+    push!(results, (name, acc))
+end</code></pre><pre><code class="nohighlight hljs">┌ Warning: The number and/or types of data arguments do not match what the specified model
+│ supports. Suppress this type check by specifying `scitype_check_level=0`.
+│ 
+│ Run `@doc MLJLinearModels.LogisticClassifier` to learn more about your model&#39;s requirements.
+│ 
+│ Commonly, but non exclusively, supervised models are constructed using the syntax
+│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
+│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
+│ sample or class weights.
+│ 
+│ In general, data in `machine(model, data...)` is expected to satisfy
+│ 
+│     scitype(data) &lt;: MLJ.fit_data_scitype(model)
+│ 
+│ In the present case:
+│ 
+│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
+│ 
+│ fit_data_scitype(model) = Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}}
+└ @ MLJBase ~/.julia/packages/MLJBase/F1Eh6/src/machines.jl:237
+[ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
+┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
+│   optim_options: Optim.Options{Float64, Nothing}
+└   lbfgs_options: @NamedTuple{} NamedTuple()
+[ Info: Training machine(ProbabilisticPipeline(standardizer = Standardizer(features = Symbol[], …), …), …).
+[ Info: Training machine(:standardizer, …).
+[ Info: Training machine(:logistic_classifier, …).
+┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
+│   optim_options: Optim.Options{Float64, Nothing}
+└   lbfgs_options: @NamedTuple{} NamedTuple()
+┌ Warning: The number and/or types of data arguments do not match what the specified model
+│ supports. Suppress this type check by specifying `scitype_check_level=0`.
+│ 
+│ Run `@doc LIBSVM.SVC` to learn more about your model&#39;s requirements.
+│ 
+│ Commonly, but non exclusively, supervised models are constructed using the syntax
+│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
+│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
+│ sample or class weights.
+│ 
+│ In general, data in `machine(model, data...)` is expected to satisfy
+│ 
+│     scitype(data) &lt;: MLJ.fit_data_scitype(model)
+│ 
+│ In the present case:
+│ 
+│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
+│ 
+│ fit_data_scitype(model) = Union{Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}}, Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}, Any}}
+└ @ MLJBase ~/.julia/packages/MLJBase/F1Eh6/src/machines.jl:237
+[ Info: Training machine(SVC(kernel = RadialBasis, …), …).
+[ Info: Training machine(DeterministicPipeline(standardizer = Standardizer(features = Symbol[], …), …), …).
+[ Info: Training machine(:standardizer, …).
+[ Info: Training machine(:svc, …).
+</code></pre><h2 id="Results-Visualization"><a class="docs-heading-anchor" href="#Results-Visualization">Results Visualization</a><a id="Results-Visualization-1"></a><a class="docs-heading-anchor-permalink" href="#Results-Visualization" title="Permalink"></a></h2><p>Finally, let&#39;s visualize our results to see the impact of standardization. We&#39;ll create a bar chart comparing the accuracy of each model.</p><pre><code class="language-julia hljs"># Create a bar chart of model performance
+p = bar(
+    results.model,
+    results.accuracy,
+    xlabel = &quot;Model&quot;,
+    ylabel = &quot;Accuracy&quot;,
+    title = &quot;Model Accuracy Comparison&quot;,
+    legend = false,
+    bar_width = 0.6,
+    ylims = (0.5, 0.7),
+    xrotation = 17,
+);</code></pre><p>Save the plot</p><p><img src="../standardization_results.png" alt="Model Accuracy Comparison"/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>From this tutorial, we can clearly see that standardization has a dramatic impact on model performance.</p><p>Looking at the results:</p><ul><li><p><strong>Logistic Regression</strong>: Without standardization, it achieves only ~57% accuracy. With standardization, its performance jumps dramatically to ~68% accuracy – the best performance among all models.</p></li><li><p><strong>SVM</strong>: The baseline SVM achieves ~62% accuracy. When standardized, it improves to ~65% accuracy, which is a significant boost but not as dramatic as what we see with logistic regression.</p></li></ul><p>Try this approach with other datasets and models to further explore the effects of standardization!</p><h2 id="Further-Resources"><a class="docs-heading-anchor" href="#Further-Resources">Further Resources</a><a id="Further-Resources-1"></a><a class="docs-heading-anchor-permalink" href="#Further-Resources" title="Permalink"></a></h2><ul><li><a href="&lt;unknown&gt;">MLJTransforms Documentation</a></li><li><a href="https://alan-turing-institute.github.io/ScientificTypes.jl/dev/">Scientific Types in MLJ</a></li><li><a href="https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/">Feature Preprocessing in MLJ</a></li></ul><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../../transformers/utility/">« Utility Encoders</a><a class="docs-footer-nextpage" href="../../classic_comparison/notebook/">Milk Quality Classification »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Sunday 24 August 2025 03:08">Sunday 24 August 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
