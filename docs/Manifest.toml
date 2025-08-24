@@ -883,9 +883,9 @@ version = "0.5.0"
 
 [[deps.MLJFlux]]
 deps = ["CategoricalArrays", "ColorTypes", "ComputationalResources", "Flux", "MLJModelInterface", "Metalhead", "Optimisers", "ProgressMeter", "Random", "Statistics", "Tables"]
-git-tree-sha1 = "50c7f24b84005a2a80875c10d4f4059df17a0f68"
+git-tree-sha1 = "cb65604a17525c341222e5379aad3dc6d322e719"
 uuid = "094fc8d1-fd35-5302-93ea-dabda2abf845"
-version = "0.5.1"
+version = "0.6.6"
 
 [[deps.MLJIteration]]
 deps = ["IterationControl", "MLJBase", "Random", "Serialization"]
