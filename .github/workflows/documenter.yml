@@ -5,6 +5,7 @@ on:
     branches:
       - dev
       - main
+      - docs
     tags: '*'
   pull_request:
 
