@@ -46,4 +46,8 @@ makedocs(
     doctest = false,
 )
 
-deploydocs(repo = "github.com/JuliaAI/MLJTransforms.jl.git", devbranch = "dev")
+deploydocs(
+    repo = "github.com/JuliaAI/MLJTransforms.jl.git",
+    devbranch = "dev",
+    push_preview = true,
+)
