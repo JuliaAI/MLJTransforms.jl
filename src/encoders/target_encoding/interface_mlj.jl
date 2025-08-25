@@ -1,7 +1,7 @@
 ### TargetEncoding with MLJ Interface
 
 # 1. Interface Struct
-mutable struct TargetEncoder{R1 <: Real, R2 <: Real, A <: Any} <:
+mutable struct TargetEncoder{R1 <: Real, R2 <: Union{Real,Symbol}, A <: Any} <:
                Unsupervised
     features::A
     ignore::Bool
@@ -27,7 +27,7 @@ end;
 # 3. Hyperparameter checks
 function MMI.clean!(t::TargetEncoder)
     message = ""
-    if t.m < 0
+    if isa(t.m, Real) &&  t.m < 0
         throw(
             ArgumentError(NON_NEGATIVE_m(t.m)),
         )
@@ -150,7 +150,7 @@ $ordered_factor_doc
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or `OrderedFactor features of `Xnew` specified by hyper-parameters, and 
+- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
    return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
    are always left unchanged.
 
