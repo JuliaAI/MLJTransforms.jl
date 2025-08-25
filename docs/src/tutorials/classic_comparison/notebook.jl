@@ -14,7 +14,7 @@ Pkg.activate(@__DIR__);
 Pkg.instantiate(); #src
 
 using MLJ, MLJTransforms, LIBSVM, DataFrames, ScientificTypes
-using Random, CSV
+using Random, CSV, Plots
 
 # ## Load and Prepare Data
 # Load the milk quality dataset which contains categorical features for quality prediction:
@@ -70,28 +70,89 @@ pipelines = [
 # ## Evaluate Pipelines
 # Use 10-fold cross-validation to robustly estimate each pipeline's accuracy:
 
-results = DataFrame(pipeline = String[], accuracy = Float64[])
+results = DataFrame(
+    pipeline = String[],
+    accuracy = Float64[],
+    std_error = Float64[],
+    ci_lower = Float64[],
+    ci_upper = Float64[],
+)
 
 for (name, pipe) in pipelines
     println("Evaluating: $name")
-    mach = machine(pipe, X, y)
-    eval_results = evaluate!(
-        mach,
-        resampling = CV(nfolds = 10, rng = 123),
+    eval_results = evaluate(
+        pipe,
+        X,
+        y,
+        resampling = CV(nfolds = 5, rng = 123),
         measure = accuracy,
         rows = train,
         verbosity = 0,
     )
-    acc = mean(eval_results.measurement)
-    push!(results, (name, acc))
+    acc = eval_results.measurement[1]          # scalar mean
+    per_fold = eval_results.per_fold[1]         # vector of fold results
+    se = std(per_fold) / sqrt(length(per_fold))
+    ci = 1.96 * se
+    push!(
+        results,
+        (
+            pipeline = name,
+            accuracy = acc,
+            std_error = se,
+            ci_lower = acc - ci,
+            ci_upper = acc + ci,
+        ),
+    )
+    println("  Mean accuracy: $(round(acc, digits=4)) ± $(round(ci, digits=4))")
 end
 
 # Sort results by accuracy (highest first) and display:
 sort!(results, :accuracy, rev = true)
+
+# Display results with confidence intervals
+println("\nResults with 95% Confidence Intervals (see caveats below):")
+println("="^60)
+for row in eachrow(results)
+    pipeline = row.pipeline
+    acc = round(row.accuracy, digits = 4)
+    ci_lower = round(row.ci_lower, digits = 4)
+    ci_upper = round(row.ci_upper, digits = 4)
+    println("$pipeline: $acc (95% CI: [$ci_lower, $ci_upper])")
+end
+
 results
 
 # ## Results Analysis
-# We notice that one-hot-encoding was the most performant here followed by target encoding.
-# Ordinal encoding also produced decent results because we can perceive all the categorical variables to be ordered
-# On the other hand, frequency encoding lagged behind. Observe that this method doesn't distinguish categories from one another if they occur with similar frequencies.
-#
+# 
+# ### Performance Summary
+# The results show OneHot encoding performing best, followed by Target encoding, with Ordinal and Frequency encoders showing lower performance.
+# 
+# The confidence intervals should be interpreted with caution and primarily serve to illustrate uncertainty rather than provide definitive statistical significance tests.
+# See Bengio & Grandvalet, 2004: "No Unbiased Estimator of the Variance of K-Fold Cross-Validation"). That said, reporting the interval is still more informative than reporting only the mean.
+
+# Prepare data for plotting
+labels = results.pipeline
+mean_acc = results.accuracy
+ci_lower = results.ci_lower
+ci_upper = results.ci_upper
+
+# Error bars: distance from mean to CI bounds
+lower_err = mean_acc .- ci_lower
+upper_err = ci_upper .- mean_acc
+
+bar(
+    labels,
+    mean_acc,
+    yerror = (lower_err, upper_err),
+    legend = false,
+    xlabel = "Encoder + SVM",
+    ylabel = "Accuracy",
+    title = "Mean Accuracy with 95% Confidence Intervals",
+    ylim = (0, 1.05),
+    color = :skyblue,
+    size = (700, 400),
+);
+
+# save the figure and load it
+savefig("encoder_comparison.png");
+# ![`encoder_comparison.png`](encoder_comparison.png)
