@@ -28,6 +28,7 @@ Pkg.instantiate(); #src
 
 ## Import all required packages
 using MLJ
+using MLJFlux
 using CategoricalArrays
 using DataFrames
 using Optimisers
@@ -160,8 +161,8 @@ df = coerce(df,
     Symbol("Content Rating") => Multiclass,
     :Genres => Multiclass,
     Symbol("Android Ver") => Multiclass,
-    :Rating => Continuous,  ## Keep original for reference
-    :RatingCategory => Multiclass,  ## New categorical target
+    :Rating => Continuous,              ## Keep original for reference
+    :RatingCategory => OrderedFactor,      ## New categorical target
 );
 schema(df)
 
@@ -183,7 +184,6 @@ X = select(df, Not([:Rating, :RatingCategory]));  ## Exclude both rating columns
     rng = Random.Xoshiro(41),
 );
 
-using MLJFlux
 
 # ## Building the EntityEmbedder Model
 
@@ -233,8 +233,8 @@ MLJ.fit!(mach, force = true, verbosity = 1);
 # After training, we can use the embedder as a transformer to convert categorical features into their learned embedding representations.
 
 ## Transform the data using the learned embeddings
-X_train_embedded = MLJFlux.transform(mach, X_train)
-X_test_embedded = MLJFlux.transform(mach, X_test);
+X_train_embedded = MLJ.transform(mach, X_train)
+X_test_embedded = MLJ.transform(mach, X_test);
 
 ## Check the schema transformation
 println("Original schema:")

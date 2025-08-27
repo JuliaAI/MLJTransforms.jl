@@ -32,6 +32,7 @@ Pkg.activate(@__DIR__);
 
 # Import all required packages
 using MLJ
+using MLJFlux
 using CategoricalArrays
 using DataFrames
 using Optimisers
@@ -184,7 +185,7 @@ println("\nUnique rating categories: $(sort(unique(df.RatingCategory)))")
 
 ````
 Distribution of categorical rating labels:
-OrderedCollections.OrderedDict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64}("1.0" => 17, "1.5" => 18, "2.0" => 53, "2.5" => 105, "3.0" => 281, "3.5" => 722, "4.0" => 2420, "4.5" => 3542, "5.0" => 571, "NaN" => 1416)
+OrderedCollections.OrderedDict{CategoricalValue{String, UInt32}, Int64}("1.0" => 17, "1.5" => 18, "2.0" => 53, "2.5" => 105, "3.0" => 281, "3.5" => 722, "4.0" => 2420, "4.5" => 3542, "5.0" => 571, "NaN" => 1416)
 
 Unique rating categories: ["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "NaN"]
 
@@ -207,28 +208,28 @@ df = coerce(df,
     Symbol("Content Rating") => Multiclass,
     :Genres => Multiclass,
     Symbol("Android Ver") => Multiclass,
-    :Rating => Continuous,  ## Keep original for reference
-    :RatingCategory => Multiclass,  ## New categorical target
+    :Rating => Continuous,              ## Keep original for reference
+    :RatingCategory => OrderedFactor,      ## New categorical target
 );
 schema(df)
 ````
 
 ````
-┌────────────────┬────────────────┬────────────────────────────────────┐
-│ names          │ scitypes       │ types                              │
-├────────────────┼────────────────┼────────────────────────────────────┤
-│ Category       │ Multiclass{33} │ CategoricalValue{String31, UInt32} │
-│ Reviews        │ Continuous     │ Float64                            │
-│ Size           │ Continuous     │ Float64                            │
-│ Installs       │ Continuous     │ Float64                            │
-│ Type           │ Multiclass{2}  │ CategoricalValue{String7, UInt32}  │
-│ Price          │ Continuous     │ Float64                            │
-│ Content Rating │ Multiclass{6}  │ CategoricalValue{String15, UInt32} │
-│ Genres         │ Multiclass{48} │ CategoricalValue{String, UInt32}   │
-│ Android Ver    │ Multiclass{34} │ CategoricalValue{String31, UInt32} │
-│ Rating         │ Continuous     │ Float64                            │
-│ RatingCategory │ Multiclass{10} │ CategoricalValue{String, UInt32}   │
-└────────────────┴────────────────┴────────────────────────────────────┘
+┌────────────────┬───────────────────┬────────────────────────────────────┐
+│ names          │ scitypes          │ types                              │
+├────────────────┼───────────────────┼────────────────────────────────────┤
+│ Category       │ Multiclass{33}    │ CategoricalValue{String31, UInt32} │
+│ Reviews        │ Continuous        │ Float64                            │
+│ Size           │ Continuous        │ Float64                            │
+│ Installs       │ Continuous        │ Float64                            │
+│ Type           │ Multiclass{2}     │ CategoricalValue{String7, UInt32}  │
+│ Price          │ Continuous        │ Float64                            │
+│ Content Rating │ Multiclass{6}     │ CategoricalValue{String15, UInt32} │
+│ Genres         │ Multiclass{48}    │ CategoricalValue{String, UInt32}   │
+│ Android Ver    │ Multiclass{34}    │ CategoricalValue{String31, UInt32} │
+│ Rating         │ Continuous        │ Float64                            │
+│ RatingCategory │ OrderedFactor{10} │ CategoricalValue{String, UInt32}   │
+└────────────────┴───────────────────┴────────────────────────────────────┘
 
 ````
 
@@ -250,8 +251,6 @@ X = select(df, Not([:Rating, :RatingCategory]));  ## Exclude both rating columns
     stratify = y,
     rng = Random.Xoshiro(41),
 );
-
-using MLJFlux
 ````
 
 ## Building the EntityEmbedder Model
@@ -321,7 +320,7 @@ EntityEmbedder(
         alpha = 0.0, 
         rng = 39, 
         optimiser_changes_trigger_retraining = false, 
-        acceleration = ComputationalResources.CUDALibs{Nothing}(nothing), 
+        acceleration = CUDALibs{Nothing}(nothing), 
         embedding_dims = Dict{Symbol, Real}(:Category => 2, Symbol("Content Rating") => 2, Symbol("Android Ver") => 2, :Genres => 2, :Type => 2)))
 ````
 
@@ -351,8 +350,8 @@ After training, we can use the embedder as a transformer to convert categorical 
 
 ````julia
 # Transform the data using the learned embeddings
-X_train_embedded = MLJFlux.transform(mach, X_train)
-X_test_embedded = MLJFlux.transform(mach, X_test);
+X_train_embedded = MLJ.transform(mach, X_train)
+X_test_embedded = MLJ.transform(mach, X_test);
 
 # Check the schema transformation
 println("Original schema:")
@@ -389,8 +388,8 @@ MLJ.fit!(pipe_mach, verbosity = 0)
 trained Machine; does not cache data
   model: ProbabilisticPipeline(entity_embedder = EntityEmbedder(model = NeuralNetworkClassifier(builder = Short(n_hidden = 14, …), …)), …)
   args: 
-    1:	Source @225 ⏎ ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Multiclass{33}}, AbstractVector{ScientificTypesBase.Multiclass{2}}, AbstractVector{ScientificTypesBase.Multiclass{6}}, AbstractVector{ScientificTypesBase.Multiclass{48}}, AbstractVector{ScientificTypesBase.Multiclass{34}}}}
-    2:	Source @148 ⏎ AbstractVector{ScientificTypesBase.Multiclass{10}}
+    1:	Source @927 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{33}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{48}}, AbstractVector{Multiclass{34}}}}
+    2:	Source @044 ⏎ AbstractVector{OrderedFactor{10}}
 
 ````
 
