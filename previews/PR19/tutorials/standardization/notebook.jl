@@ -104,9 +104,9 @@ stand = Standardizer()  # This is our standardization transformer
 
 ## Create pipelines for each model variant
 logreg_pipe = logreg()  # Plain logistic regression
-logreg_std_pipe = Pipeline(stand, logreg())  # Logistic regression with standardization
+logreg_std_pipe = stand |> logreg()  # Logistic regression with standardization
 svm_pipe = svm()  # Plain SVM
-svm_std_pipe = Pipeline(stand, svm())  # SVM with standardization
+svm_std_pipe = stand |> svm()  # SVM with standardization
 
 # ## Model Evaluation
 #
@@ -123,6 +123,10 @@ models = [
 
 # Now we'll loop through each model, train it, make predictions, and calculate accuracy.
 # This will help us compare how standardization affects each model's performance.
+#
+# Note: As an alternative to the explicit fit!/predict workflow below, we could use:
+# evaluate(model, X, y, resampling=[(train, test),], measure=accuracy)
+# This shortcut handles the training, prediction, and evaluation in one step.
 
 ## Train and evaluate each model
 results = DataFrame(model = String[], accuracy = Float64[])
