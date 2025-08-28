@@ -1,7 +1,9 @@
 function generate(dir; execute = true, pluto = false)
     quote
         using Pkg
-        Pkg.activate(temp = true)
+        # Activate the specific tutorial directory instead of temp environment
+        Pkg.activate($dir)
+        Pkg.instantiate()
         Pkg.add("Literate")
         using Literate
 

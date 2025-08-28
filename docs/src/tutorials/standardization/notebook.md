@@ -43,6 +43,53 @@ using Plots                 # For visualizations
 using MLJLinearModels       # For Logistic Regression
 ````
 
+````
+Precompiling LIBSVM...
+    922.3 ms  ✓ liblinear_jll
+    919.7 ms  ✓ libsvm_jll
+    837.3 ms  ✓ LIBLINEAR
+   1393.2 ms  ✓ LIBSVM
+  4 dependencies successfully precompiled in 3 seconds. 33 already precompiled.
+Precompiling RDatasets...
+   3340.2 ms  ✓ TimeZones
+   3632.3 ms  ✓ RData
+   2434.4 ms  ✓ RDatasets
+  3 dependencies successfully precompiled in 10 seconds. 67 already precompiled.
+Precompiling FileIOExt...
+   1067.6 ms  ✓ FileIO → HTTPExt
+   2541.2 ms  ✓ Plots → FileIOExt
+  2 dependencies successfully precompiled in 3 seconds. 182 already precompiled.
+Precompiling TimeZonesRecipesBaseExt...
+    470.1 ms  ✓ TimeZones → TimeZonesRecipesBaseExt
+  1 dependency successfully precompiled in 1 seconds. 27 already precompiled.
+Precompiling MLJLinearModels...
+    437.0 ms  ✓ OpenSpecFun_jll
+   1694.4 ms  ✓ SpecialFunctions
+   2526.4 ms  ✓ ForwardDiff
+    972.1 ms  ✓ DifferentiationInterface → DifferentiationInterfaceForwardDiffExt
+    966.6 ms  ✓ NLSolversBase
+   1396.3 ms  ✓ LineSearches
+   2234.5 ms  ✓ Optim
+   2572.4 ms  ✓ MLJLinearModels
+  8 dependencies successfully precompiled in 13 seconds. 73 already precompiled.
+  2 dependencies precompiled but different versions are currently loaded. Restart julia to access the new versions. Otherwise, loading dependents of these packages may trigger further precompilation to work with the unexpected versions.
+Precompiling DifferentiationInterfaceStaticArraysExt...
+    581.9 ms  ✓ DifferentiationInterface → DifferentiationInterfaceStaticArraysExt
+  1 dependency successfully precompiled in 1 seconds. 10 already precompiled.
+Precompiling FiniteDiffStaticArraysExt...
+    573.6 ms  ✓ FiniteDiff → FiniteDiffStaticArraysExt
+    586.8 ms  ✓ ConstructionBase → ConstructionBaseStaticArraysExt
+  2 dependencies successfully precompiled in 1 seconds. 20 already precompiled.
+  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
+Precompiling NNlibForwardDiffExt...
+    630.6 ms  ✓ KernelAbstractions → LinearAlgebraExt
+    703.5 ms  ✓ ForwardDiff → ForwardDiffStaticArraysExt
+   1217.8 ms  ✓ NNlib → NNlibForwardDiffExt
+  3 dependencies successfully precompiled in 2 seconds. 46 already precompiled.
+  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
+
+````
+
 ## Data Preparation
 
 Let's load the Pima Indians Diabetes Dataset. This is a classic dataset for
@@ -64,7 +111,7 @@ first(df, 5)
 ````
 
 ```@raw html
-<div><div style = "float: left;"><span>5×8 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">NPreg</th><th style = "text-align: left;">Glu</th><th style = "text-align: left;">BP</th><th style = "text-align: left;">Skin</th><th style = "text-align: left;">BMI</th><th style = "text-align: left;">Ped</th><th style = "text-align: left;">Age</th><th style = "text-align: left;">Type</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "CategoricalValue{String, UInt8}" style = "text-align: left;">Cat…</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10086.0</td><td style = "text-align: right;">68</td><td style = "text-align: right;">28</td><td style = "text-align: right;">30.2</td><td style = "text-align: right;">0.364</td><td style = "text-align: right;">24</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: right;">7</td><td style = "text-align: right;">10195.0</td><td style = "text-align: right;">70</td><td style = "text-align: right;">33</td><td style = "text-align: right;">25.1</td><td style = "text-align: right;">0.163</td><td style = "text-align: right;">55</td><td style = "text-align: left;">Yes</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10077.0</td><td style = "text-align: right;">82</td><td style = "text-align: right;">41</td><td style = "text-align: right;">35.8</td><td style = "text-align: right;">0.156</td><td style = "text-align: right;">35</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10165.0</td><td style = "text-align: right;">76</td><td style = "text-align: right;">43</td><td style = "text-align: right;">47.9</td><td style = "text-align: right;">0.259</td><td style = "text-align: right;">26</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">5</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10107.0</td><td style = "text-align: right;">60</td><td style = "text-align: right;">25</td><td style = "text-align: right;">26.4</td><td style = "text-align: right;">0.133</td><td style = "text-align: right;">23</td><td style = "text-align: left;">No</td></tr></tbody></table></div>
+<div><div style = "float: left;"><span>5×8 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">NPreg</th><th style = "text-align: left;">Glu</th><th style = "text-align: left;">BP</th><th style = "text-align: left;">Skin</th><th style = "text-align: left;">BMI</th><th style = "text-align: left;">Ped</th><th style = "text-align: left;">Age</th><th style = "text-align: left;">Type</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "CategoricalArrays.CategoricalValue{String, UInt8}" style = "text-align: left;">Cat…</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10086.0</td><td style = "text-align: right;">68</td><td style = "text-align: right;">28</td><td style = "text-align: right;">30.2</td><td style = "text-align: right;">0.364</td><td style = "text-align: right;">24</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: right;">7</td><td style = "text-align: right;">10195.0</td><td style = "text-align: right;">70</td><td style = "text-align: right;">33</td><td style = "text-align: right;">25.1</td><td style = "text-align: right;">0.163</td><td style = "text-align: right;">55</td><td style = "text-align: left;">Yes</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10077.0</td><td style = "text-align: right;">82</td><td style = "text-align: right;">41</td><td style = "text-align: right;">35.8</td><td style = "text-align: right;">0.156</td><td style = "text-align: right;">35</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10165.0</td><td style = "text-align: right;">76</td><td style = "text-align: right;">43</td><td style = "text-align: right;">47.9</td><td style = "text-align: right;">0.259</td><td style = "text-align: right;">26</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">5</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10107.0</td><td style = "text-align: right;">60</td><td style = "text-align: right;">25</td><td style = "text-align: right;">26.4</td><td style = "text-align: right;">0.133</td><td style = "text-align: right;">23</td><td style = "text-align: left;">No</td></tr></tbody></table></div>
 ```
 
 ### Data Type Conversion
@@ -191,7 +238,7 @@ models = [
 ````
 
 ````
-4-element Vector{Tuple{String, Supervised}}:
+4-element Vector{Tuple{String, MLJModelInterface.Supervised}}:
  ("Logistic Regression", LogisticClassifier(lambda = 2.220446049250313e-16, …))
  ("Logistic Regression (standardized)", ProbabilisticPipeline(standardizer = Standardizer(features = Symbol[], …), …))
  ("SVM", SVC(kernel = RadialBasis, …))
@@ -247,9 +294,9 @@ end
 │ 
 │ In the present case:
 │ 
-│ scitype(data) = Tuple{Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}, AbstractVector{Multiclass{2}}}
+│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
 │ 
-│ fit_data_scitype(model) = Tuple{Table{<:AbstractVector{<:Continuous}}, AbstractVector{<:Finite}}
+│ fit_data_scitype(model) = Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}}
 └ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
 [ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
 ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
@@ -277,9 +324,9 @@ end
 │ 
 │ In the present case:
 │ 
-│ scitype(data) = Tuple{Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}, AbstractVector{Multiclass{2}}}
+│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
 │ 
-│ fit_data_scitype(model) = Union{Tuple{Table{<:AbstractVector{<:Continuous}}, AbstractVector{<:Finite}}, Tuple{Table{<:AbstractVector{<:Continuous}}, AbstractVector{<:Finite}, Any}}
+│ fit_data_scitype(model) = Union{Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}}, Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}, Any}}
 └ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
 [ Info: Training machine(SVC(kernel = RadialBasis, …), …).
 [ Info: Training machine(DeterministicPipeline(standardizer = Standardizer(features = Symbol[], …), …), …).
