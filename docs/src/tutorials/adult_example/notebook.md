@@ -453,7 +453,7 @@ combined_plot = plot(time_plot, accuracy_plot; layout = (1, 2), size = (1200, 50
 Save the plot
 
 
-![Adult Encoding Comparison](adult_encoding_comparison_proper_benchmark.png)
+![Adult Encoding Comparison](adult_encoding_comparison.png)
 
 ## Conclusion
 
