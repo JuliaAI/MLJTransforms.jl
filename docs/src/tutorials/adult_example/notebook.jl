@@ -61,7 +61,7 @@ for col in [:workclass, :education, :marital_status, :occupation, :relationship,
 end
 
 # Convert income to binary (0 for <=50K, 1 for >50K)
-df.income = ifelse.(df.income .== ">50K", 1, 0)
+df.income = ifelse.(df.income .== ">50K", 1, 0);
 
 # Let's a high-cardinality categorical feature to showcase encoder handling
 # Create a realistic frequency distribution: A1-A3 make up 90% of data, A4-A500 make up 10%
@@ -75,11 +75,11 @@ n_rare = n_rows - n_frequent           # 10% for A4-A500
 frequent_samples = rand(["A1", "A2", "A3"], n_frequent)
 
 rare_categories = ["A$i" for i in 4:500]
-rare_samples = rand(rare_categories, n_rare)
+rare_samples = rand(rare_categories, n_rare);
 
 # Combine and shuffle
 all_samples = vcat(frequent_samples, rare_samples)
-df.high_cardinality_feature = all_samples[randperm(n_rows)]
+df.high_cardinality_feature = all_samples[randperm(n_rows)];
 
 # Coerce categorical columns to appropriate scientific types. 
 # Apply explicit type coercions using fully qualified names
@@ -101,7 +101,7 @@ type_dict = Dict(
     :native_country => Multiclass,
     :high_cardinality_feature => Multiclass,
 )
-df = coerce(df, type_dict)
+df = coerce(df, type_dict);
 
 # Let's examine the cardinality of our categorical features:
 categorical_cols = [:workclass, :education, :marital_status, :occupation,
@@ -205,7 +205,7 @@ time_plot = bar(1:n, results.training_time;
     xrotation = 8,
     legend = false,
     color = :lightblue,
-)
+);
 
 # accuracy plot
 accuracy_plot = bar(1:n, results.accuracy;
@@ -216,10 +216,10 @@ accuracy_plot = bar(1:n, results.accuracy;
     legend = false,
     ylim = (0.0, 1.0),
     color = :lightcoral,
-)
+);
 
 
-combined_plot = plot(time_plot, accuracy_plot; layout = (1, 2), size = (1200, 500))
+combined_plot = plot(time_plot, accuracy_plot; layout = (1, 2), size = (1200, 500));
 
 # Save the plot
 savefig(combined_plot, "adult_encoding_comparison.png"); #hide
