@@ -73,10 +73,10 @@ MMI.metadata_model(
 """
 $(MMI.doc_header(ContrastEncoder))
 
-`ContrastEncoder` implements the following contrast encoding methods for 
-categorical features: dummy, sum, backward/forward difference, and Helmert coding. 
-More generally, users can specify a custom contrast or hypothesis matrix, and each feature 
-can be encoded using a different method.
+`ContrastEncoder` implements the following contrast encoding methods for categorical
+features: dummy, sum, backward/forward difference, and Helmert coding.  More generally,
+users can specify a custom contrast or hypothesis matrix, and each feature can be encoded
+using a different method.
 
 # Training data
 
@@ -93,26 +93,36 @@ Train the machine using `fit!(mach, rows=...)`.
 # Hyper-parameters
 
 $features_doc
-- `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`, `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`.
-If `ignore=false` (features to be encoded are listed explictly in `features`), then this can be a vector of the same length as `features` to specify a different
-contrast encoding scheme for each feature
-- `buildmatrix=nothing`: A function or other callable with signature `buildmatrix(colname, k)`, 
-where `colname` is the name of the feature levels and `k` is it's length, and which returns contrast or 
-hypothesis matrix with row/column ordering consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or `:hypothesis`.
+
+- `mode=:dummy`: The type of encoding to use. Can be one of `:contrast`, `:dummy`, `:sum`,
+  `:backward_diff`, `:forward_diff`, `:helmert` or `:hypothesis`. If `ignore=false`
+  (features to be encoded are listed explictly in `features`), then this can be a vector
+  of the same length as `features` to specify a different contrast encoding scheme for
+  each feature
+
+- `buildmatrix=nothing`: A function or other callable with signature
+  `buildmatrix(colname,k)`, where `colname` is the name of the feature levels and `k` is
+  it's length, and which returns contrast or hypothesis matrix with row/column ordering
+  consistent with the ordering of `levels(col)`. Only relevant if `mode` is `:contrast` or
+  `:hypothesis`.
+
 $ignore_doc
+
 $ordered_factor_doc
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply contrast encoding to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
-   return the new table. Features that are neither `Multiclass` nor `OrderedFactor`
-   are always left unchanged.
+- `transform(mach, Xnew)`: Apply contrast encoding to selected `Multiclass` or
+  `OrderedFactor features of `Xnew` specified by hyper-parameters, and return the new
+  table. Features that are neither `Multiclass` nor `OrderedFactor` are always left
+  unchanged.
 
 # Fitted parameters
 
 The fields of `fitted_params(mach)` are:
 
-- `vector_given_value_given_feature`: A dictionary that maps each level for each column in a subset of the categorical features of X into its frequency.
+- `vector_given_value_given_feature`: A dictionary that maps each level for each column in
+  a subset of the categorical features of X into its frequency.
 
 # Report
 
@@ -138,7 +148,7 @@ schema(X)
 
 encoder =  ContrastEncoder(
     features = [:name, :favnum],
-    ignore = false, 
+    ignore = false,
     mode = [:dummy, :helmert],
 )
 mach = fit!(machine(encoder, X))
