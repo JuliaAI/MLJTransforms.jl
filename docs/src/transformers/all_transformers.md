@@ -12,12 +12,12 @@
 | [OrdinalEncoder](@ref) | Encode categorical variables into ordered integers | 
 | [FrequencyEncoder](@ref) | Encode categorical variables into their normalized or unormalized frequencies | 
 | [TargetEncoder](@ref) | Encode categorical variables into relevant target statistics | 
-| [DummyEncoder](@ref) | Encodes by comparing each level to the reference level, intercept being the cell mean of the reference group | 
-| [SumEncoder](@ref) | Encodes by comparing each level to the reference level, intercept being the grand mean | 
-| [HelmertEncoder](@ref) | Encodes by comparing levels of a variable with the mean of the subsequent levels of the variable
-| [ForwardDifferenceEncoder](@ref) | Encodes by comparing adjacent levels of a variable (each level minus the next level)
+| [DummyEncoder](@ref ContrastEncoder) | Encodes by comparing each level to the reference level, intercept being the cell mean of the reference group | 
+| [SumEncoder](@ref ContrastEncoder) | Encodes by comparing each level to the reference level, intercept being the grand mean | 
+| [HelmertEncoder](@ref ContrastEncoder) | Encodes by comparing levels of a variable with the mean of the subsequent levels of the variable
+| [ForwardDifferenceEncoder](@ref ContrastEncoder) | Encodes by comparing adjacent levels of a variable (each level minus the next level)
 | [ContrastEncoder](@ref) | Allows defining a custom contrast encoder via a contrast matrix | 
-| [HypothesisEncoder](@ref) | Allows defining a custom contrast encoder via a hypothesis matrix | 
+| [HypothesisEncoder](@ref ContrastEncoder) | Allows defining a custom contrast encoder via a hypothesis matrix | 
 | [EntityEmbedder](@ref) | Encode categorical variables into dense embedding vectors |
 | [CardinalityReducer](@ref) | Reduce cardinality of high cardinality categorical features by grouping infrequent categories |
 | [MissingnessEncoder](@ref) | Encode missing values of categorical features into new values |
