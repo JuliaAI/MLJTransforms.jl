@@ -88,10 +88,10 @@ MMI.metadata_model(
 """
 $(MMI.doc_header(CardinalityReducer))
 
-`CardinalityReducer` maps any level of a categorical feature that occurs with
-frequency < `min_frequency` into a new level (e.g., "Other"). This is useful when some categorical features have
-high cardinality and many levels are infrequent. This assumes that the categorical features have raw
-types that are in `Union{AbstractString, Char, Number}`.
+`CardinalityReducer` maps any level of a categorical feature that occurs with frequency `<
+min_frequency` into a new level (e.g., "Other"). This is useful when some categorical
+features have high cardinality and many levels are infrequent. This assumes that the
+categorical features have raw types that are in `Union{AbstractString, Char, Number}`.
 
 
 # Training data
@@ -109,28 +109,36 @@ Train the machine using `fit!(mach, rows=...)`.
 # Hyper-parameters
 
 $features_doc
+
 $ignore_doc
+
 $ordered_factor_doc
-- `min_frequency::Real=3`: Any level of a categorical feature that occurs with frequency < `min_frequency` will be mapped to a new level. Could be
-an integer or a float which decides whether raw counts or normalized frequencies are used.
-- `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char => 'O', )`: A
-dictionary where the possible values for keys are the types in `Char`, `AbstractString`, and `Number` and each value signifies
-the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
-then the new value is `"Other"` and if the raw type subtypes `Char` then the new value is `'O'`
-and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
+
+- `min_frequency::Real=3`: Any level of a categorical feature that occurs with frequency <
+  `min_frequency` will be mapped to a new level. Could be an integer or a float which
+  decides whether raw counts or normalized frequencies are used.
+
+- `label_for_infrequent::Dict{<:Type, <:Any}()= Dict( AbstractString => "Other", Char =>
+  'O', )`: A dictionary where the possible values for keys are the types in `Char`,
+  `AbstractString`, and `Number` and each value signifies the new level to map into given
+  a column raw super type. By default, if the raw type of the column subtypes
+  `AbstractString` then the new value is `"Other"` and if the raw type subtypes `Char`
+  then the new value is `'O'` and if the raw type subtypes `Number` then the new value is
+  the lowest value in the column - 1.
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
-   return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
-   are always left unchanged.
+- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or
+  `OrderedFactor` features of `Xnew` specified by hyper-parameters, and return the new
+  table.  Features that are neither `Multiclass` nor `OrderedFactor` are always left
+  unchanged.
 
 # Fitted parameters
 
 The fields of `fitted_params(mach)` are:
 
-- `new_cat_given_col_val`: A dictionary that maps each level in a
-    categorical feature to a new level (either itself or the new level specified in `label_for_infrequent`)
+- `new_cat_given_col_val`: A dictionary that maps each level in a categorical feature to a
+   new level (either itself or the new level specified in `label_for_infrequent`)
 
 # Report
 
