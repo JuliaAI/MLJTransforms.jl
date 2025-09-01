@@ -7,6 +7,7 @@
 | [UnivariateDiscretizer](@ref) | Discretize a continuous vector into an ordered factor | 
 | [FillImputer](@ref) | Fill missing values of features belonging to any scientific type | 
 | [UnivariateTimeTypeToContinuous](@ref) | Transform a vector of time type into continuous type | 
+| [UnivariateFillImputer](@ref) | Fill in missing values in a single vector |
 | [OneHotEncoder](@ref) | Encode categorical variables into one-hot vectors | 
 | [ContinuousEncoder](@ref) | Adds type casting functionality to OnehotEncoder | 
 | [OrdinalEncoder](@ref) | Encode categorical variables into ordered integers | 
@@ -29,6 +30,10 @@ MLJTransforms.Standardizer
 ```
 
 ```@docs; canonical = false
+MLJTransforms.UnivariateBoxCoxTransformer
+```
+
+```@docs; canonical = false
 MLJTransforms.InteractionTransformer
 ```
 
@@ -42,6 +47,10 @@ MLJTransforms.FillImputer
 
 ```@docs; canonical = false
 MLJTransforms.UnivariateTimeTypeToContinuous
+```
+
+```@docs; canonical = false
+MLJTransforms.UnivariateFillImputer
 ```
 
 ```@docs; canonical = false
