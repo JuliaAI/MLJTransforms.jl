@@ -59,7 +59,7 @@ function generic_fit(X,
     # 4. Use feature mapper to compute the mapping of each level in each column
     encoded_features = Symbol[]# to store column that were actually encoded
     for feat_name in feat_names
-        feat_col = Tables.getcolumn(X, feat_name)
+        feat_col = MMI.selectcols(X, feat_name)
         feat_type = elscitype(feat_col)
         feat_has_allowed_type =
             feat_type <: Union{Missing, Multiclass} ||
@@ -149,7 +149,7 @@ function generic_transform(
     new_feat_names = Symbol[]
     new_cols = []
     for feat_name in feat_names
-        col = Tables.getcolumn(X, feat_name)
+        col = MMI.selectcols(X, feat_name)
         # Create the transformation function for each column
         if feat_name in keys(mapping_per_feat_level)
             if !ignore_unknown
