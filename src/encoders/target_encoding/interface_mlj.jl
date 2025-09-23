@@ -49,7 +49,7 @@ struct TargetEncoderResult{
 } <: MMI.MLJType
     # target statistic for each level of each categorical feature
     y_stat_given_feat_level::Dict{A, A}
-    task::S            # "Regression", "Classification" 
+    task::S            # "Regression", "Classification"
     num_classes::I     # num_classes in case of classification
     y_classes::A      # y_classes in case of classification
 
@@ -120,7 +120,7 @@ MMI.target_in_fit(::Type{<:TargetEncoder}) = true
 """
 $(MMI.doc_header(TargetEncoder))
 
-`TargetEncoder` implements target encoding as defined in [1] to encode categorical variables 
+`TargetEncoder` implements target encoding as defined in [1] to encode categorical variables
     into continuous ones using statistics from the target variable.
 
 # Training data
@@ -133,34 +133,42 @@ Here:
 
 $X_doc_mlj
 
-- `y` is the target, which can be any `AbstractVector` whose element
-  scitype is `Continuous` or `Count` for regression problems and 
-  `Multiclass` or `OrderedFactor` for classification problems; check the scitype with `schema(y)`
+- `y` is the target, which can be any `AbstractVector` whose element scitype is
+  `Continuous` or `Count` for regression problems and `Multiclass` or `OrderedFactor` for
+  classification problems; check the scitype with `schema(y)`
 
 Train the machine using `fit!(mach, rows=...)`.
 
 # Hyper-parameters
 
 $features_doc
+
 $ignore_doc
+
 $ordered_factor_doc
-- `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as described in [1]
-- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto` then m will be computed using
- empirical Bayes estimation as described in [1]
+
+- `λ`: Shrinkage hyperparameter used to mix between posterior and prior statistics as
+  described in [1]
+
+- `m`: An integer hyperparameter to compute shrinkage as described in [1]. If `m=:auto`
+  then m will be computed using empirical Bayes estimation as described in [1]
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or `OrderedFactor features of `Xnew` specified by hyper-parameters, and 
-   return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
-   are always left unchanged.
+- `transform(mach, Xnew)`: Apply target encoding to selected `Multiclass` or
+  `OrderedFactor` features of `Xnew` specified by hyper-parameters, and return the new
+  table.  Features that are neither `Multiclass` nor `OrderedFactor` are always left
+  unchanged.
 
 # Fitted parameters
 
 The fields of `fitted_params(mach)` are:
 
 - `task`: Whether the task is `Classification` or `Regression`
-- `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode each categorical feature. It maps each 
-    level in each categorical feature to a statistic computed over the target.
+
+- `y_statistic_given_feat_level`: A dictionary with the necessary statistics to encode
+  each categorical feature. It maps each level in each categorical feature to a statistic
+  computed over the target.
 
 # Report
 
@@ -174,13 +182,13 @@ $encoded_features_doc
 using MLJ
 
 # Define categorical features
-A = ["g", "b", "g", "r", "r",]  
+A = ["g", "b", "g", "r", "r",]
 B = [1.0, 2.0, 3.0, 4.0, 5.0,]
-C = ["f", "f", "f", "m", "f",]  
+C = ["f", "f", "f", "m", "f",]
 D = [true, false, true, false, true,]
 E = [1, 2, 3, 4, 5,]
 
-# Define the target variable 
+# Define the target variable
 y = ["c1", "c2", "c3", "c1", "c2",]
 
 # Combine into a named tuple
@@ -219,8 +227,8 @@ julia > schema(Xnew)
 ```
 
 # Reference
-[1] Micci-Barreca, Daniele. 
-    “A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems” 
+[1] Micci-Barreca, Daniele.
+    “A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems”
     SIGKDD Explor. Newsl. 3, 1 (July 2001), 27–32.
 
 See also

@@ -5,7 +5,7 @@ using Tables
 # https://github.com/JuliaAI/MLJBase.jl/issues/1002
 import ScientificTypes: elscitype, schema, coerce, ScientificTimeType
 using MLJModelInterface # exports `scitype`, which will call `ScientificTypes.scitype`,
-                        # once MLJBase is loaded (but this is not a dependency!)
+# once MLJBase is loaded (but this is not a dependency!)
 using CategoricalArrays
 using TableOperations
 using StatsBase
@@ -29,27 +29,27 @@ include("utils.jl")
 include("encoders/target_encoding/errors.jl")
 include("encoders/target_encoding/target_encoding.jl")
 include("encoders/target_encoding/interface_mlj.jl")
-export  TargetEncoder
+export TargetEncoder
 
 # Ordinal encoding
 include("encoders/ordinal_encoding/ordinal_encoding.jl")
 include("encoders/ordinal_encoding/interface_mlj.jl")
-export  OrdinalEncoder
+export OrdinalEncoder
 
 # Frequency encoding
 include("encoders/frequency_encoding/frequency_encoding.jl")
 include("encoders/frequency_encoding/interface_mlj.jl")
 export frequency_encoder_fit, frequency_encoder_transform, FrequencyEncoder
-export  FrequencyEncoder
+export FrequencyEncoder
 
 # Cardinality reduction
 include("transformers/cardinality_reducer/cardinality_reducer.jl")
 include("transformers/cardinality_reducer/interface_mlj.jl")
 export cardinality_reducer_fit, cardinality_reducer_transform, CardinalityReducer
-export  CardinalityReducer
+export CardinalityReducer
 include("encoders/missingness_encoding/missingness_encoding.jl")
 include("encoders/missingness_encoding/interface_mlj.jl")
-export  MissingnessEncoder
+export MissingnessEncoder
 
 # Contrast encoder
 include("encoders/contrast_encoder/contrast_encoder.jl")
@@ -65,7 +65,6 @@ include("transformers/other_transformers/one_hot_encoder.jl")
 include("transformers/other_transformers/standardizer.jl")
 include("transformers/other_transformers/univariate_boxcox_transformer.jl")
 include("transformers/other_transformers/univariate_discretizer.jl")
-include("transformers/other_transformers/metadata_shared.jl")
 
 export UnivariateDiscretizer,
     UnivariateStandardizer, Standardizer, UnivariateBoxCoxTransformer,

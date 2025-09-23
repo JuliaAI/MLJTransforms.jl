@@ -77,10 +77,10 @@ MMI.metadata_model(
 """
 $(MMI.doc_header(MissingnessEncoder))
 
-`MissingnessEncoder` maps any missing level of a categorical feature into a new level (e.g., "Missing"). 
-By this, missingness will be treated as a new
-level by any subsequent model. This assumes that the categorical features have raw
-types that are in `Char`, `AbstractString`, and `Number`.
+`MissingnessEncoder` maps any missing level of a categorical feature into a new level
+(e.g., "Missing").  By this, missingness will be treated as a new level by any subsequent
+model. This assumes that the categorical features have raw types that are in `Char`,
+`AbstractString`, and `Number`.
 
 # Training data
 
@@ -97,25 +97,32 @@ Train the machine using `fit!(mach, rows=...)`.
 # Hyper-parameters
 
 $features_doc
+
 $ignore_doc
+
 $ordered_factor_doc
-- `label_for_missing::Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char => 'm', )`: A
-dictionary where the possible values for keys are the types in `Char`, `AbstractString`, and `Number` and where each value
-signifies the new level to map into given a column raw super type. By default, if the raw type of the column subtypes `AbstractString`
-then missing values will be replaced with `"missing"` and if the raw type subtypes `Char` then the new value is `'m'`
-and if the raw type subtypes `Number` then the new value is the lowest value in the column - 1.
+
+- `label_for_missing::Dict{<:Type, <:Any}()= Dict( AbstractString => "missing", Char =>
+  'm', )`: A dictionary where the possible values for keys are the types in `Char`,
+  `AbstractString`, and `Number` and where each value signifies the new level to map into
+  given a column raw super type. By default, if the raw type of the column subtypes
+  `AbstractString` then missing values will be replaced with `"missing"` and if the raw
+  type subtypes `Char` then the new value is `'m'` and if the raw type subtypes `Number`
+  then the new value is the lowest value in the column - 1.
 
 # Operations
 
-- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or `OrderedFactor` features of `Xnew` specified by hyper-parameters, and 
-   return the new table.   Features that are neither `Multiclass` nor `OrderedFactor`
-   are always left unchanged.
+- `transform(mach, Xnew)`: Apply cardinality reduction to selected `Multiclass` or
+  `OrderedFactor` features of `Xnew` specified by hyper-parameters, and return the new
+  table.  Features that are neither `Multiclass` nor `OrderedFactor` are always left
+  unchanged.
 
 # Fitted parameters
 
 The fields of `fitted_params(mach)` are:
 
-- `label_for_missing_given_feature`: A dictionary that for each column, maps `missing` into some value according to `label_for_missing`
+- `label_for_missing_given_feature`: A dictionary that for each column, maps `missing`
+  into some value according to `label_for_missing`
 
 # Report
 
