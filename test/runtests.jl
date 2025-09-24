@@ -20,6 +20,7 @@ _get(x) = CategoricalArrays.DataAPI.unwrap(x)
 
 include("utils.jl")
 include("generic.jl")
+include("generic_table_types.jl")  # Test for issue #42 fix
 include("encoders/target_encoding.jl")
 include("encoders/ordinal_encoding.jl")
 include("encoders/frequency_encoder.jl")
