@@ -16,7 +16,7 @@ OneHot, Frequency, Target, and Ordinal encoders paired with SVM classification.
 using Pkg;
 Pkg.activate(@__DIR__);
 
-using MLJ, MLJTransforms, LIBSVM, DataFrames, ScientificTypes
+using MLJ, LIBSVM, DataFrames, ScientificTypes
 using Random, CSV, Plots
 ````
 
@@ -65,7 +65,7 @@ Automatically coerce columns with few unique values to categorical:
 ````julia
 df = coerce(df, autotype(df, :few_to_finite))
 
-ScientificTypes.schema(df)
+schema(df)
 ````
 
 ````
@@ -96,7 +96,6 @@ train, test = partition(eachindex(y), 0.9, shuffle = true, rng = 100);
 Load the required models and create different encoding strategies:
 
 ````julia
-OneHot = @load OneHotEncoder pkg = MLJModels verbosity = 0
 SVC = @load SVC pkg = LIBSVM verbosity = 0
 ````
 
@@ -111,10 +110,10 @@ MLJLIBSVMInterface.SVC
 4. **Ordinal**: Assigns integer codes to categories (assumes ordering)
 
 ````julia
-onehot_model = OneHot(drop_last = true, ordered_factor = true)
-freq_model = MLJTransforms.FrequencyEncoder(normalize = false, ordered_factor = true)
-target_model = MLJTransforms.TargetEncoder(lambda = 0.9, m = 5, ordered_factor = true)
-ordinal_model = MLJTransforms.OrdinalEncoder(ordered_factor = true)
+onehot_model = OneHotEncoder(drop_last = true, ordered_factor = true)
+freq_model = FrequencyEncoder(normalize = false, ordered_factor = true)
+target_model = TargetEncoder(lambda = 0.9, m = 5, ordered_factor = true)
+ordinal_model = OrdinalEncoder(ordered_factor = true)
 svm = SVC()
 ````
 

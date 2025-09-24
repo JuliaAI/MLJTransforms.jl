@@ -13,7 +13,7 @@ using Pkg;
 Pkg.activate(@__DIR__);
 Pkg.instantiate(); #src
 
-using MLJ, MLJTransforms, LIBSVM, DataFrames, ScientificTypes
+using MLJ, LIBSVM, DataFrames, ScientificTypes
 using Random, CSV, Plots
 
 # ## Load and Prepare Data
@@ -33,7 +33,7 @@ ScientificTypes.schema(df)
 # Automatically coerce columns with few unique values to categorical:
 df = coerce(df, autotype(df, :few_to_finite))
 
-ScientificTypes.schema(df)
+schema(df)
 
 # ## Split Data
 # Separate features from target and create train/test split:
@@ -43,7 +43,6 @@ train, test = partition(eachindex(y), 0.9, shuffle = true, rng = 100);
 # ## Setup Encoders and Classifier
 # Load the required models and create different encoding strategies:
 
-OneHot = @load OneHotEncoder pkg = MLJModels verbosity = 0
 SVC = @load SVC pkg = LIBSVM verbosity = 0
 
 # **Encoding Strategies Explained:**
@@ -52,10 +51,10 @@ SVC = @load SVC pkg = LIBSVM verbosity = 0
 # 3. **Target**: Uses target statistics for each category 
 # 4. **Ordinal**: Assigns integer codes to categories (assumes ordering)
 
-onehot_model = OneHot(drop_last = true, ordered_factor = true)
-freq_model = MLJTransforms.FrequencyEncoder(normalize = false, ordered_factor = true)
-target_model = MLJTransforms.TargetEncoder(lambda = 0.9, m = 5, ordered_factor = true)
-ordinal_model = MLJTransforms.OrdinalEncoder(ordered_factor = true)
+onehot_model = OneHotEncoder(drop_last = true, ordered_factor = true)
+freq_model = FrequencyEncoder(normalize = false, ordered_factor = true)
+target_model = TargetEncoder(lambda = 0.9, m = 5, ordered_factor = true)
+ordinal_model = OrdinalEncoder(ordered_factor = true)
 svm = SVC()
 
 # Create four different pipelines to compare:
