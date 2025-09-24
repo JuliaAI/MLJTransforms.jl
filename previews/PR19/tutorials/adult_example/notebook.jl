@@ -16,9 +16,11 @@
 # demonstrate how encoders handle extreme cardinality - a common real-world scenario with
 # features like customer IDs, product codes, or geographical subdivisions.
 
-# packages are already activated by generate.jl
+using Pkg;
+Pkg.activate(@__DIR__);
+Pkg.instantiate(); #src
 
-using MLJ, MLJTransforms, DataFrames, ScientificTypes
+using MLJ, DataFrames, ScientificTypes
 using Random, CSV, StatsBase, Plots, BenchmarkTools
 
 # Import scitypes from MLJ to avoid any package version skew
@@ -123,7 +125,6 @@ train, test = partition(eachindex(y), 0.8, shuffle = true, rng = 100);
 # ## Setup Encoders and Model
 # Load the required models and create different encoding strategies:
 
-OneHot = @load OneHotEncoder pkg = MLJModels verbosity = 0
 CatBoostClassifier = @load CatBoostClassifier pkg = CatBoost
 
 
@@ -140,8 +141,8 @@ card_reducer = MLJTransforms.CardinalityReducer(
         Char => 'O',
     ),
 )
-onehot_model = OneHot(drop_last = true, ordered_factor = true)
-freq_model = MLJTransforms.FrequencyEncoder(normalize = false, ordered_factor = true)
+onehot_model = OneHotEncoder(drop_last = true, ordered_factor = true)
+freq_model = FrequencyEncoder(normalize = false, ordered_factor = true)
 cat = CatBoostClassifier();
 
 # Create three different pipelines to compare:
