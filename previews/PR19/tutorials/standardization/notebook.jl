@@ -23,7 +23,6 @@ Pkg.instantiate();     #md
 
 ## Load the necessary packages
 using MLJ                   # Core MLJ framework
-using LIBSVM                # For Support Vector Machine
 using DataFrames            # For displaying results
 using RDatasets             # To load sample datasets
 using Random                # For reproducibility
@@ -150,6 +149,7 @@ for (name, model) in models
     ## Store the results
     push!(results, (name, acc))
 end
+# Notice that if we use MLJ's `evaluate!` function, we can skip the explicit fit/predict steps. We chose to show the explicit steps here for clarity. See MLJ [docs](https://juliaai.github.io/MLJ.jl/stable/evaluating_model_performance/) for more details.
 
 # ## Results Visualization
 #
