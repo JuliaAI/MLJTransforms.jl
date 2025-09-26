@@ -9,55 +9,11 @@ using DataFrames            # For displaying results
 using RDatasets             # To load sample datasets
 using Random                # For reproducibility
 using ScientificTypes       # For proper data typing
-using Plots                 # For visualizations
-using MLJLinearModels       # For Logistic Regression</code></pre><pre><code class="nohighlight hljs">Precompiling LIBSVM...
-    922.3 ms  ✓ liblinear_jll
-    919.7 ms  ✓ libsvm_jll
-    837.3 ms  ✓ LIBLINEAR
-   1393.2 ms  ✓ LIBSVM
-  4 dependencies successfully precompiled in 3 seconds. 33 already precompiled.
-Precompiling RDatasets...
-   3340.2 ms  ✓ TimeZones
-   3632.3 ms  ✓ RData
-   2434.4 ms  ✓ RDatasets
-  3 dependencies successfully precompiled in 10 seconds. 67 already precompiled.
-Precompiling FileIOExt...
-   1067.6 ms  ✓ FileIO → HTTPExt
-   2541.2 ms  ✓ Plots → FileIOExt
-  2 dependencies successfully precompiled in 3 seconds. 182 already precompiled.
-Precompiling TimeZonesRecipesBaseExt...
-    470.1 ms  ✓ TimeZones → TimeZonesRecipesBaseExt
-  1 dependency successfully precompiled in 1 seconds. 27 already precompiled.
-Precompiling MLJLinearModels...
-    437.0 ms  ✓ OpenSpecFun_jll
-   1694.4 ms  ✓ SpecialFunctions
-   2526.4 ms  ✓ ForwardDiff
-    972.1 ms  ✓ DifferentiationInterface → DifferentiationInterfaceForwardDiffExt
-    966.6 ms  ✓ NLSolversBase
-   1396.3 ms  ✓ LineSearches
-   2234.5 ms  ✓ Optim
-   2572.4 ms  ✓ MLJLinearModels
-  8 dependencies successfully precompiled in 13 seconds. 73 already precompiled.
-  2 dependencies precompiled but different versions are currently loaded. Restart julia to access the new versions. Otherwise, loading dependents of these packages may trigger further precompilation to work with the unexpected versions.
-Precompiling DifferentiationInterfaceStaticArraysExt...
-    581.9 ms  ✓ DifferentiationInterface → DifferentiationInterfaceStaticArraysExt
-  1 dependency successfully precompiled in 1 seconds. 10 already precompiled.
-Precompiling FiniteDiffStaticArraysExt...
-    573.6 ms  ✓ FiniteDiff → FiniteDiffStaticArraysExt
-    586.8 ms  ✓ ConstructionBase → ConstructionBaseStaticArraysExt
-  2 dependencies successfully precompiled in 1 seconds. 20 already precompiled.
-  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
-Precompiling NNlibForwardDiffExt...
-    630.6 ms  ✓ KernelAbstractions → LinearAlgebraExt
-    703.5 ms  ✓ ForwardDiff → ForwardDiffStaticArraysExt
-   1217.8 ms  ✓ NNlib → NNlibForwardDiffExt
-  3 dependencies successfully precompiled in 2 seconds. 46 already precompiled.
-  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
-</code></pre><h2 id="Data-Preparation"><a class="docs-heading-anchor" href="#Data-Preparation">Data Preparation</a><a id="Data-Preparation-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Preparation" title="Permalink"></a></h2><p>Let&#39;s load the Pima Indians Diabetes Dataset. This is a classic dataset for binary classification, where we predict diabetes status based on various health metrics.</p><p>The interesting thing about this dataset is that different features have very different scales. We&#39;ll artificially exaggerate this by adding a large constant to the glucose values.</p><pre><code class="language-julia hljs"># Load the dataset and modify it to have extreme scale differences
+using Plots                 # For visualizations</code></pre><h2 id="Data-Preparation"><a class="docs-heading-anchor" href="#Data-Preparation">Data Preparation</a><a id="Data-Preparation-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Preparation" title="Permalink"></a></h2><p>Let&#39;s load the Pima Indians Diabetes Dataset. This is a classic dataset for binary classification, where we predict diabetes status based on various health metrics.</p><p>The interesting thing about this dataset is that different features have very different scales. We&#39;ll artificially exaggerate this by adding a large constant to the glucose values.</p><pre><code class="language-julia hljs"># Load the dataset and modify it to have extreme scale differences
 df = RDatasets.dataset(&quot;MASS&quot;, &quot;Pima.tr&quot;)
 df.Glu .+= 10000.0;  # Artificially increase the scale of glucose values</code></pre><p>Let&#39;s examine the first few rows of our dataset:</p><pre><code class="language-julia hljs">first(df, 5)</code></pre><div><div style = "float: left;"><span>5×8 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">NPreg</th><th style = "text-align: left;">Glu</th><th style = "text-align: left;">BP</th><th style = "text-align: left;">Skin</th><th style = "text-align: left;">BMI</th><th style = "text-align: left;">Ped</th><th style = "text-align: left;">Age</th><th style = "text-align: left;">Type</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Int32" style = "text-align: left;">Int32</th><th title = "CategoricalArrays.CategoricalValue{String, UInt8}" style = "text-align: left;">Cat…</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10086.0</td><td style = "text-align: right;">68</td><td style = "text-align: right;">28</td><td style = "text-align: right;">30.2</td><td style = "text-align: right;">0.364</td><td style = "text-align: right;">24</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: right;">7</td><td style = "text-align: right;">10195.0</td><td style = "text-align: right;">70</td><td style = "text-align: right;">33</td><td style = "text-align: right;">25.1</td><td style = "text-align: right;">0.163</td><td style = "text-align: right;">55</td><td style = "text-align: left;">Yes</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: right;">5</td><td style = "text-align: right;">10077.0</td><td style = "text-align: right;">82</td><td style = "text-align: right;">41</td><td style = "text-align: right;">35.8</td><td style = "text-align: right;">0.156</td><td style = "text-align: right;">35</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10165.0</td><td style = "text-align: right;">76</td><td style = "text-align: right;">43</td><td style = "text-align: right;">47.9</td><td style = "text-align: right;">0.259</td><td style = "text-align: right;">26</td><td style = "text-align: left;">No</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">5</td><td style = "text-align: right;">0</td><td style = "text-align: right;">10107.0</td><td style = "text-align: right;">60</td><td style = "text-align: right;">25</td><td style = "text-align: right;">26.4</td><td style = "text-align: right;">0.133</td><td style = "text-align: right;">23</td><td style = "text-align: left;">No</td></tr></tbody></table></div><h3 id="Data-Type-Conversion"><a class="docs-heading-anchor" href="#Data-Type-Conversion">Data Type Conversion</a><a id="Data-Type-Conversion-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Type-Conversion" title="Permalink"></a></h3><p>In MLJ, it&#39;s important to ensure that our data has the correct scientific types. This helps the framework understand how to properly handle each column.</p><p>We&#39;ll convert our columns to their appropriate types:</p><ul><li><code>Count</code> for discrete count data</li><li><code>Continuous</code> for continuous numerical data</li><li><code>Multiclass</code> for our target variable</li></ul><pre><code class="language-julia hljs"># Coerce columns to the right scientific types
 df = coerce(df,
-    :NPreg =&gt; Count,      # Number of pregnancies is a count
+    :NPreg =&gt; Continuous, # Number of pregnancies will be treated as continuous
     :Glu =&gt; Continuous,   # Glucose level is continuous
     :BP =&gt; Continuous,    # Blood pressure is continuous
     :Skin =&gt; Continuous,  # Skin thickness is continuous
@@ -65,10 +21,10 @@ df = coerce(df,
     :Ped =&gt; Continuous,   # Diabetes pedigree is continuous
     :Age =&gt; Continuous,   # Age is continuous
     :Type =&gt; Multiclass,  # Diabetes status is our target (Yes/No)
-);</code></pre><p>Let&#39;s verify that our schema looks correct:</p><pre><code class="language-julia hljs">ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌───────┬───────────────┬─────────────────────────────────┐
+);</code></pre><p>Notice we treat <code>NPreg</code> as continuous for broader compatibility with various MLJ models.</p><p>Let&#39;s verify that our schema looks correct:</p><pre><code class="language-julia hljs">schema(df)</code></pre><pre><code class="nohighlight hljs">┌───────┬───────────────┬─────────────────────────────────┐
 │ names │ scitypes      │ types                           │
 ├───────┼───────────────┼─────────────────────────────────┤
-│ NPreg │ Count         │ Int32                           │
+│ NPreg │ Continuous    │ Float64                         │
 │ Glu   │ Continuous    │ Float64                         │
 │ BP    │ Continuous    │ Float64                         │
 │ Skin  │ Continuous    │ Float64                         │
@@ -134,27 +90,7 @@ for (name, model) in models
 
     # Store the results
     push!(results, (name, acc))
-end</code></pre><pre><code class="nohighlight hljs">┌ Warning: The number and/or types of data arguments do not match what the specified model
-│ supports. Suppress this type check by specifying `scitype_check_level=0`.
-│ 
-│ Run `@doc MLJLinearModels.LogisticClassifier` to learn more about your model&#39;s requirements.
-│ 
-│ Commonly, but non exclusively, supervised models are constructed using the syntax
-│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
-│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
-│ sample or class weights.
-│ 
-│ In general, data in `machine(model, data...)` is expected to satisfy
-│ 
-│     scitype(data) &lt;: MLJ.fit_data_scitype(model)
-│ 
-│ In the present case:
-│ 
-│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
-│ 
-│ fit_data_scitype(model) = Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}}
-└ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
-[ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
+end</code></pre><pre><code class="nohighlight hljs">[ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
 ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
 │   optim_options: Optim.Options{Float64, Nothing}
 └   lbfgs_options: @NamedTuple{} NamedTuple()
@@ -164,26 +100,6 @@ end</code></pre><pre><code class="nohighlight hljs">┌ Warning: The number and/
 ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
 │   optim_options: Optim.Options{Float64, Nothing}
 └   lbfgs_options: @NamedTuple{} NamedTuple()
-┌ Warning: The number and/or types of data arguments do not match what the specified model
-│ supports. Suppress this type check by specifying `scitype_check_level=0`.
-│ 
-│ Run `@doc LIBSVM.SVC` to learn more about your model&#39;s requirements.
-│ 
-│ Commonly, but non exclusively, supervised models are constructed using the syntax
-│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
-│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
-│ sample or class weights.
-│ 
-│ In general, data in `machine(model, data...)` is expected to satisfy
-│ 
-│     scitype(data) &lt;: MLJ.fit_data_scitype(model)
-│ 
-│ In the present case:
-│ 
-│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
-│ 
-│ fit_data_scitype(model) = Union{Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}}, Tuple{ScientificTypesBase.Table{&lt;:AbstractVector{&lt;:ScientificTypesBase.Continuous}}, AbstractVector{&lt;:ScientificTypesBase.Finite}, Any}}
-└ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
 [ Info: Training machine(SVC(kernel = RadialBasis, …), …).
 [ Info: Training machine(DeterministicPipeline(standardizer = Standardizer(features = Symbol[], …), …), …).
 [ Info: Training machine(:standardizer, …).
@@ -199,4 +115,4 @@ p = bar(
     bar_width = 0.6,
     ylims = (0.5, 0.7),
     xrotation = 17,
-);</code></pre><p>Save the plot</p><p><img src="../standardization_results.png" alt="Model Accuracy Comparison"/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>From this tutorial, we can clearly see that standardization has a dramatic impact on model performance.</p><p>Looking at the results:</p><ul><li><p><strong>Logistic Regression</strong>: Without standardization, it achieves only ~57% accuracy. With standardization, its performance jumps dramatically to ~68% accuracy – the best performance among all models.</p></li><li><p><strong>SVM</strong>: The baseline SVM achieves ~62% accuracy. When standardized, it improves to ~65% accuracy, which is a significant boost but not as dramatic as what we see with logistic regression.</p></li></ul><p>Try this approach with other datasets and models to further explore the effects of standardization!</p><h2 id="Further-Resources"><a class="docs-heading-anchor" href="#Further-Resources">Further Resources</a><a id="Further-Resources-1"></a><a class="docs-heading-anchor-permalink" href="#Further-Resources" title="Permalink"></a></h2><ul><li><a href="&lt;unknown&gt;">MLJTransforms Documentation</a></li><li><a href="https://alan-turing-institute.github.io/ScientificTypes.jl/dev/">Scientific Types in MLJ</a></li><li><a href="https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/">Feature Preprocessing in MLJ</a></li></ul><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../../transformers/utility/">« Utility Encoders</a><a class="docs-footer-nextpage" href="../../classic_comparison/notebook/">Milk Quality Classification »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 26 September 2025 02:24">Friday 26 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+);</code></pre><p>Save the plot</p><p><img src="../standardization_results.png" alt="Model Accuracy Comparison"/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>From this tutorial, we can clearly see that standardization has a dramatic impact on model performance.</p><p>Looking at the results:</p><ul><li><p><strong>Logistic Regression</strong>: Without standardization, it achieves only ~57% accuracy. With standardization, its performance jumps dramatically to ~68% accuracy – the best performance among all models.</p></li><li><p><strong>SVM</strong>: The baseline SVM achieves ~62% accuracy. When standardized, it improves to ~65% accuracy, which is a significant boost but not as dramatic as what we see with logistic regression.</p></li></ul><p>Try this approach with other datasets and models to further explore the effects of standardization!</p><h2 id="Further-Resources"><a class="docs-heading-anchor" href="#Further-Resources">Further Resources</a><a id="Further-Resources-1"></a><a class="docs-heading-anchor-permalink" href="#Further-Resources" title="Permalink"></a></h2><ul><li><a href="&lt;unknown&gt;">MLJTransforms Documentation</a></li><li><a href="https://alan-turing-institute.github.io/ScientificTypes.jl/dev/">Scientific Types in MLJ</a></li><li><a href="https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/">Feature Preprocessing in MLJ</a></li></ul><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../../transformers/utility/">« Utility Encoders</a><a class="docs-footer-nextpage" href="../../classic_comparison/notebook/">Milk Quality Classification »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 26 September 2025 02:37">Friday 26 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
