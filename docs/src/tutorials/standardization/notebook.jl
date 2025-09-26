@@ -29,7 +29,6 @@ using RDatasets             # To load sample datasets
 using Random                # For reproducibility
 using ScientificTypes       # For proper data typing
 using Plots                 # For visualizations
-using MLJLinearModels       # For Logistic Regression
 
 # ## Data Preparation
 #
