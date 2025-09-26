@@ -23,7 +23,6 @@ Pkg.instantiate();     #md
 
 ## Load the necessary packages
 using MLJ                   # Core MLJ framework
-using LIBSVM                # For Support Vector Machine
 using DataFrames            # For displaying results
 using RDatasets             # To load sample datasets
 using Random                # For reproducibility
