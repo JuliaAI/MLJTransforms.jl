@@ -68,7 +68,7 @@ df = coerce(df,
 );
 
 # Let's verify that our schema looks correct:
-ScientificTypes.schema(df)
+schema(df)
 
 # ## Feature Extraction and Data Splitting
 #
