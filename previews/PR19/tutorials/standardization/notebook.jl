@@ -29,7 +29,6 @@ using RDatasets             # To load sample datasets
 using Random                # For reproducibility
 using ScientificTypes       # For proper data typing
 using Plots                 # For visualizations
-using MLJLinearModels       # For Logistic Regression
 
 # ## Data Preparation
 #
@@ -69,7 +68,7 @@ df = coerce(df,
 );
 
 # Let's verify that our schema looks correct:
-ScientificTypes.schema(df)
+schema(df)
 
 # ## Feature Extraction and Data Splitting
 #
