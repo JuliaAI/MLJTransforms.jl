@@ -2,7 +2,6 @@
 | Transformer | Brief Description | 
 |:----------:|:----------:|
 | [Standardizer](@ref) | Transforming columns of numerical features by standardization | 
-| [UnivariateStandardizer](@ref) | Apply standardization given a single vector |
 | [UnivariateBoxCoxTransformer](@ref) | Apply BoxCox transformation given a single vector | 
 | [InteractionTransformer](@ref) | Transforming columns of numerical features to create new interaction features |
 | [UnivariateDiscretizer](@ref) | Discretize a continuous vector into an ordered factor | 
