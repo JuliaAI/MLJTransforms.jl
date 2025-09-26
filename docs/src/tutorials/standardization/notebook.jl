@@ -57,7 +57,7 @@ first(df, 5)
 
 ## Coerce columns to the right scientific types
 df = coerce(df,
-    :NPreg => Count,      # Number of pregnancies is a count
+    :NPreg => Continuous, # Number of pregnancies will be treated as continuous
     :Glu => Continuous,   # Glucose level is continuous
     :BP => Continuous,    # Blood pressure is continuous
     :Skin => Continuous,  # Skin thickness is continuous
@@ -66,6 +66,7 @@ df = coerce(df,
     :Age => Continuous,   # Age is continuous
     :Type => Multiclass,  # Diabetes status is our target (Yes/No)
 );
+# Notice we treat `NPreg` as continuous for broader compatibility with various MLJ models.
 
 # Let's verify that our schema looks correct:
 schema(df)

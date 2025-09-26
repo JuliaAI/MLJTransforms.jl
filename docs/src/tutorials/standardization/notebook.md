@@ -40,54 +40,6 @@ using RDatasets             # To load sample datasets
 using Random                # For reproducibility
 using ScientificTypes       # For proper data typing
 using Plots                 # For visualizations
-using MLJLinearModels       # For Logistic Regression
-````
-
-````
-Precompiling LIBSVM...
-    922.3 ms  ✓ liblinear_jll
-    919.7 ms  ✓ libsvm_jll
-    837.3 ms  ✓ LIBLINEAR
-   1393.2 ms  ✓ LIBSVM
-  4 dependencies successfully precompiled in 3 seconds. 33 already precompiled.
-Precompiling RDatasets...
-   3340.2 ms  ✓ TimeZones
-   3632.3 ms  ✓ RData
-   2434.4 ms  ✓ RDatasets
-  3 dependencies successfully precompiled in 10 seconds. 67 already precompiled.
-Precompiling FileIOExt...
-   1067.6 ms  ✓ FileIO → HTTPExt
-   2541.2 ms  ✓ Plots → FileIOExt
-  2 dependencies successfully precompiled in 3 seconds. 182 already precompiled.
-Precompiling TimeZonesRecipesBaseExt...
-    470.1 ms  ✓ TimeZones → TimeZonesRecipesBaseExt
-  1 dependency successfully precompiled in 1 seconds. 27 already precompiled.
-Precompiling MLJLinearModels...
-    437.0 ms  ✓ OpenSpecFun_jll
-   1694.4 ms  ✓ SpecialFunctions
-   2526.4 ms  ✓ ForwardDiff
-    972.1 ms  ✓ DifferentiationInterface → DifferentiationInterfaceForwardDiffExt
-    966.6 ms  ✓ NLSolversBase
-   1396.3 ms  ✓ LineSearches
-   2234.5 ms  ✓ Optim
-   2572.4 ms  ✓ MLJLinearModels
-  8 dependencies successfully precompiled in 13 seconds. 73 already precompiled.
-  2 dependencies precompiled but different versions are currently loaded. Restart julia to access the new versions. Otherwise, loading dependents of these packages may trigger further precompilation to work with the unexpected versions.
-Precompiling DifferentiationInterfaceStaticArraysExt...
-    581.9 ms  ✓ DifferentiationInterface → DifferentiationInterfaceStaticArraysExt
-  1 dependency successfully precompiled in 1 seconds. 10 already precompiled.
-Precompiling FiniteDiffStaticArraysExt...
-    573.6 ms  ✓ FiniteDiff → FiniteDiffStaticArraysExt
-    586.8 ms  ✓ ConstructionBase → ConstructionBaseStaticArraysExt
-  2 dependencies successfully precompiled in 1 seconds. 20 already precompiled.
-  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
-Precompiling NNlibForwardDiffExt...
-    630.6 ms  ✓ KernelAbstractions → LinearAlgebraExt
-    703.5 ms  ✓ ForwardDiff → ForwardDiffStaticArraysExt
-   1217.8 ms  ✓ NNlib → NNlibForwardDiffExt
-  3 dependencies successfully precompiled in 2 seconds. 46 already precompiled.
-  1 dependency precompiled but a different version is currently loaded. Restart julia to access the new version. Otherwise, loading dependents of this package may trigger further precompilation to work with the unexpected version.
-
 ````
 
 ## Data Preparation
@@ -127,7 +79,7 @@ We'll convert our columns to their appropriate types:
 ````julia
 # Coerce columns to the right scientific types
 df = coerce(df,
-    :NPreg => Count,      # Number of pregnancies is a count
+    :NPreg => Continuous, # Number of pregnancies will be treated as continuous
     :Glu => Continuous,   # Glucose level is continuous
     :BP => Continuous,    # Blood pressure is continuous
     :Skin => Continuous,  # Skin thickness is continuous
@@ -138,17 +90,19 @@ df = coerce(df,
 );
 ````
 
+Notice we treat `NPreg` as continuous for broader compatibility with various MLJ models.
+
 Let's verify that our schema looks correct:
 
 ````julia
-ScientificTypes.schema(df)
+schema(df)
 ````
 
 ````
 ┌───────┬───────────────┬─────────────────────────────────┐
 │ names │ scitypes      │ types                           │
 ├───────┼───────────────┼─────────────────────────────────┤
-│ NPreg │ Count         │ Int32                           │
+│ NPreg │ Continuous    │ Float64                         │
 │ Glu   │ Continuous    │ Float64                         │
 │ BP    │ Continuous    │ Float64                         │
 │ Skin  │ Continuous    │ Float64                         │
@@ -278,26 +232,6 @@ end
 ````
 
 ````
-┌ Warning: The number and/or types of data arguments do not match what the specified model
-│ supports. Suppress this type check by specifying `scitype_check_level=0`.
-│ 
-│ Run `@doc MLJLinearModels.LogisticClassifier` to learn more about your model's requirements.
-│ 
-│ Commonly, but non exclusively, supervised models are constructed using the syntax
-│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
-│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
-│ sample or class weights.
-│ 
-│ In general, data in `machine(model, data...)` is expected to satisfy
-│ 
-│     scitype(data) <: MLJ.fit_data_scitype(model)
-│ 
-│ In the present case:
-│ 
-│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
-│ 
-│ fit_data_scitype(model) = Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}}
-└ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
 [ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
 ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
 │   optim_options: Optim.Options{Float64, Nothing}
@@ -308,26 +242,6 @@ end
 ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, @NamedTuple{}}
 │   optim_options: Optim.Options{Float64, Nothing}
 └   lbfgs_options: @NamedTuple{} NamedTuple()
-┌ Warning: The number and/or types of data arguments do not match what the specified model
-│ supports. Suppress this type check by specifying `scitype_check_level=0`.
-│ 
-│ Run `@doc LIBSVM.SVC` to learn more about your model's requirements.
-│ 
-│ Commonly, but non exclusively, supervised models are constructed using the syntax
-│ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
-│ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
-│ sample or class weights.
-│ 
-│ In general, data in `machine(model, data...)` is expected to satisfy
-│ 
-│     scitype(data) <: MLJ.fit_data_scitype(model)
-│ 
-│ In the present case:
-│ 
-│ scitype(data) = Tuple{ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Count}}}, AbstractVector{ScientificTypesBase.Multiclass{2}}}
-│ 
-│ fit_data_scitype(model) = Union{Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}}, Tuple{ScientificTypesBase.Table{<:AbstractVector{<:ScientificTypesBase.Continuous}}, AbstractVector{<:ScientificTypesBase.Finite}, Any}}
-└ @ MLJBase ~/.julia/packages/MLJBase/7nGJF/src/machines.jl:237
 [ Info: Training machine(SVC(kernel = RadialBasis, …), …).
 [ Info: Training machine(DeterministicPipeline(standardizer = Standardizer(features = Symbol[], …), …), …).
 [ Info: Training machine(:standardizer, …).
