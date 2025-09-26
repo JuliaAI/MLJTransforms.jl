@@ -22,7 +22,6 @@ import RDatasets
 X = RDatasets.dataset("HSAUR", "Forbes2000");
 
 # 2. Load the model
-FrequencyEncoder = @load FrequencyEncoder pkg="MLJTransforms"
 encoder = FrequencyEncoder(
     features=[:Country, :Category],     # The categorical columns to select
     ignore=false,                       # Whether to exclude or include selected columns
