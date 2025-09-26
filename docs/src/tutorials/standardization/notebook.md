@@ -249,6 +249,8 @@ end
 
 ````
 
+Notice that if we use MLJ's `evaluate!` function, we can skip the explicit fit/predict steps. We chose to show the explicit steps here for clarity. See MLJ [docs](https://juliaai.github.io/MLJ.jl/stable/evaluating_model_performance/) for more details.
+
 ## Results Visualization
 
 Finally, let's visualize our results to see the impact of standardization.
