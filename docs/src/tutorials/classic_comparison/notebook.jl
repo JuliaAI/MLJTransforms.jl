@@ -26,7 +26,7 @@ first(df, 5)
 #-
 
 # Check the scientific types to understand our data structure:
-ScientificTypes.schema(df)
+schema(df)
 
 #-
 
