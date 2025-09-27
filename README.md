@@ -35,6 +35,3 @@ Xnew = transform(mach, X)
 ```
 
 See the full [documentation](https://juliaai.github.io/MLJTransforms.jl/dev/) for more information and a [full list](https://juliaai.github.io/MLJTransforms.jl/dev/all_transformers) of transformers in this package.
-
-## 👥 Credits
-This package was created by [Essam Wisam](https://github.com/JuliaAI) as a Google Summer of Code project on categorical encoding, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Subsequently, the package was expanded to include data transformation methods beyond categorical encoders that previously existed in other packages.
