@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Adult Income Classification · MLJTransforms</title><meta name="title" content="Adult Income Classification · MLJTransforms"/><meta property="og:title" content="Adult Income Classification · MLJTransforms"/><meta property="twitter:title" content="Adult Income Classification · MLJTransforms"/><meta name="description" content="Documentation for MLJTransforms."/><meta property="og:description" content="Documentation for MLJTransforms."/><meta property="twitter:description" content="Documentation for MLJTransforms."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;display=swap" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="MLJTransforms logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">MLJTransforms</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox"/><label class="tocitem" for="menuitem-2"><span class="docs-label">Transformers</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../transformers/all_transformers/">All Transformers</a></li><li><input class="collapse-toggle" id="menuitem-2-2" type="checkbox"/><label class="tocitem" for="menuitem-2-2"><span class="docs-label">Encoders</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../transformers/classical/">Classical Encoders</a></li><li><a class="tocitem" href="../../../transformers/neural/">Neural-based Encoders</a></li><li><a class="tocitem" href="../../../transformers/contrast/">Contrast Encoders</a></li><li><a class="tocitem" href="../../../transformers/utility/">Utility Encoders</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox" checked/><label class="tocitem" for="menuitem-3"><span class="docs-label">Extended Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../standardization/notebook/">Standardization Impact</a></li><li><a class="tocitem" href="../../classic_comparison/notebook/">Milk Quality Classification</a></li><li class="is-active"><a class="tocitem" href>Adult Income Classification</a><ul class="internal"><li><a class="tocitem" href="#Load-and-Prepare-Data"><span>Load and Prepare Data</span></a></li><li><a class="tocitem" href="#Split-Data"><span>Split Data</span></a></li><li><a class="tocitem" href="#Setup-Encoders-and-Model"><span>Setup Encoders and Model</span></a></li><li><a class="tocitem" href="#Evaluate-Pipelines-with-Proper-Benchmarking"><span>Evaluate Pipelines with Proper Benchmarking</span></a></li><li><a class="tocitem" href="#Visualization"><span>Visualization</span></a></li><li><a class="tocitem" href="#Visualization-(side-by-side)"><span>Visualization (side-by-side)</span></a></li><li><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li></ul></li><li><a class="tocitem" href="../../entity_embeddings/notebook/">Entity Embeddings Tutorial</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Extended Examples</a></li><li class="is-active"><a href>Adult Income Classification</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Adult Income Classification</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/MLJTransforms.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaAI/MLJTransforms.jl/blob/dev/docs/src/tutorials/adult_example/notebook.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Adult-Income-Prediction:-Comparing-Categorical-Encoders"><a class="docs-heading-anchor" href="#Adult-Income-Prediction:-Comparing-Categorical-Encoders">Adult Income Prediction: Comparing Categorical Encoders</a><a id="Adult-Income-Prediction:-Comparing-Categorical-Encoders-1"></a><a class="docs-heading-anchor-permalink" href="#Adult-Income-Prediction:-Comparing-Categorical-Encoders" title="Permalink"></a></h1><p><strong>Julia version</strong> is assumed to be 1.10.*</p><p>This demonstration is available as a Jupyter notebook or julia script (as well as the dataset) <a href="https://github.com/essamwise/MLJTransforms.jl/tree/main/docs/src/tutorials/wine_example">here</a>.</p><p>This tutorial compares different categorical encoding approaches on adult income prediction. We&#39;ll test OneHot, Frequency, and Cardinality Reduction encoders with CatBoost classification.</p><p><strong>Why compare encoders?</strong> Categorical variables with many levels (like occupation, education) can create high-dimensional sparse features. Different encoding strategies handle this challenge differently, affecting both model performance and training speed.</p><p><strong>High Cardinality Challenge:</strong> We&#39;ve added a synthetic feature with 100 categories to demonstrate how encoders handle extreme cardinality - a common real-world scenario with features like customer IDs, product codes, or geographical subdivisions.</p><pre><code class="language-julia hljs">using Pkg;
+Pkg.activate(@__DIR__);
+
+using MLJ, DataFrames, ScientificTypes
+using Random, CSV, StatsBase, Plots, BenchmarkTools</code></pre><pre><code class="nohighlight hljs">  Activating project at `~/Documents/GitHub/MLJTransforms/docs/src/tutorials/adult_example`
+</code></pre><p>Import scitypes from MLJ to avoid any package version skew</p><pre><code class="language-julia hljs">using MLJ: OrderedFactor, Continuous, Multiclass</code></pre><h2 id="Load-and-Prepare-Data"><a class="docs-heading-anchor" href="#Load-and-Prepare-Data">Load and Prepare Data</a><a id="Load-and-Prepare-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Load-and-Prepare-Data" title="Permalink"></a></h2><p>Load the Adult Income dataset. This dataset contains demographic information and the task is to predict whether a person makes over 50K per year.</p><p>Load data with header and rename columns to the expected symbols</p><pre><code class="language-julia hljs">df = CSV.read(&quot;./adult.csv&quot;, DataFrame; header = true)
+rename!(
+    df,
+    [
+        :age,
+        :workclass,
+        :fnlwgt,
+        :education,
+        :education_num,
+        :marital_status,
+        :occupation,
+        :relationship,
+        :race,
+        :sex,
+        :capital_gain,
+        :capital_loss,
+        :hours_per_week,
+        :native_country,
+        :income,
+    ],
+)
+
+first(df, 5)</code></pre><div><div style = "float: left;"><span>5×15 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">age</th><th style = "text-align: left;">workclass</th><th style = "text-align: left;">fnlwgt</th><th style = "text-align: left;">education</th><th style = "text-align: left;">education_num</th><th style = "text-align: left;">marital_status</th><th style = "text-align: left;">occupation</th><th style = "text-align: left;">relationship</th><th style = "text-align: left;">race</th><th style = "text-align: left;">sex</th><th style = "text-align: left;">capital_gain</th><th style = "text-align: left;">capital_loss</th><th style = "text-align: left;">hours_per_week</th><th style = "text-align: left;">native_country</th><th style = "text-align: left;">income</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "String31" style = "text-align: left;">String31</th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "String15" style = "text-align: left;">String15</th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "String31" style = "text-align: left;">String31</th><th title = "String31" style = "text-align: left;">String31</th><th title = "String15" style = "text-align: left;">String15</th><th title = "String31" style = "text-align: left;">String31</th><th title = "String7" style = "text-align: left;">String7</th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "Int64" style = "text-align: left;">Int64</th><th title = "String31" style = "text-align: left;">String31</th><th title = "String7" style = "text-align: left;">String7</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: right;">25</td><td style = "text-align: left;">Private</td><td style = "text-align: right;">226802</td><td style = "text-align: left;">11th</td><td style = "text-align: right;">7</td><td style = "text-align: left;">Never-married</td><td style = "text-align: left;">Machine-op-inspct</td><td style = "text-align: left;">Own-child</td><td style = "text-align: left;">Black</td><td style = "text-align: left;">Male</td><td style = "text-align: right;">0</td><td style = "text-align: right;">0</td><td style = "text-align: right;">40</td><td style = "text-align: left;">United-States</td><td style = "text-align: left;">&lt;=50K</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: right;">38</td><td style = "text-align: left;">Private</td><td style = "text-align: right;">89814</td><td style = "text-align: left;">HS-grad</td><td style = "text-align: right;">9</td><td style = "text-align: left;">Married-civ-spouse</td><td style = "text-align: left;">Farming-fishing</td><td style = "text-align: left;">Husband</td><td style = "text-align: left;">White</td><td style = "text-align: left;">Male</td><td style = "text-align: right;">0</td><td style = "text-align: right;">0</td><td style = "text-align: right;">50</td><td style = "text-align: left;">United-States</td><td style = "text-align: left;">&lt;=50K</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: right;">28</td><td style = "text-align: left;">Local-gov</td><td style = "text-align: right;">336951</td><td style = "text-align: left;">Assoc-acdm</td><td style = "text-align: right;">12</td><td style = "text-align: left;">Married-civ-spouse</td><td style = "text-align: left;">Protective-serv</td><td style = "text-align: left;">Husband</td><td style = "text-align: left;">White</td><td style = "text-align: left;">Male</td><td style = "text-align: right;">0</td><td style = "text-align: right;">0</td><td style = "text-align: right;">40</td><td style = "text-align: left;">United-States</td><td style = "text-align: left;">&gt;50K</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">4</td><td style = "text-align: right;">44</td><td style = "text-align: left;">Private</td><td style = "text-align: right;">160323</td><td style = "text-align: left;">Some-college</td><td style = "text-align: right;">10</td><td style = "text-align: left;">Married-civ-spouse</td><td style = "text-align: left;">Machine-op-inspct</td><td style = "text-align: left;">Husband</td><td style = "text-align: left;">Black</td><td style = "text-align: left;">Male</td><td style = "text-align: right;">7688</td><td style = "text-align: right;">0</td><td style = "text-align: right;">40</td><td style = "text-align: left;">United-States</td><td style = "text-align: left;">&gt;50K</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">5</td><td style = "text-align: right;">18</td><td style = "text-align: left;">?</td><td style = "text-align: right;">103497</td><td style = "text-align: left;">Some-college</td><td style = "text-align: right;">10</td><td style = "text-align: left;">Never-married</td><td style = "text-align: left;">?</td><td style = "text-align: left;">Own-child</td><td style = "text-align: left;">White</td><td style = "text-align: left;">Female</td><td style = "text-align: right;">0</td><td style = "text-align: right;">0</td><td style = "text-align: right;">30</td><td style = "text-align: left;">United-States</td><td style = "text-align: left;">&lt;=50K</td></tr></tbody></table></div><p>Clean the data by removing leading/trailing spaces and converting income to binary:</p><pre><code class="language-julia hljs">for col in [:workclass, :education, :marital_status, :occupation, :relationship,
+    :race, :sex, :native_country, :income]
+    df[!, col] = strip.(string.(df[!, col]))
+end</code></pre><p>Convert income to binary (0 for &lt;=50K, 1 for &gt;50K)</p><pre><code class="language-julia hljs">df.income = ifelse.(df.income .== &quot;&gt;50K&quot;, 1, 0);</code></pre><p>Let&#39;s a high-cardinality categorical feature to showcase encoder handling Create a realistic frequency distribution: A1-A3 make up 90% of data, A4-A500 make up 10%</p><pre><code class="language-julia hljs">Random.seed!(42)
+high_card_categories = [&quot;A$i&quot; for i in 1:500]
+
+n_rows = nrow(df)
+n_frequent = Int(round(0.9 * n_rows))  # 90% for A1, A2, A3
+n_rare = n_rows - n_frequent           # 10% for A4-A500
+
+frequent_samples = rand([&quot;A1&quot;, &quot;A2&quot;, &quot;A3&quot;], n_frequent)
+
+rare_categories = [&quot;A$i&quot; for i in 4:500]
+rare_samples = rand(rare_categories, n_rare);</code></pre><p>Combine and shuffle</p><pre><code class="language-julia hljs">all_samples = vcat(frequent_samples, rare_samples)
+df.high_cardinality_feature = all_samples[randperm(n_rows)];</code></pre><p>Coerce categorical columns to appropriate scientific types. Apply explicit type coercions using fully qualified names</p><pre><code class="language-julia hljs">type_dict = Dict(
+    :income =&gt; OrderedFactor,
+    :age =&gt; Continuous,
+    :fnlwgt =&gt; Continuous,
+    :education_num =&gt; Continuous,
+    :capital_gain =&gt; Continuous,
+    :capital_loss =&gt; Continuous,
+    :hours_per_week =&gt; Continuous,
+    :workclass =&gt; Multiclass,
+    :education =&gt; Multiclass,
+    :marital_status =&gt; Multiclass,
+    :occupation =&gt; Multiclass,
+    :relationship =&gt; Multiclass,
+    :race =&gt; Multiclass,
+    :sex =&gt; Multiclass,
+    :native_country =&gt; Multiclass,
+    :high_cardinality_feature =&gt; Multiclass,
+)
+df = coerce(df, type_dict);</code></pre><p>Let&#39;s examine the cardinality of our categorical features:</p><pre><code class="language-julia hljs">categorical_cols = [:workclass, :education, :marital_status, :occupation,
+    :relationship, :race, :sex, :native_country, :high_cardinality_feature]
+println(&quot;Cardinality of categorical features:&quot;)
+for col in categorical_cols
+    n_unique = length(unique(df[!, col]))
+    println(&quot;  $col: $n_unique unique values&quot;)
+end</code></pre><pre><code class="nohighlight hljs">Cardinality of categorical features:
+  workclass: 9 unique values
+  education: 16 unique values
+  marital_status: 7 unique values
+  occupation: 15 unique values
+  relationship: 6 unique values
+  race: 5 unique values
+  sex: 2 unique values
+  native_country: 42 unique values
+  high_cardinality_feature: 500 unique values
+</code></pre><h2 id="Split-Data"><a class="docs-heading-anchor" href="#Split-Data">Split Data</a><a id="Split-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Split-Data" title="Permalink"></a></h2><p>Separate features (X) from target (y), then split into train/test sets:</p><pre><code class="language-julia hljs">y, X = unpack(df, ==(:income); rng = 123);
+train, test = partition(eachindex(y), 0.8, shuffle = true, rng = 100);</code></pre><h2 id="Setup-Encoders-and-Model"><a class="docs-heading-anchor" href="#Setup-Encoders-and-Model">Setup Encoders and Model</a><a id="Setup-Encoders-and-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Encoders-and-Model" title="Permalink"></a></h2><p>Load the required models and create different encoding strategies:</p><pre><code class="language-julia hljs">CatBoostClassifier = @load CatBoostClassifier pkg = CatBoost</code></pre><pre><code class="nohighlight hljs">CatBoost.MLJCatBoostInterface.CatBoostClassifier</code></pre><p><strong>Encoding Strategies:</strong></p><ol><li><strong>OneHotEncoder</strong>: Creates binary columns for each category</li><li><strong>FrequencyEncoder</strong>: Replaces categories with their frequency counts</li></ol><p>In case of the one-hot-encoder, we worry when categories have high cardinality as that would lead to an explosion in the number of features.</p><pre><code class="language-julia hljs">card_reducer = MLJTransforms.CardinalityReducer(
+    min_frequency = 0.15,
+    ordered_factor = true,
+    label_for_infrequent = Dict(
+        AbstractString =&gt; &quot;OtherItems&quot;,
+        Char =&gt; &#39;O&#39;,
+    ),
+)
+onehot_model = OneHotEncoder(drop_last = true, ordered_factor = true)
+freq_model = FrequencyEncoder(normalize = false, ordered_factor = true)
+cat = CatBoostClassifier();</code></pre><p>Create three different pipelines to compare:</p><pre><code class="language-julia hljs">pipelines = [
+    (&quot;CardRed + OneHot + CAT&quot;, card_reducer |&gt; onehot_model |&gt; cat),
+    (&quot;OneHot + CAT&quot;, onehot_model |&gt; cat),
+    (&quot;FreqEnc + CAT&quot;, freq_model |&gt; cat),
+]</code></pre><pre><code class="nohighlight hljs">3-element Vector{Tuple{String, MLJBase.ProbabilisticPipeline{N, MLJModelInterface.predict} where N&lt;:NamedTuple}}:
+ (&quot;CardRed + OneHot + CAT&quot;, ProbabilisticPipeline(cardinality_reducer = CardinalityReducer(features = Symbol[], …), …))
+ (&quot;OneHot + CAT&quot;, ProbabilisticPipeline(one_hot_encoder = OneHotEncoder(features = Symbol[], …), …))
+ (&quot;FreqEnc + CAT&quot;, ProbabilisticPipeline(frequency_encoder = FrequencyEncoder(features = Symbol[], …), …))</code></pre><h2 id="Evaluate-Pipelines-with-Proper-Benchmarking"><a class="docs-heading-anchor" href="#Evaluate-Pipelines-with-Proper-Benchmarking">Evaluate Pipelines with Proper Benchmarking</a><a id="Evaluate-Pipelines-with-Proper-Benchmarking-1"></a><a class="docs-heading-anchor-permalink" href="#Evaluate-Pipelines-with-Proper-Benchmarking" title="Permalink"></a></h2><p>Train each pipeline and measure both performance (accuracy) and training time using @btime:</p><pre><code class="language-julia hljs">results = DataFrame(pipeline = String[], accuracy = Float64[], training_time = Float64[]);</code></pre><p>Prepare results DataFrame</p><pre><code class="language-julia hljs">for (name, pipe) in pipelines
+    println(&quot;Training and benchmarking: $name&quot;)
+
+    # Train once to compute accuracy
+    mach = machine(pipe, X, y)
+    MLJ.fit!(mach, rows = train)
+    predictions = MLJ.predict_mode(mach, rows = test)
+    accuracy_value = MLJ.accuracy(predictions, y[test])
+
+    # Measure training time using @belapsed (returns Float64 seconds) with 5 samples
+    # Create a fresh machine inside the benchmark to avoid state sharing
+    training_time =
+        @belapsed MLJ.fit!(machine($pipe, $X, $y), rows = $train, force = true) samples = 5
+
+    println(&quot;  Training time (min over 5 samples): $(training_time) s&quot;)
+    println(&quot;  Accuracy: $(round(accuracy_value, digits=4))\n&quot;)
+
+    push!(results, (string(name), accuracy_value, training_time))
+end</code></pre><pre><code class="nohighlight hljs">Training and benchmarking: CardRed + OneHot + CAT
+[ Info: Training machine(ProbabilisticPipeline(cardinality_reducer = CardinalityReducer(features = Symbol[], …), …), …).
+[ Info: Training machine(:cardinality_reducer, …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 1 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 3 sub-features to one-hot encode feature :education.
+[ Info: Spawning 2 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 0 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 3 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 1 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 2 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 3 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(cardinality_reducer = CardinalityReducer(features = Symbol[], …), …), …).
+[ Info: Training machine(:cardinality_reducer, …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 1 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 3 sub-features to one-hot encode feature :education.
+[ Info: Spawning 2 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 0 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 3 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 1 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 2 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 3 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(cardinality_reducer = CardinalityReducer(features = Symbol[], …), …), …).
+[ Info: Training machine(:cardinality_reducer, …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 1 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 3 sub-features to one-hot encode feature :education.
+[ Info: Spawning 2 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 0 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 3 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 1 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 2 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 3 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(cardinality_reducer = CardinalityReducer(features = Symbol[], …), …), …).
+[ Info: Training machine(:cardinality_reducer, …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 1 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 3 sub-features to one-hot encode feature :education.
+[ Info: Spawning 2 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 0 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 3 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 1 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 2 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 3 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+  Training time (min over 5 samples): 6.887171291 s
+  Accuracy: 0.8697
+
+Training and benchmarking: OneHot + CAT
+[ Info: Training machine(ProbabilisticPipeline(one_hot_encoder = OneHotEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 8 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 15 sub-features to one-hot encode feature :education.
+[ Info: Spawning 6 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 14 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 5 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 4 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 41 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 499 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(one_hot_encoder = OneHotEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 8 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 15 sub-features to one-hot encode feature :education.
+[ Info: Spawning 6 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 14 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 5 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 4 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 41 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 499 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(one_hot_encoder = OneHotEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 8 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 15 sub-features to one-hot encode feature :education.
+[ Info: Spawning 6 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 14 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 5 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 4 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 41 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 499 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(one_hot_encoder = OneHotEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:one_hot_encoder, …).
+[ Info: Spawning 8 sub-features to one-hot encode feature :workclass.
+[ Info: Spawning 15 sub-features to one-hot encode feature :education.
+[ Info: Spawning 6 sub-features to one-hot encode feature :marital_status.
+[ Info: Spawning 14 sub-features to one-hot encode feature :occupation.
+[ Info: Spawning 5 sub-features to one-hot encode feature :relationship.
+[ Info: Spawning 4 sub-features to one-hot encode feature :race.
+[ Info: Spawning 1 sub-features to one-hot encode feature :sex.
+[ Info: Spawning 41 sub-features to one-hot encode feature :native_country.
+[ Info: Spawning 499 sub-features to one-hot encode feature :high_cardinality_feature.
+[ Info: Training machine(:cat_boost_classifier, …).
+  Training time (min over 5 samples): 15.952417041 s
+  Accuracy: 0.8775
+
+Training and benchmarking: FreqEnc + CAT
+[ Info: Training machine(ProbabilisticPipeline(frequency_encoder = FrequencyEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:frequency_encoder, …).
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(frequency_encoder = FrequencyEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:frequency_encoder, …).
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(frequency_encoder = FrequencyEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:frequency_encoder, …).
+[ Info: Training machine(:cat_boost_classifier, …).
+[ Info: Training machine(ProbabilisticPipeline(frequency_encoder = FrequencyEncoder(features = Symbol[], …), …), …).
+[ Info: Training machine(:frequency_encoder, …).
+[ Info: Training machine(:cat_boost_classifier, …).
+  Training time (min over 5 samples): 6.951079292 s
+  Accuracy: 0.8765
+
+</code></pre><p>Sort by accuracy (higher is better) and display results:</p><pre><code class="language-julia hljs">sort!(results, :accuracy, rev = true)
+results</code></pre><div><div style = "float: left;"><span>3×3 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">pipeline</th><th style = "text-align: left;">accuracy</th><th style = "text-align: left;">training_time</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "String" style = "text-align: left;">String</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: left;">OneHot + CAT</td><td style = "text-align: right;">0.877457</td><td style = "text-align: right;">15.9524</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: left;">FreqEnc + CAT</td><td style = "text-align: right;">0.876536</td><td style = "text-align: right;">6.95108</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: left;">CardRed + OneHot + CAT</td><td style = "text-align: right;">0.869676</td><td style = "text-align: right;">6.88717</td></tr></tbody></table></div><h2 id="Visualization"><a class="docs-heading-anchor" href="#Visualization">Visualization</a><a id="Visualization-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization" title="Permalink"></a></h2><p>Create side-by-side bar charts to compare both training time and model performance:</p><pre><code class="language-julia hljs">n = nrow(results)</code></pre><pre><code class="nohighlight hljs">3</code></pre><p>Create a simple timing visualization (note: timing strings from @btime need manual parsing for plotting) Sort by accuracy (higher is better)</p><pre><code class="language-julia hljs">sort!(results, :accuracy, rev = true)
+results  # show table</code></pre><div><div style = "float: left;"><span>3×3 DataFrame</span></div><div style = "clear: both;"></div></div><div class = "data-frame" style = "overflow-x: scroll;"><table class = "data-frame" style = "margin-bottom: 6px;"><thead><tr class = "header"><th class = "rowNumber" style = "font-weight: bold; text-align: right;">Row</th><th style = "text-align: left;">pipeline</th><th style = "text-align: left;">accuracy</th><th style = "text-align: left;">training_time</th></tr><tr class = "subheader headerLastRow"><th class = "rowNumber" style = "font-weight: bold; text-align: right;"></th><th title = "String" style = "text-align: left;">String</th><th title = "Float64" style = "text-align: left;">Float64</th><th title = "Float64" style = "text-align: left;">Float64</th></tr></thead><tbody><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">1</td><td style = "text-align: left;">OneHot + CAT</td><td style = "text-align: right;">0.877457</td><td style = "text-align: right;">15.9524</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">2</td><td style = "text-align: left;">FreqEnc + CAT</td><td style = "text-align: right;">0.876536</td><td style = "text-align: right;">6.95108</td></tr><tr><td class = "rowNumber" style = "font-weight: bold; text-align: right;">3</td><td style = "text-align: left;">CardRed + OneHot + CAT</td><td style = "text-align: right;">0.869676</td><td style = "text-align: right;">6.88717</td></tr></tbody></table></div><hr/><h2 id="Visualization-(side-by-side)"><a class="docs-heading-anchor" href="#Visualization-(side-by-side)">Visualization (side-by-side)</a><a id="Visualization-(side-by-side)-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization-(side-by-side)" title="Permalink"></a></h2><pre><code class="language-julia hljs">n = nrow(results)</code></pre><pre><code class="nohighlight hljs">3</code></pre><p>training time plot (seconds)</p><pre><code class="language-julia hljs">time_plot = bar(1:n, results.training_time;
+    xticks = (1:n, results.pipeline),
+    title = &quot;Training Time (s)&quot;,
+    xlabel = &quot;Pipeline&quot;, ylabel = &quot;Time (s)&quot;,
+    xrotation = 8,
+    legend = false,
+    color = :lightblue,
+);</code></pre><p>accuracy plot</p><pre><code class="language-julia hljs">accuracy_plot = bar(1:n, results.accuracy;
+    xticks = (1:n, results.pipeline),
+    title = &quot;Classification Accuracy&quot;,
+    xlabel = &quot;Pipeline&quot;, ylabel = &quot;Accuracy&quot;,
+    xrotation = 8,
+    legend = false,
+    ylim = (0.0, 1.0),
+    color = :lightcoral,
+);
+
+
+combined_plot = plot(time_plot, accuracy_plot; layout = (1, 2), size = (1200, 500));</code></pre><p>Save the plot</p><p><img src="../adult_encoding_comparison.png" alt="Adult Encoding Comparison"/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p><strong>Key Findings from Results:</strong></p><p><strong>Training Time Performance (dramatic differences!):</strong></p><ul><li><strong>FreqEnc + CAT</strong>: 0.32 seconds - <strong>fastest approach</strong></li><li><strong>CardRed + OneHot + CAT</strong>: 0.57 seconds - <strong>10x faster than pure OneHot</strong></li><li><strong>OneHot + CAT</strong>: 5.85 seconds - <strong>significantly slower due to high cardinality</strong></li></ul><p><strong>Accuracy:</strong> In this example, we don&#39;t see a difference in accuracy but the savings in time are big.</p><p>Note that we still observe a speed improvement with the cardinality reducer if we omit the high cardinality feature we added but it&#39;s much smaller as the adults dataset is not that high in cardinality.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../classic_comparison/notebook/">« Milk Quality Classification</a><a class="docs-footer-nextpage" href="../../entity_embeddings/notebook/">Entity Embeddings Tutorial »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Saturday 27 September 2025 17:55">Saturday 27 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
