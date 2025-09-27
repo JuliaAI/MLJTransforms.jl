@@ -217,7 +217,7 @@ Train the machine using `fit!(mach, rows=...)`.
 - `ordered_factor=false`: when `true`, `OrderedFactor` features are
   universally excluded
 
-- `drop_last=true`: whether to drop the column corresponding to the
+- `drop_last=false`: whether to drop the column corresponding to the
   final class of encoded features. For example, a three-class feature
   is spawned into three new features if `drop_last=false`, but just
   two features otherwise.
