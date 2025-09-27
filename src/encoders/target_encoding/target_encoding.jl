@@ -135,7 +135,7 @@ function target_encoder_fit(
     ignore::Bool = true,
     ordered_factor::Bool = false,
     lambda::Real = 1.0,
-    m::Real = 0,
+    m = 0,
 )
     # 1. Figure out task (classification or regression)
     y_scitype = elscitype(y)

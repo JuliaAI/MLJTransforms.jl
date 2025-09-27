@@ -15,13 +15,13 @@ const features_doc = """
   included/excluded.
 """
 const ignore_doc = """
-- ignore=true: Whether to exclude or include the features given in `features`
+- `ignore=true`: Whether to exclude or include the features given in `features`
 """
 const ordered_factor_doc = """
-- ordered_factor=false: Whether to encode `OrderedFactor` or ignore them
+- `ordered_factor=false`: Whether to encode `OrderedFactor` or ignore them
 """
 const encoded_features_doc = """
-- encoded_features: The subset of the categorical features of `X` that were encoded
+- `encoded_features`: The subset of the categorical features of `X` that were encoded
 """
 const cache_doc = """
 - `cache`: The output of `contrast_encoder_fit`
