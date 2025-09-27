@@ -25,8 +25,7 @@ In this tutorial, we will explore how to use the `EntityEmbedder` to learn and a
 - Build pipelines combining embeddings with downstream models
 
 ````julia
-using Pkg;
-Pkg.activate(@__DIR__);
+using Pkg;                   # src
 
 
 
@@ -44,11 +43,6 @@ using ScientificTypes
 using CSV
 using StatsBase  ## For countmap
 import Plots: mm  ## For margin units
-````
-
-````
-  Activating project at `~/Documents/GitHub/MLJTransforms/docs/src/tutorials/entity_embeddings`
-
 ````
 
 ## Data Loading and Preprocessing
@@ -185,7 +179,7 @@ println("\nUnique rating categories: $(sort(unique(df.RatingCategory)))")
 
 ````
 Distribution of categorical rating labels:
-OrderedCollections.OrderedDict{CategoricalValue{String, UInt32}, Int64}("1.0" => 17, "1.5" => 18, "2.0" => 53, "2.5" => 105, "3.0" => 281, "3.5" => 722, "4.0" => 2420, "4.5" => 3542, "5.0" => 571, "NaN" => 1416)
+OrderedCollections.OrderedDict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64}("1.0" => 17, "1.5" => 18, "2.0" => 53, "2.5" => 105, "3.0" => 281, "3.5" => 722, "4.0" => 2420, "4.5" => 3542, "5.0" => 571, "NaN" => 1416)
 
 Unique rating categories: ["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "NaN"]
 
@@ -320,7 +314,7 @@ EntityEmbedder(
         alpha = 0.0, 
         rng = 39, 
         optimiser_changes_trigger_retraining = false, 
-        acceleration = CUDALibs{Nothing}(nothing), 
+        acceleration = ComputationalResources.CUDALibs{Nothing}(nothing), 
         embedding_dims = Dict{Symbol, Real}(:Category => 2, Symbol("Content Rating") => 2, Symbol("Android Ver") => 2, :Genres => 2, :Type => 2)))
 ````
 
@@ -340,7 +334,7 @@ MLJ.fit!(mach, force = true, verbosity = 1);
 │ `CUDA.jl` must be loaded to access it.
 └ Add `using CUDA` or `import CUDA` to your code.  Alternatively, configure a different GPU backend by calling `Flux.gpu_backend!`.
 [ Info: MLJFlux: converting input data to Float32
-Optimising neural net:  33%[========>                ]  ETA: 0:00:00[KOptimising neural net:  50%[============>            ]  ETA: 0:00:00[KOptimising neural net:  67%[================>        ]  ETA: 0:00:00[KOptimising neural net:  83%[====================>    ]  ETA: 0:00:00[KOptimising neural net: 100%[=========================] Time: 0:00:00[K
+Optimising neural net:  33%[========>                ]  ETA: 0:00:28[KOptimising neural net:  83%[====================>    ]  ETA: 0:00:03[KOptimising neural net: 100%[=========================] Time: 0:00:14[K
 
 ````
 
@@ -388,8 +382,8 @@ MLJ.fit!(pipe_mach, verbosity = 0)
 trained Machine; does not cache data
   model: ProbabilisticPipeline(entity_embedder = EntityEmbedder(model = NeuralNetworkClassifier(builder = Short(n_hidden = 14, …), …)), …)
   args: 
-    1:	Source @927 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{33}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{48}}, AbstractVector{Multiclass{34}}}}
-    2:	Source @044 ⏎ AbstractVector{OrderedFactor{10}}
+    1:	Source @148 ⏎ ScientificTypesBase.Table{Union{AbstractVector{ScientificTypesBase.Continuous}, AbstractVector{ScientificTypesBase.Multiclass{33}}, AbstractVector{ScientificTypesBase.Multiclass{2}}, AbstractVector{ScientificTypesBase.Multiclass{6}}, AbstractVector{ScientificTypesBase.Multiclass{48}}, AbstractVector{ScientificTypesBase.Multiclass{34}}}}
+    2:	Source @429 ⏎ AbstractVector{ScientificTypesBase.OrderedFactor{10}}
 
 ````
 

@@ -20,9 +20,9 @@
 # - Visualize the learned embedding spaces
 # - Build pipelines combining embeddings with downstream models
 
-using Pkg;
-Pkg.activate(@__DIR__);
-Pkg.instantiate(); #src
+using Pkg;                   # src
+Pkg.activate(@__DIR__);      #src
+Pkg.instantiate();           #src
 
 
 
