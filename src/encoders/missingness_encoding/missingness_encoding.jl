@@ -39,7 +39,7 @@ function missingness_encoder_fit(
 
     # 1. Define feature mapper
     function feature_mapper(col, name)
-        feat_levels = levels(col; skipmissing = true)
+        feat_levels = unwrap.(levels(col; skipmissing = true))
         col_type = nonmissingtype(eltype(feat_levels))
 
         # Ensure column type is valid (can't test because never occurs)

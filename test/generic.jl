@@ -86,7 +86,7 @@ function dummy_encoder_fit(
 )
     # 1. Define feature mapper
     function feature_mapper(col, name)
-        feat_levels = levels(col)
+        feat_levels = rawlevels(col)
         hash_given_feat_val =
             Dict{Any, Integer}(value => hash(value) for value in feat_levels)
         return hash_given_feat_val

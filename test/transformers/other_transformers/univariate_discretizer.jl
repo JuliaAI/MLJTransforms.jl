@@ -1,4 +1,3 @@
-
 @testset "U-Discr" begin
     v = randn(10000)
     t = UnivariateDiscretizer(n_classes=100);
@@ -24,5 +23,6 @@
     v2 = v[1:3]
     w2 = MLJBase.transform(t, result, v2)
     @test levels(w2) == levels(w)
-
 end
+
+true

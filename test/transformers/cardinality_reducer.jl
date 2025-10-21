@@ -40,7 +40,7 @@ end
     new_cat_given_col_val = cache.new_cat_given_col_val
 
     @test minimum(values(new_cat_given_col_val[:HighCardFeature1])) ==
-          minimum(levels(X.HighCardFeature1)) - 1
+          minimum(rawlevels(X.HighCardFeature1)) - 1
 end
 
 
@@ -101,21 +101,21 @@ end
         :LowCardFeature => Dict(
             [
             (level, enc_char(LowCardFeature_col, level)) for
-            level in levels(LowCardFeature_col) if
+            level in rawlevels(LowCardFeature_col) if
             proportionmap(LowCardFeature_col)[level] < 0.3
         ],
         ),
         :HighCardFeature1 => Dict(
             [
             (level, enc_num(HighCardFeature1_col, level)) for
-            level in levels(HighCardFeature1_col) if
+            level in rawlevels(HighCardFeature1_col) if
             proportionmap(HighCardFeature1_col)[level] < 0.3
         ],
         ),
         :HighCardFeature2 => Dict(
             [
             (level, enc_str(HighCardFeature2_col, level)) for
-            level in levels(HighCardFeature2_col) if
+            level in rawlevels(HighCardFeature2_col) if
             proportionmap(HighCardFeature2_col)[level] < 0.3
         ],
         ),
@@ -191,7 +191,7 @@ end
     )
     X_tr = cardinality_reducer_transform(X, cache)
 
-    @test 'Z' in Set(levels(X_tr[:LowCardFeature]))
+    @test 'Z' in Set(rawlevels(X_tr[:LowCardFeature]))
 end
 
 @testset "MLJ Interface Cardinality Reducer" begin
@@ -236,7 +236,7 @@ end
         :B => Multiclass,
     )
 
-    levels(X.A)
+    rawlevels(X.A)
 
     encoder = CardinalityReducer(ordered_factor = false, min_frequency = 3)
     mach = fit!(machine(encoder, X))

@@ -207,7 +207,7 @@ function generic_transform(
         if feat_name in keys(mapping_per_feat_level)
             if !ignore_unknown
                 train_levels = keys(mapping_per_feat_level[feat_name])
-                test_levels = levels(col)
+                test_levels = rawlevels(col)
                 # test levels must be a subset of train levels
                 if !issubset(test_levels, train_levels)
                     # get the levels in test that are not in train

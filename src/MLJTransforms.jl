@@ -20,6 +20,9 @@ using OrderedCollections
 
 const MMI = MLJModelInterface
 
+# old behaviour of `levels` (before CategoricalArrays 1.0):
+rawlevels(A) = unwrap.(levels(A))
+
 # Functions of generic use across transformers
 include("common_docs.jl")
 include("generic.jl")

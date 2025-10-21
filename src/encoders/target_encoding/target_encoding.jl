@@ -148,12 +148,12 @@ function target_encoder_fit(
         "Your target must be Continuous/Count for regression or Multiclass/OrderedFactor for classification",
     )
 
-    # 2. Setup prior statistics 
+    # 2. Setup prior statistics
     if task == "Regression"
         y_mean = mean(y)                             # for mixing
         m == :auto && (y_var = std(y)^2)              # for empirical Bayes estimation
     else
-        y_classes = levels(y)
+        y_classes = rawlevels(y)
         is_multiclass = length(y_classes) > 2
         if !is_multiclass       # binary case
             y_prior = sum(y .== y_classes[1]) / length(y)   # for mixing
@@ -165,10 +165,10 @@ function target_encoder_fit(
 
     # 3. Define function to compute the new value(s) for each level given a column
     function feature_mapper(col, name)
-        feat_levels = levels(col)
+        feat_levels = rawlevels(col)
         y_stat_given_feat_level_for_col =
             Dict{eltype(feat_levels), Any}()
-        for level in levels(col)
+        for level in rawlevels(col)
             # Get the targets of an example that belong to this level
             targets_for_level = y[col.==level]
 
@@ -230,14 +230,14 @@ end
 Transform given data with fitted target encoder cache.
 
 # Arguments
-- `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/) 
+- `X`: A table where the elements of the categorical features have [scitypes](https://juliaai.github.io/ScientificTypes.jl/dev/)
 `Multiclass` or `OrderedFactor`
-- `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics for 
+- `cache`: A dictionary containing a dictionary `y_stat_given_feat_level` with the necessary statistics for
 every categorical feature as well as other metadata needed for transform
 
 # Returns
 - `X`: A table where the categorical features as specified during fitting are transformed by target encoding. Other features will remain
-    the same. This will attempt to preserve the type of the table but may not succeed. 
+    the same. This will attempt to preserve the type of the table but may not succeed.
 """
 
 function target_encoder_transform(X, cache)
@@ -253,4 +253,3 @@ function target_encoder_transform(X, cache)
         use_levelnames = true,
         custom_levels = y_classes)
 end
-
