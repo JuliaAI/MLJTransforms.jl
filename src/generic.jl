@@ -12,12 +12,13 @@ generic_fit(X,
 )
 ```
 
-Given a `feature_mapper` (see definition below), this method applies 
-    `feature_mapper` across a specified subset of categorical columns in X and returns a dictionary 
-    whose keys are the feature names, and each value is the corresponding 
-    level‑to‑value mapping produced by `feature_mapper`. 
+Given a `feature_mapper` (see definition below), this method applies `feature_mapper`
+across a specified subset of categorical columns in X and returns a dictionary whose keys
+are the feature names, and each value is the corresponding level‑to‑value mapping produced
+by `feature_mapper`.
 
-In essence, it spares effort of looping over each column and applying the `feature_mapper` function manually as well as handling the feature selection logic.
+In essence, it spares effort of looping over each column and applying the `feature_mapper`
+function manually as well as handling the feature selection logic.
 
 
 # Arguments
@@ -26,17 +27,22 @@ $X_doc
 $features_doc
 $ignore_doc
 $ordered_factor_doc
-- feature_mapper: function that, for a given vector (eg, corresponding to a categorical column from the dataset `X`), 
-    produces a mapping from each category level name in this vector to a scalar or vector according to specified transformation logic.
+
+- feature_mapper: function that, for a given vector (eg, corresponding to a categorical
+  column from the dataset `X`), produces a mapping from each category level name in this
+  vector to a scalar or vector according to specified transformation logic.
 
 # Note
 
-- Any additional arguments (whether keyword or not) provided to this function are passed to the `feature_mapper` function which
-    is helpful when `feature_mapper` requires additional arguments to compute the mapping (eg, hyperparameters).
+- Any additional arguments (whether keyword or not) provided to this function are passed
+  to the `feature_mapper` function which is helpful when `feature_mapper` requires
+  additional arguments to compute the mapping (eg, hyperparameters).
 
 # Returns
-- `mapping_per_feat_level`: Maps each level for each feature in a subset of the categorical features of
-    X into a scalar or a vector. 
+
+- `mapping_per_feat_level`: Maps each level for each feature in a subset of the
+  categorical features of X into a scalar or a vector.
+
 $encoded_features_doc
 """
 function generic_fit(X,
@@ -50,11 +56,11 @@ function generic_fit(X,
     # 1. Get X column types and names
     feat_names = Tables.schema(X).names
 
-    #2.  Modify column_names based on features 
+    #2.  Modify column_names based on features
     if features isa Symbol
         features = [features]
     end
-    
+
     if features isa AbstractVector{Symbol}
         # Original behavior for vector of symbols
         feat_names =
@@ -94,8 +100,9 @@ end
 """
 **Private method.**
 
-Function to generate new feature names: feat_name_0, feat_name_1,..., feat_name_n or if possible,
-feat_name_level_0, feat_name_level_1,..., feat_name_level_n
+Function to generate new feature names: feat_name_0, feat_name_1,..., feat_name_n or if
+possible, feat_name_level_0, feat_name_level_1,..., feat_name_level_n
+
 """
 function generate_new_feat_names(
     feat_name,
@@ -115,7 +122,8 @@ function generate_new_feat_names(
         suffix = repeat("_", count)
         if use_levelnames
             # Always use the first num_inds level names
-            new_column_names = [ Symbol("$(feat_name)$(suffix)$(levels_vec[i])") for i in 1:num_inds ]
+            new_column_names =
+                [ Symbol("$(feat_name)$(suffix)$(levels_vec[i])") for i in 1:num_inds ]
         else
             # Always use numeric indices
             new_column_names = [ Symbol("$(feat_name)$(suffix)$i") for i in 1:num_inds ]
@@ -144,34 +152,42 @@ generic_transform(
 ```
 
 
-Apply a per‐level feature mapping to selected categorical columns in `X`, returning a new table of the same type.
+Apply a per‐level feature mapping to selected categorical columns in `X`, returning a new
+table of the same type.
 
 # Arguments
 
 $X_doc
-- `mapping_per_feat_level::Dict{Symbol,Dict}`:
-    A dict whose keys are feature names (`Symbol`) and values are themselves dictionaries 
-    mapping each observed level to either a scalar (if `single_feat=true`) or a fixed‐length vector 
-        (if `single_feat=false`). Only columns whose names appear in `mapping_per_feat_level` are 
-            transformed; others pass through unchanged.
-- `single_feat::Bool=true`:
-    If `true`, each input level is mapped to a single scalar feature; if `false`,
-    each input level is mapped to a length‑`k` vector, producing `k` output columns.
-- `ignore_unknown::Bool=false`:
-    If `false`, novel levels in `X` (not seen during fit) will raise an error; 
-    if `true`, novel levels will be left unchanged (identity mapping).
-- `use_levelnames::Bool=false`:
-    When `single_feat=false`, controls naming of the expanded columns: `true`: use actual level names (e.g. `:color_red`, `:color_blue`), 
-    `false`: use numeric indices (e.g. `:color_1`, `:color_2`).
-- `custom_levels::Union{Nothing,Vector}`:
-    If not `nothing`, overrides the names of levels used to generate feature names when `single_feat=false`.
-- `ensure_categorical::Bool=false`:
-    Only when `single_feat=true` and if `true`, preserves the categorical type of the column after 
-        recoding (eg, feature should still be recognized as `Multiclass` after transformation)
+
+- `mapping_per_feat_level::Dict{Symbol,Dict}`: A dict whose keys are feature names
+   (`Symbol`) and values are themselves dictionaries mapping each observed level to either
+   a scalar (if `single_feat=true`) or a fixed‐length vector (if
+   `single_feat=false`). Only columns whose names appear in `mapping_per_feat_level` are
+   transformed; others pass through unchanged.
+
+- `single_feat::Bool=true`: If `true`, each input level is mapped to a single scalar
+   feature; if `false`, each input level is mapped to a length‑`k` vector, producing `k`
+   output columns.
+
+- `ignore_unknown::Bool=false`: If `false`, novel levels in `X` (not seen during fit) will
+   raise an error; if `true`, novel levels will be left unchanged (identity mapping).
+
+- `use_levelnames::Bool=false`: When `single_feat=false`, controls naming of the expanded
+   columns: `true`: use actual level names (e.g. `:color_red`, `:color_blue`), `false`:
+   use numeric indices (e.g. `:color_1`, `:color_2`).
+
+- `custom_levels::Union{Nothing,Vector}`: If not `nothing`, overrides the names of levels
+   used to generate feature names when `single_feat=false`.
+
+- `ensure_categorical::Bool=false`: Only when `single_feat=true` and if `true`, preserves
+  the categorical type of the column after recoding (eg, feature should still be
+  recognized as `Multiclass` after transformation)
 
 # Returns
 
-A new table of potentially similar to `X` but with categorical columns transformed according to `mapping_per_feat_level`.
+A new table of potentially similar to `X` but with categorical columns transformed
+according to `mapping_per_feat_level`.
+
 """
 function generic_transform(
     X,
@@ -197,7 +213,8 @@ function generic_transform(
                     # get the levels in test that are not in train
                     lost_levels = setdiff(test_levels, train_levels)
                     error(
-                        "While transforming, found novel levels for the column $(feat_name): $(lost_levels) that were not seen while training.",
+                    "While transforming, found novel levels for the column "*
+                        "$(feat_name): $(lost_levels) that were not seen while training.",
                     )
                 end
             end
@@ -206,10 +223,11 @@ function generic_transform(
                 level2scalar = mapping_per_feat_level[feat_name]
                 if ensure_categorical
                     new_col = !isempty(level2scalar) ? recode(col, level2scalar...) : col
-                else 
-                    new_col = !isempty(level2scalar) ? unwrap.(recode(col, level2scalar...)) : col
+                else
+                    new_col =
+                        !isempty(level2scalar) ? unwrap.(recode(col, level2scalar...)) : col
                 end
-               
+
                 push!(new_cols, new_col)
                 push!(new_feat_names, feat_name)
             else
@@ -221,7 +239,8 @@ function generic_transform(
                 feat_names_with_inds = generate_new_feat_names(
                     feat_name,
                     length(first(mapping_per_feat_level[feat_name])[2]),
-                    (custom_levels === nothing) ? keys(mapping_per_feat_level[feat_name]) : custom_levels,
+                    (custom_levels === nothing) ?
+                        keys(mapping_per_feat_level[feat_name]) : custom_levels,
                     feat_names;
                     use_levelnames = use_levelnames,
                 )
