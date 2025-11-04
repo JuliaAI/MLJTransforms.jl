@@ -9,6 +9,9 @@ import StatsModels
 using Random
 using LinearAlgebra
 
+# old behaviour of `levels` (before CategoricalArrays 1.0):
+rawlevels(A) = unwrap.(levels(A))
+
 # Other transformers
 using Tables, CategoricalArrays
 using Statistics

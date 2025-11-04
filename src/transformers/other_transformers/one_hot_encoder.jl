@@ -61,7 +61,7 @@ function MMI.fit(transformer::OneHotEncoder, verbosity::Int, X)
         if T <: allowed_scitypes && ftr in specified_features
             ref_name_pairs_given_feature[ftr] = Pair{<:Unsigned,Symbol}[]
             shift = transformer.drop_last ? 1 : 0
-            levels = classes(col)
+            levels = CategoricalArrays.levels(col)
             fitted_levels_given_feature[ftr] = levels
             if verbosity > 0
                 @info "Spawning $(length(levels)-shift) sub-features "*
@@ -136,7 +136,7 @@ function MMI.transform(transformer::OneHotEncoder, fitresult, X)
         col = MMI.selectcols(X, ftr)
         if ftr in features_to_be_transformed
             Set(fitresult.fitted_levels_given_feature[ftr]) ==
-                Set(classes(col)) ||
+                Set(levels(col)) ||
             error("Found category level mismatch in feature `$(ftr)`. "*
             "Consider using `levels!` to ensure fitted and transforming "*
             "features have the same category levels.")

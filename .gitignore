@@ -30,6 +30,5 @@ scratchpad/
 examples/test.jl
 catboost_info/**
 /catboost_info
-/catboost_info
-/docs/src/tutorials/adult_example/.CondaPkg
-/docs/src/tutorials/adult_example/catboost_info
+/docs/src/tutorials/**/.CondaPkg
+/docs/src/tutorials/**/catboost_info

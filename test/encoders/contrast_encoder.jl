@@ -82,9 +82,9 @@ end
     end
     # test that fit is correct for dummy Coding
     cache = contrast_encoder_fit(X, [:name]; ignore = false, mode = :dummy)
-    k = length(levels(X.name))
+    k = length(rawlevels(X.name))
     contrast_matrix = get_dummy_contrast(k)
-    for (i, level) in enumerate(levels(X.name))
+    for (i, level) in enumerate(rawlevels(X.name))
         @test cache.vector_given_value_given_feature[:name][level] == contrast_matrix[i, :]
     end
 end
@@ -110,9 +110,9 @@ end
     @test size(contrast_matrix_3) == (3, 2)
     # test that fit is correct for sum Coding
     cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :sum)
-    k = length(levels(X.favnum))
+    k = length(rawlevels(X.favnum))
     contrast_matrix = get_sum_contrast(k)
-    for (i, level) in enumerate(levels(X.favnum))
+    for (i, level) in enumerate(rawlevels(X.favnum))
         @test cache.vector_given_value_given_feature[:favnum][level] ==
               contrast_matrix[i, :]
     end
@@ -130,9 +130,9 @@ end
 
     # Test that fit is correct for backward Coding
     cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :backward_diff)
-    k = length(levels(X.favnum))
+    k = length(rawlevels(X.favnum))
     contrast_matrix = get_backward_diff_contrast(k)
-    for (i, level) in enumerate(levels(X.favnum))
+    for (i, level) in enumerate(rawlevels(X.favnum))
         @test cache.vector_given_value_given_feature[:favnum][level] ==
               contrast_matrix[i, :]
     end
@@ -148,9 +148,9 @@ end
 
     # Test that fit is correct for forward Coding
     cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :forward_diff)
-    k = length(levels(X.favnum))
+    k = length(rawlevels(X.favnum))
     contrast_matrix = get_forward_diff_contrast(k)
-    for (i, level) in enumerate(levels(X.favnum))
+    for (i, level) in enumerate(rawlevels(X.favnum))
         @test cache.vector_given_value_given_feature[:favnum][level] ==
               contrast_matrix[i, :]
     end
@@ -171,9 +171,9 @@ end
          0.0   0.0   3.0]
     # test that fit is correct for helmert Coding
     cache = contrast_encoder_fit(X, [:name, :favnum]; ignore = false, mode = :helmert)
-    k = length(levels(X.name))
+    k = length(rawlevels(X.name))
     contrast_matrix = get_helmert_contrast(k)
-    for (i, level) in enumerate(levels(X.name))
+    for (i, level) in enumerate(rawlevels(X.name))
         @test cache.vector_given_value_given_feature[:name][level] == contrast_matrix[i, :]
     end
 end
@@ -227,12 +227,12 @@ end
         contrasts = Dict(
             :name => StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, 3);
-                levels = levels(X.name),
+                levels = rawlevels(X.name),
                 labels = [],
             ),
             :favnum => StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, 4);
-                levels = levels(X.favnum),
+                levels = rawlevels(X.favnum),
                 labels = [],
             ),
         ),
@@ -263,7 +263,7 @@ end
             StatsModels.HelmertCoding(),
             StatsModels.HypothesisCoding(
                 buildrandomhypothesis(nothing, k);
-                levels = (k == 3) ? levels(X.name) : levels(X.favnum),
+                levels = (k == 3) ? rawlevels(X.name) : rawlevels(X.favnum),
                 labels = [],
             ),
         ][ind]
@@ -304,7 +304,7 @@ end
                 StatsModels.HelmertCoding(),
                 StatsModels.HypothesisCoding(
                     buildrandomhypothesis(nothing, k);
-                    levels = (k == 3) ? levels(X.name) : levels(X.favnum),
+                    levels = (k == 3) ? rawlevels(X.name) : rawlevels(X.favnum),
                     labels = [],
                 ),
             ][ind]

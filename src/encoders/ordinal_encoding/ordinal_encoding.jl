@@ -25,7 +25,7 @@ function ordinal_encoder_fit(
 )
     # 1. Define feature mapper
     function feature_mapper(col, name)
-        feat_levels = levels(col)
+        feat_levels = rawlevels(col)
         index_given_feat_val =
             Dict{eltype(feat_levels), output_type}(
                 value => index for (index, value) in enumerate(feat_levels)

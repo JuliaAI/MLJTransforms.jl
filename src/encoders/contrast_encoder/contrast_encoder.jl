@@ -102,7 +102,7 @@ function contrast_encoder_fit(
 
     # ensure mode is one of :contrast, :dummy, :sum, :backward_diff, :forward_diff, :helmert, :polynomial, :hypothesis
     function feature_mapper(col, name)
-        feat_levels = levels(col)
+        feat_levels = rawlevels(col)
         k = length(feat_levels)
         feat_mode = (mode_is_vector) ? mode[findfirst(isequal(name), features)] : mode
         if feat_mode == :contrast
