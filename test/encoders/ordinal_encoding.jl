@@ -18,22 +18,22 @@ push!(
     A_col, C_col, D_col, F_col = selectcols(X, [1, 3, 4, 6])
     true_output = Dict{Symbol, Dict{Any, AbstractFloat}}(
         :F => Dict(
-            "m" => findfirst(==("m"), levels(F_col)),
-            "l" => findfirst(==("l"), levels(F_col)),
-            "s" => findfirst(==("s"), levels(F_col)),
+            "m" => findfirst(==("m"), rawlevels(F_col)),
+            "l" => findfirst(==("l"), rawlevels(F_col)),
+            "s" => findfirst(==("s"), rawlevels(F_col)),
         ),
         :A => Dict(
-            "g" => findfirst(==("g"), levels(A_col)),
-            "b" => findfirst(==("b"), levels(A_col)),
-            "r" => findfirst(==("r"), levels(A_col)),
+            "g" => findfirst(==("g"), rawlevels(A_col)),
+            "b" => findfirst(==("b"), rawlevels(A_col)),
+            "r" => findfirst(==("r"), rawlevels(A_col)),
         ),
         :D => Dict(
-            false => findfirst(==(false), levels(D_col)),
-            true => findfirst(==(true), levels(D_col)),
+            false => findfirst(==(false), rawlevels(D_col)),
+            true => findfirst(==(true), rawlevels(D_col)),
         ),
         :C => Dict(
-            "f" => findfirst(==("f"), levels(C_col)),
-            "m" => findfirst(==("m"), levels(C_col)),
+            "f" => findfirst(==("f"), rawlevels(C_col)),
+            "m" => findfirst(==("m"), rawlevels(C_col)),
         ),
     )
     @test result == true_output
@@ -46,7 +46,7 @@ end
 
     X_tr = ordinal_encoder_transform(X, cache)
 
-    enc = (col, level) -> findfirst(==(level), levels(X[col]))
+    enc = (col, level) -> findfirst(==(level), rawlevels(X[col]))
 
     target = (
         A = [enc(:A, X[:A][i]) for i in 1:10],

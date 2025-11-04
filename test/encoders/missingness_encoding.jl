@@ -34,7 +34,7 @@ end
     X = generate_X_with_missingness()
     cache = missingness_encoder_fit(X)
     label_for_missing_given_feature = cache.label_for_missing_given_feature
-    @test label_for_missing_given_feature[:C][missing] == minimum(levels(X.C)) - 1
+    @test label_for_missing_given_feature[:C][missing] == minimum(rawlevels(X.C)) - 1
 end
 
 
@@ -52,14 +52,14 @@ end
     X_tr = missingness_encoder_transform(X, cache)
 
     for col in [:A, :B, :C, :D, :E]
-        @test issubset(levels(X[col]), levels(X_tr[col]))
+        @test issubset(rawlevels(X[col]), rawlevels(X_tr[col]))
     end
 
-    @test Set(push!(levels(X[:A]), "missing-item")) == Set(levels(X_tr[:A]))
-    @test Set(push!(levels(X[:C]), -99)) == Set(levels(X_tr[:C]))
-    @test Set(push!(levels(X[:E]), 'i')) == Set(levels(X_tr[:E]))
-    @test levels(X[:B]) == levels(X_tr[:B])
-    @test levels(X[:D]) == levels(X_tr[:D])
+    @test Set(push!(rawlevels(X[:A]), "missing-item")) == Set(rawlevels(X_tr[:A]))
+    @test Set(push!(rawlevels(X[:C]), -99)) == Set(rawlevels(X_tr[:C]))
+    @test Set(push!(rawlevels(X[:E]), 'i')) == Set(rawlevels(X_tr[:E]))
+    @test rawlevels(X[:B]) == rawlevels(X_tr[:B])
+    @test rawlevels(X[:D]) == rawlevels(X_tr[:D])
 end
 
 
@@ -158,7 +158,7 @@ end
     )
     X_tr = missingness_encoder_transform(X, cache)
 
-    @test issubset(levels(X[:A]), levels(X_tr[:A])) # Will have "MissingOne" added
+    @test issubset(rawlevels(X[:A]), rawlevels(X_tr[:A])) # Will have "MissingOne" added
 end
 
 @testset "MLJ Interface Missingness Encoder" begin
