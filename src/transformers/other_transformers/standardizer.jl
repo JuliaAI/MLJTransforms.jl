@@ -270,9 +270,9 @@ In MLJ or MLJBase, bind an instance `model` to data with
 
 where
 
-- `X`: any Tables.jl compatible table or any abstract vector with
-  `Continuous` element scitype (any abstract float vector). Only
-  features in a table with `Continuous` scitype can be standardized;
+- `X`: any Tables.jl compatible table, or any abstract vector with
+  `Continuous` element scitype (any abstract float vector). Features
+  in a table without `Continuous` scitype will be ignored;
   check column scitypes with `schema(X)`.
 
 Train the machine using `fit!(mach, rows=...)`.
