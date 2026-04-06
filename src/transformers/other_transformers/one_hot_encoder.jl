@@ -214,8 +214,8 @@ Train the machine using `fit!(mach, rows=...)`.
   (`ignore=true`). This default behavior can be modified by the
   `ordered_factor` flag.
 
-- `ordered_factor=false`: when `true`, `OrderedFactor` features are
-  universally excluded
+- `ordered_factor=true`: when `false`, `OrderedFactor` features are
+  left untouched.
 
 - `drop_last=false`: whether to drop the column corresponding to the
   final class of encoded features. For example, a three-class feature
