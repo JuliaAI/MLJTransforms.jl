@@ -6,3 +6,4 @@ MLJTransforms = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6"
 
 [compat]
 MLJFlux = "0.6.6"
+MLJTransforms = "0.1.6"
