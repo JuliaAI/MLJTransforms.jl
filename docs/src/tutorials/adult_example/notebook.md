@@ -7,7 +7,7 @@ EditURL = "notebook.jl"
 **Julia version** is assumed to be 1.10.*
 
 This demonstration is available as a Jupyter notebook or julia script (as well as the dataset)
-[here](https://github.com/essamwise/MLJTransforms.jl/tree/main/docs/src/tutorials/wine_example).
+[here](https://github.com/juliaai/MLJTransforms.jl/tree/main/docs/src/tutorials/wine_example).
 
 This tutorial compares different categorical encoding approaches on adult income prediction.
 We'll test OneHot, Frequency, and Cardinality Reduction encoders with CatBoost classification.

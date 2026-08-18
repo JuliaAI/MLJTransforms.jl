@@ -17,7 +17,8 @@ function generate(dir; execute = true, pluto = false)
             INFILE,
             OUTDIR,
             execute = true,
-            # Use regular julia code blocks instead of @example to prevent execution by Documenter
+            # Use regular julia code blocks instead of @example to prevent execution by
+            # Documenter
             config = Dict("codefence" => Pair("````julia", "````")),
         )
 
