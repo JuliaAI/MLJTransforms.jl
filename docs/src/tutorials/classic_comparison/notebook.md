@@ -7,7 +7,7 @@ EditURL = "notebook.jl"
 **Julia version** is assumed to be 1.10.*
 
 This demonstration is available as a Jupyter notebook or julia script (as well as the dataset)
-[here](https://github.com/essamwise/MLJTransforms.jl/tree/main/docs/src/tutorials/classic_comparison).
+[here](https://github.com/juliaai/MLJTransforms.jl/tree/main/docs/src/tutorials/classic_comparison).
 
 This tutorial compares four fundamental categorical encoding approaches on a milk quality dataset:
 OneHot, Frequency, Target, and Ordinal encoders paired with SVM classification.

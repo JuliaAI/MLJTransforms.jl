@@ -13,7 +13,7 @@ both with and without feature standardization. This will help us understand
 when and why preprocessing is important for model performance.
 
 This demonstration is available as a Jupyter notebook or julia script
-[here](https://github.com/essamwise/MLJTransforms.jl/tree/main/docs/src/tutorials/standardization).
+[here](https://github.com/juliaai/MLJTransforms.jl/tree/main/docs/src/tutorials/standardization).
 
 ````julia
 using Pkg
