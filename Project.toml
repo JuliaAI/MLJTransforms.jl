@@ -1,8 +1,7 @@
 name = "MLJTransforms"
 uuid = "23777cdb-d90c-4eb0-a694-7c2b83d5c1d6"
 authors = ["Essam <essamwisam@outlook.com> and contributors"]
-
-version = "0.1.6"
+version = "0.1.7"
 
 [deps]
 BitBasis = "50ba71b6-fa0f-514d-ae9a-0916efc90dcf"
@@ -30,7 +29,7 @@ Distributions = "0.25"
 LinearAlgebra = "1"
 MLJModelInterface = "1.11"
 OrderedCollections = "1, 2"
-Parameters = "0.12"
+Parameters = "0.12, 0.13"
 ScientificTypes = "3.1.0"
 ScientificTypesBase = "3.0.0"
 Statistics = "1"
