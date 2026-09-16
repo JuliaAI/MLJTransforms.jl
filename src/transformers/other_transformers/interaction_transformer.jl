@@ -1,3 +1,4 @@
+# The model implementation here is deprecated
 
 @mlj_model mutable struct InteractionTransformer <: Static
     order::Int                                          = 2::(_ > 1)
@@ -10,7 +11,14 @@ interactions(columns, order::Int) =
 interactions(columns, variables...) =
     .*((Tables.getcolumn(columns, var) for var in variables)...)
 
+const WARN_INTERACTION_DEPRECATED = """
+    `InteractionTransformer(; kwargs...)` is deprecated. Instead use
+    `PolynomialTransformer(; interactions_only=true, kwargs...)`. The
+    `PolynomialTransformer` type is also provided by the MLJTransforms module.
+    """
+
 function MMI.transform(model::InteractionTransformer, _, X)
+    Base.depwarn(WARN_INTERACTION_DEPRECATED, :transform)
     features = actualfeatures(model.features, X)
     interactions_ = interactions(features, model.order)
     interaction_features = Tuple(Symbol(join(inter, "_")) for inter in interactions_)
