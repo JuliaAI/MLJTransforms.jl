@@ -20,6 +20,7 @@ stable_rng = StableRNGs.StableRNG(123)
 using Dates: DateTime, Date, Time, Day, Hour
 _get(x) = CategoricalArrays.DataAPI.unwrap(x)
 
+include("test_utils.jl")
 
 include("utils.jl")
 include("generic.jl")

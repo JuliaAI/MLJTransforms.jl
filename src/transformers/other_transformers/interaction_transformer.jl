@@ -4,21 +4,6 @@
     features::Union{Nothing, Vector{Symbol}}            = nothing::(_ !== nothing ? length(_) > 1 : true)
 end
 
-infinite_scitype(col) = eltype(scitype(col)) <: Infinite
-
-actualfeatures(features::Nothing, table) =
-    filter(feature -> infinite_scitype(Tables.getcolumn(table, feature)), Tables.columnnames(table))
-
-function actualfeatures(features::Vector{Symbol}, table)
-    diff = setdiff(features, Tables.columnnames(table))
-    diff != [] && throw(ArgumentError(string("Column(s) ", join([x for x in diff], ", "), " are not in the dataset.")))
-
-    for feature in features
-        infinite_scitype(Tables.getcolumn(table, feature)) || throw(ArgumentError("Column $feature's scitype is not Infinite."))
-    end
-    return Tuple(features)
-end
-
 interactions(columns, order::Int) =
     collect(Iterators.flatten(combinations(columns, i) for i in 2:order))
 
