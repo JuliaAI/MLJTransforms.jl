@@ -37,6 +37,8 @@ end
 """
     orderedwords(alphabet, len)
 
+*Private method.*
+
 If `alphabet = [:x, y:], then `[:x', :x']`, `[:x', :y]`, and `[:y, :y]` are
 *ordered* words (of length two) but `[:y, :x']` is not.
 
@@ -87,7 +89,7 @@ struct WithoutRepetitions <: Selection end
 
 *Private method* to help generate monomials. A **pre-monomial** is a vector with elements
  from the alphabet, with possible repetitions, but with no element predecessor coming
- *after* the element itself in the alphaget.
+ *after* the element itself in the alphabet.
 
 Note degree one "pre-monomials" are excluded.
 
