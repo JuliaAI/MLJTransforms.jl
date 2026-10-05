@@ -57,7 +57,7 @@ end
         A_B_C = [28, 80, 162]
     )
     # degree=2, features=[:A, :B], ie all columns
-    Xt =MLJBase.transform(
+    Xt = MLJBase.transform(
         PolynomialTransformer(interactions_only=true, degree=2, features=[:A, :B]),
         nothing,
         X,
