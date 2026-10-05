@@ -38,15 +38,23 @@ Xnew = transform(mach, X)
 ## Available Transformers
 See [complete list](transformers/all_transformers) of transformers in this package.
 
-In `MLJTransforms` we denote transformers that can operate on columns with `Continuous` and/or `Count` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/) as *numerical transformers*. Meanwhile, *categorical transformers* operate on `Multiclass` and/or `OrderedFactor` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/). Most categorical transformers in this package operate by converting categorical values into numerical values or vectors, and are therefore considered categorical encoders. We categorize categorical encoders as follows:
+In `MLJTransforms` we denote transformers that can operate on columns with `Continuous` and/or `Count` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/) as *numerical transformers*. Meanwhile, *categorical transformers* operate on `Multiclass` and/or `OrderedFactor` [scientific types](https://juliaai.github.io/ScientificTypes.jl/dev/). Most categorical transformers in this package operate by converting categorical values into numerical values or vectors, and are therefore considered categorical encoders. 
+
+Some transformers in this package can operate on both `Finite` and `Infinite` scientific
+types or other special scientific types (eg, to represent time). To learn more about
+scientific types see [the official
+documentation](https://juliaai.github.io/ScientificTypes.jl/dev/#Type-hierarchy).
+
+### Categorical encoders
+
+The categorical encoders in this package can be further broken down as follows:
 
 
-| **Category**                | **Description**                                                                 |
-|:---------------------------:|:-------------------------------------------------------------------------------:|
-| [Classical Encoders](transformers/classical.md)       | Traditional categorical encoding algorithms and techniques.                 |
-| [Neural-based Encoders](transformers/neural)    | Categorical encoders based on neural networks.                                  |
-| [Contrast Encoders](transformers/contrast.md)        | Categorical encoders that could be modeled via a contrast matrix.                             |
-| [Utility Encoders](transformers/utility.md)         | Categorical encoders meant to be used as preprocessors for other transformers or models.|
+|                  **Category**                   |                                     **Description**                                      |
+|:-----------------------------------------------:|:----------------------------------------------------------------------------------------:|
+| [Classical Encoders](transformers/classical.md) |               Traditional categorical encoding algorithms and techniques.                |
+|  [Neural-based Encoders](transformers/neural)   |                      Categorical encoders based on neural networks.                      |
+|  [Contrast Encoders](transformers/contrast.md)  |            Categorical encoders that could be modeled via a contrast matrix.             |
+|   [Utility Encoders](transformers/utility.md)   | Categorical encoders meant to be used as preprocessors for other transformers or models. |
 
 
-Some transformers in this package can even operate on both `Finite` and `Infinite` scientific types or other special scientific types (eg, to represent time). To learn more about scientific types see [the official documentation](https://juliaai.github.io/ScientificTypes.jl/dev/#Type-hierarchy).

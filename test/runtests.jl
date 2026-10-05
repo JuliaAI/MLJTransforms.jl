@@ -20,6 +20,7 @@ stable_rng = StableRNGs.StableRNG(123)
 using Dates: DateTime, Date, Time, Day, Hour
 _get(x) = CategoricalArrays.DataAPI.unwrap(x)
 
+include("test_utils.jl")
 
 include("utils.jl")
 include("generic.jl")
@@ -36,6 +37,7 @@ include("transformers/other_transformers/fill_imputer.jl")
 include("transformers/other_transformers/one_hot_encoder.jl")
 include("transformers/other_transformers/univariate_time_type_to_continuous.jl")
 include("transformers/other_transformers/interaction_transformer.jl")
+include("transformers/other_transformers/polynomial_transformer.jl")
 include("transformers/other_transformers/continuous_encoder.jl")
 include("transformers/other_transformers/univariate_boxcox_transformer.jl")
 include("transformers/other_transformers/standardizer.jl")
