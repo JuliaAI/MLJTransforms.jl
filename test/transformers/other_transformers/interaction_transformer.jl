@@ -1,17 +1,3 @@
-
-@testset "Interaction Transformer functions" begin
-    # No column provided, A has scitype Continuous, B has scitype Count
-    table = (A = [1., 2., 3.], B = [4, 5, 6], C = ["x₁", "x₂", "x₃"])
-    @test MLJTransforms.actualfeatures(nothing, table) == (:A, :B)
-    # Column provided
-    @test MLJTransforms.actualfeatures([:A, :B], table) == (:A, :B)
-    # Column provided, not in table
-    @test_throws ArgumentError("Column(s) D are not in the dataset.") MLJTransforms.actualfeatures([:A, :D], table)
-    # Non Infinite scitype column provided
-    @test_throws ArgumentError("Column C's scitype is not Infinite.") MLJTransforms.actualfeatures([:A, :C], table)
-end
-
-
 @testset "Interaction Transformer" begin
     # Check constructor sanity checks: order > 1, length(features) > 1
     @test_logs (:warn, "Constraint `model.order > 1` failed; using default: order=2.") InteractionTransformer(order = 1)

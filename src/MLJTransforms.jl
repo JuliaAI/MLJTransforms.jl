@@ -62,6 +62,7 @@ export ContrastEncoder
 # MLJModels transformers
 include("transformers/other_transformers/continuous_encoder.jl")
 include("transformers/other_transformers/interaction_transformer.jl")
+include("transformers/other_transformers/polynomial_transformer.jl")
 include("transformers/other_transformers/univariate_time_type_to_continuous.jl")
 include("transformers/other_transformers/fill_imputer.jl")
 include("transformers/other_transformers/one_hot_encoder.jl")
@@ -72,5 +73,5 @@ include("transformers/other_transformers/univariate_discretizer.jl")
 export UnivariateDiscretizer,
     UnivariateStandardizer, Standardizer, UnivariateBoxCoxTransformer,
     OneHotEncoder, ContinuousEncoder, FillImputer, UnivariateFillImputer,
-    UnivariateTimeTypeToContinuous, InteractionTransformer
+    UnivariateTimeTypeToContinuous, InteractionTransformer, PolynomialTransformer
 end
