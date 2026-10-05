@@ -1,11 +1,12 @@
-import MLJTransforms
+using MLJTransforms
 import MLJBase
 using Test
 import DataFrames.DataFrame
+using Combinatorics
 
 @testset "PolynomialTransformer" begin
     @testset "helper functions" begin
-        @test MLJTransforms.orderedwords((:x, :y, :z), 2) ==
+        @test collect(Combinatorics.with_replacement_combinations((:x, :y, :z), 2)) ==
             [[:x, :x], [:x, :y], [:x, :z], [:y, :y], [:y, :z], [:z, :z]]
         @test MLJTransforms.premonomials(
             (:x, :y, :z),

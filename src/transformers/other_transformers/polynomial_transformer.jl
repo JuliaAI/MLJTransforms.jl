@@ -34,52 +34,6 @@ end
 
 # # HELPERS
 
-"""
-    orderedwords(alphabet, len)
-
-*Private method.*
-
-If `alphabet = [:x, y:], then `[:x', :x']`, `[:x', :y]`, and `[:y, :y]` are
-*ordered* words (of length two) but `[:y, :x']` is not.
-
-# Example
-
-```julia-repl
-julia> orderedwords([:x, :y, :z], 2)
-6-element Vector{Vector{String}}:
- 6-element Vector{Vector{Symbol}}:
- [:x, :x]
- [:x, :y]
- [:x, :z]
- [:y, :y]
- [:y, :z]
- [:z, :z]
-```
-"""
-orderedwords(alphabet::Union{AbstractVector{T},NTuple{N,T}}, len) where {T,N} =
-    _orderedwords(alphabet, len, Vector{T}[])
-# recursive part:
-function _orderedwords(
-    alphabet::Union{AbstractVector{T},NTuple{N,T}},
-    len,
-    shorter_words,
-    ) where {T,N}
-    isempty(shorter_words) && len == 0 && return shorter_words
-    if isempty(shorter_words)
-        longer_words = map(letter->T[letter], alphabet)
-    else
-        length(first(shorter_words)) == len && return shorter_words
-        longer_words = Vector{T}[]
-        for wrd in shorter_words
-            idx = findfirst(==(last(wrd)), alphabet)
-            for letter in alphabet[idx:end]
-                push!(longer_words, [wrd..., letter])
-            end
-        end
-    end
-    return _orderedwords(alphabet, len, longer_words)
-end
-
 abstract type Selection end
 struct WithRepetitions <: Selection end
 struct WithoutRepetitions <: Selection end
@@ -126,7 +80,7 @@ julia> premonomials((:x, :y, :z), 3, WithRepetitions())
 premonomials(alphabet, degree, ::WithoutRepetitions) =
     premonomials(alphabet, degree, Combinatorics.combinations)
 premonomials(alphabet, degree, ::WithRepetitions) =
-    premonomials(alphabet, degree, orderedwords)
+    premonomials(alphabet, degree, Combinatorics.with_replacement_combinations)
 premonomials(alphabet, degree, fnctn) =
     collect(Iterators.flatten(fnctn(alphabet, i) for i in 2:degree))
 
