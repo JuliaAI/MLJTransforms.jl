@@ -7,12 +7,12 @@
 #
 # This tutorial compares different categorical encoding approaches on adult income prediction.
 # We'll test OneHot, Frequency, and Cardinality Reduction encoders with CatBoost classification.
-# 
+#
 # **Why compare encoders?** Categorical variables with many levels (like occupation, education)
 # can create high-dimensional sparse features. Different encoding strategies handle this
 # challenge differently, affecting both model performance and training speed.
-# 
-# **High Cardinality Challenge:** We've added a synthetic feature with 100 categories to 
+#
+# **High Cardinality Challenge:** We've added a synthetic feature with 100 categories to
 # demonstrate how encoders handle extreme cardinality - a common real-world scenario with
 # features like customer IDs, product codes, or geographical subdivisions.
 
@@ -28,7 +28,7 @@ using MLJ: OrderedFactor, Continuous, Multiclass
 
 # ## Load and Prepare Data
 # Load the Adult Income dataset. This dataset contains demographic information
-# and the task is to predict whether a person makes over $50K per year.
+# and the task is to predict whether a person makes over \$50K per year.
 
 # Load data with header and rename columns to the expected symbols
 df = CSV.read("./adult.csv", DataFrame; header = true)
@@ -83,7 +83,7 @@ rare_samples = rand(rare_categories, n_rare);
 all_samples = vcat(frequent_samples, rare_samples)
 df.high_cardinality_feature = all_samples[randperm(n_rows)];
 
-# Coerce categorical columns to appropriate scientific types. 
+# Coerce categorical columns to appropriate scientific types.
 # Apply explicit type coercions using fully qualified names
 type_dict = Dict(
     :income => OrderedFactor,
@@ -230,7 +230,7 @@ savefig(combined_plot, "adult_encoding_comparison.png"); #hide
 # ## Conclusion
 #
 # **Key Findings from Results:**
-# 
+#
 # **Training Time Performance (dramatic differences!):**
 # - **FreqEnc + CAT**: 0.32 seconds - **fastest approach**
 # - **CardRed + OneHot + CAT**: 0.57 seconds - **10x faster than pure OneHot**

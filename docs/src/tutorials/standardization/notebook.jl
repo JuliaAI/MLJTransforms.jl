@@ -191,5 +191,5 @@ savefig(p, "standardization_results.png"); #hide
 #md # ## Further Resources
 #md #
 #md # * [MLJTransforms Documentation](@__REPO_ROOT_URL__)
-#md # * [Scientific Types in MLJ](https://alan-turing-institute.github.io/ScientificTypes.jl/dev/)
-#md # * [Feature Preprocessing in MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/)
+#md # * [Scientific Types in MLJ](https://JuliaAI.github.io/ScientificTypes.jl/dev/)
+#md # * [Feature Preprocessing in MLJ](https://JuliaAI.github.io/MLJ.jl/dev/transformers/)
