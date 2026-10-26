@@ -1,3 +1,13 @@
+# Utilities
+
+get_mean_and_std(v::AbstractVector{T}) where T <: Real = mean(v), std(v)
+
+function get_mean_and_std(v::AbstractVector{T}) where T <: Union{Missing, Real}
+    v_ = skipmissing(v)
+    return mean(v_), std(v_)
+end
+
+# Univariate Standardizer
 
 """
     UnivariateStandardizer()
@@ -11,11 +21,11 @@ This model may be deprecated in the future. Consider using
 mutable struct UnivariateStandardizer <: Unsupervised end
 
 function MMI.fit(transformer::UnivariateStandardizer, verbosity::Int,
-             v::AbstractVector{T}) where T<:Real
-    stdv = std(v)
+             v::AbstractVector{T}) where T<:Union{Real, Missing}
+    meanv, stdv = get_mean_and_std(v)
     stdv > eps(typeof(stdv)) ||
         @warn "Extremely small standard deviation encountered in standardization."
-    fitresult = (mean(v), stdv)
+    fitresult = (meanv, stdv)
     cache = nothing
     report = NamedTuple()
     return fitresult, cache, report
@@ -31,6 +41,8 @@ function MMI.transform(transformer::UnivariateStandardizer, fitresult, x::Real)
     return (x - mu)/sigma
 end
 
+MMI.transform(transformer::UnivariateStandardizer, fitresult, x::Missing) = missing
+
 # for transforming vector:
 MMI.transform(transformer::UnivariateStandardizer, fitresult, v) =
               [transform(transformer, fitresult, x) for x in v]
@@ -40,6 +52,8 @@ function MMI.inverse_transform(transformer::UnivariateStandardizer, fitresult, y
     mu, sigma = fitresult
     return mu + y*sigma
 end
+
+MMI.inverse_transform(transformer::UnivariateStandardizer, fitresult, y::Missing) = missing
 
 # for vectors:
 MMI.inverse_transform(transformer::UnivariateStandardizer, fitresult, w) =
@@ -83,7 +97,6 @@ function MMI.clean!(transformer::Standardizer)
 end
 
 function MMI.fit(transformer::Standardizer, verbosity::Int, X)
-
     # if not a table, it must be an abstract vector, eltpye AbstractFloat:
     is_univariate = !Tables.istable(X)
 
@@ -106,9 +119,9 @@ function MMI.fit(transformer::Standardizer, verbosity::Int, X)
     all_features = Tables.schema(X).names
     feature_scitypes =
         collect(elscitype(selectcols(X, c)) for c in all_features)
-    scitypes = Vector{Type}([Continuous])
-    transformer.ordered_factor && push!(scitypes, OrderedFactor)
-    transformer.count && push!(scitypes, Count)
+    scitypes = Vector{Type}([Union{Missing, Continuous}])
+    transformer.ordered_factor && push!(scitypes, Union{Missing, OrderedFactor})
+    transformer.count && push!(scitypes, Union{Missing, Count})
     AllowedScitype = Union{scitypes...}
 
     # determine indices of all_features to be transformed
@@ -148,7 +161,7 @@ function MMI.fit(transformer::Standardizer, verbosity::Int, X)
     # fit each feature and add result to above dict
     verbosity > 1 && @info "Features standarized: "
     for j in cols_to_fit
-        col_data = if (feature_scitypes[j] <: OrderedFactor)
+        col_data = if (feature_scitypes[j] <: Union{Missing, OrderedFactor})
             coerce(selectcols(X, j), Continuous)
         else
             selectcols(X, j)
@@ -259,7 +272,9 @@ Use this model to standardize (whiten) a `Continuous` vector, or
 relevant columns of a table. The rescalings applied by this
 transformer to new data are always those learned during the training
 phase, which are generally different from what would actually
-standardize the new data.
+standardize the new data. Missing values are ignored by the transformer. 
+At train time they do not count towards mean and standard deviation calculations. 
+At transform time, they are propagated as missing values.
 
 
 # Training data

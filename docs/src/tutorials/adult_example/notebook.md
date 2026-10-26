@@ -41,7 +41,7 @@ using MLJ: OrderedFactor, Continuous, Multiclass
 
 ## Load and Prepare Data
 Load the Adult Income dataset. This dataset contains demographic information
-and the task is to predict whether a person makes over $50K per year.
+and the task is to predict whether a person makes over \$50K per year.
 
 Load data with header and rename columns to the expected symbols
 

@@ -292,9 +292,8 @@ Try this approach with other datasets and models to further explore the effects 
 
 ## Further Resources
 
-* [MLJTransforms Documentation](<unknown>)
-* [Scientific Types in MLJ](https://alan-turing-institute.github.io/ScientificTypes.jl/dev/)
-* [Feature Preprocessing in MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/)
+* [Scientific Types in MLJ](https://JuliaAI.github.io/ScientificTypes.jl/dev/)
+* [Feature Preprocessing in MLJ](https://JuliaAI.github.io/MLJ.jl/dev/transformers/)
 
 ---
 

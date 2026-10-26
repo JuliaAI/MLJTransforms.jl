@@ -111,6 +111,28 @@
     @test Xnew[4] == X[4]
     @test Xnew[5] == X[5]
 
+    # Test missingness in Standardizer
+    X = (
+        OverallQual  = [1, 3, missing, 2, missing, 1],
+        GrLivArea    = [2., 1., missing, missing, missing],
+        Neighborhood = categorical(['1', missing, '2', '3', '3'], ordered=true)
+    )
+    stand = Standardizer(ordered_factor=true, count=true)
+    f,   = MLJBase.fit(stand, 0, X)
+    Xt   = MLJBase.transform(stand, f, X)
+    for col in values(Xt)
+        meanv, stdv = MLJTransforms.get_mean_and_std(col)
+        @test meanv ≈ 0 atol=1e-10
+        @test stdv ≈ 1 atol=1e-10
+    end
+    # Test inverse transform when missingness is present
+    stand = Standardizer()
+    f,   = MLJBase.fit(stand, 0, X)
+    Xt   = MLJBase.transform(stand, f, X)
+    Xi   = MLJBase.inverse_transform(stand, f, Xt)
+    @test isequal(Xi.GrLivArea, X.GrLivArea)
+
+    
     # infos = MLJTransforms.info_dict(stand)
 
     # @test infos[:name] == "Standardizer"
@@ -126,4 +148,10 @@
     fp = MLJBase.fitted_params(stand, f)
     @test fp.mean ≈ 2.0
     @test fp.std ≈ 2.0
+    # univariate case with missingness
+    f, _, _   = MLJBase.fit(stand, 0, [0, 2, 4, missing])
+    xt = MLJBase.transform(stand, f, [0,4,8, missing])
+    @test isequal(xt, [-1.0,1.0,3.0, missing])
+    xi = MLJBase.inverse_transform(stand, f, [-1.0,1.0,3.0, missing])
+    @test isequal(xi, [0., 4., 8., missing])
 end
