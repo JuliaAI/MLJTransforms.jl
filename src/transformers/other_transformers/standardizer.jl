@@ -272,8 +272,9 @@ Use this model to standardize (whiten) a `Continuous` vector, or
 relevant columns of a table. The rescalings applied by this
 transformer to new data are always those learned during the training
 phase, which are generally different from what would actually
-standardize the new data. Missing values are ignored by the transformer and
-returned as missing.
+standardize the new data. Missing values are ignored by the transformer. 
+At train time they do not count towards mean and standard deviation calculations. 
+At transform time, they are propagated as missing values.
 
 
 # Training data
