@@ -162,7 +162,7 @@ function MMI.fit(transformer::Standardizer, verbosity::Int, X)
     verbosity > 1 && @info "Features standarized: "
     for j in cols_to_fit
         col_data = if (feature_scitypes[j] <: Union{Missing, OrderedFactor})
-            coerce(selectcols(X, j), Continuous)
+            coerce(selectcols(X, j), Continuous, verbosity=verbosity-1)
         else
             selectcols(X, j)
         end
@@ -224,7 +224,7 @@ function _standardize(operation, fitresult, X)
     cols = map(all_features) do ftr
         ftr_data = selectcols(X, ftr)
         if ftr in features_to_be_transformed
-            col_to_transform = coerce(ftr_data, Continuous)
+            col_to_transform = coerce(ftr_data, Continuous, verbosity=0)
             operation(col_transformer,
                       fitresult_given_feature[ftr],
                       col_to_transform)
