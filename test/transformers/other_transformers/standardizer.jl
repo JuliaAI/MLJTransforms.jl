@@ -1,5 +1,5 @@
 
-@testset begin "standardization"
+@testset "standardization" begin 
 
     # UnivariateStandardizer:
     stand = UnivariateStandardizer()
