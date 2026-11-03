@@ -172,9 +172,11 @@ function target_encoder_fit(
             # Get the targets of an example that belong to this level
             targets_for_level = y[col.==level]
 
-            # Compute λ for mixing
-            m == :auto && (m = compute_m_auto(task, targets_for_level; y_var = y_var))
-            lambda = compute_shrinkage(targets_for_level; m = m, λ = lambda)
+            # Compute λ for mixing (per level; use new locals so that the values computed
+            # for one level do not leak into the next level or column)
+            m_level =
+                m == :auto ? compute_m_auto(task, targets_for_level; y_var = y_var) : m
+            λ_level = compute_shrinkage(targets_for_level; m = m_level, λ = lambda)
 
             if task == "Classification"
                 if !is_multiclass           # 3.1 Binary classification
@@ -184,7 +186,7 @@ function target_encoder_fit(
                         mix_stats(
                             posterior = y_freq_for_level,
                             prior = y_prior,
-                            λ = lambda,
+                            λ = λ_level,
                         )
                 else                        # 3.2 Multiclass classification
                     y_freqs_for_level =
@@ -192,13 +194,13 @@ function target_encoder_fit(
                     y_stat_given_feat_level_for_col[level] = mix_stats(
                         posterior = y_freqs_for_level,
                         prior = y_priors,
-                        λ = lambda,
+                        λ = λ_level,
                     )
                 end
             else                            # 3.3 Regression
                 y_mean_for_level = compute_target_mean_for_level(targets_for_level)
                 y_stat_given_feat_level_for_col[level] =
-                    mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = lambda)
+                    mix_stats(posterior = y_mean_for_level, prior = y_mean, λ = λ_level)
             end
         end
         return y_stat_given_feat_level_for_col
