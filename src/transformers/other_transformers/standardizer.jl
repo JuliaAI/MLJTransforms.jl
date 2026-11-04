@@ -187,8 +187,8 @@ function MMI.fitted_params(::Standardizer, fitresult)
     is_univariate &&
         return fitted_params(UnivariateStandardizer(), dic[:unnamed])
     features_fit = keys(dic) |> collect
-    zipped = map(ftr->dic[ftr], features_fit)
-    means, stds = zip(zipped...) |> collect
+    means = Tuple(dic[k][1] for k in features_fit)
+    stds = Tuple(dic[k][2] for k in features_fit)
     return (; features_fit, means, stds)
 end
 
