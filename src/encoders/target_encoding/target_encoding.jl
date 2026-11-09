@@ -172,8 +172,7 @@ function target_encoder_fit(
             # Get the targets of an example that belong to this level
             targets_for_level = y[col.==level]
 
-            # Compute λ for mixing (per level; use new locals so that the values computed
-            # for one level do not leak into the next level or column)
+            # Compute λ for mixing
             m_level =
                 m == :auto ? compute_m_auto(task, targets_for_level; y_var = y_var) : m
             λ_level = compute_shrinkage(targets_for_level; m = m_level, λ = lambda)
