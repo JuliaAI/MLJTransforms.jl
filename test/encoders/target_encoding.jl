@@ -48,6 +48,41 @@ end
 end
 
 
+@testset "Shrinkage is computed separately for each level and column" begin
+    # levels/columns of different sizes so that the shrinkage factors differ
+    X = (
+        A = categorical(["a", "a", "b", "b", "b", "b", "b", "b"]),
+        B = categorical(["u", "v", "v", "v", "v", "v", "v", "v"]),
+    )
+    m = 2
+    shrunk(t, prior) = (length(t) / (m + length(t))) * mean(t) +
+                       (m / (m + length(t))) * prior
+
+    # regression
+    y = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+    stats = target_encoder_fit(X, y; m = m)[:y_stat_given_feat_level]
+    for col in (:A, :B), level in rawlevels(X[col])
+        @test stats[col][level] ≈ shrunk(y[X[col].==level], mean(y))
+    end
+
+    # binary classification (frequency of the first class)
+    y = categorical([0, 1, 0, 0, 1, 1, 1, 0])
+    stats = target_encoder_fit(X, y; m = m)[:y_stat_given_feat_level]
+    for col in (:A, :B), level in rawlevels(X[col])
+        @test stats[col][level] ≈ shrunk(y[X[col].==level] .== 0, mean(y .== 0))
+    end
+
+    # m = :auto is estimated per level as well
+    y = [1.0, 2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0]
+    stats = target_encoder_fit(X[(:A,)], y; m = :auto)[:y_stat_given_feat_level]
+    for level in rawlevels(X.A)
+        t = y[X.A.==level]
+        m_level = compute_m_auto("Regression", t; y_var = std(y)^2)
+        λ = length(t) / (m_level + length(t))
+        @test stats[:A][level] ≈ λ * mean(t) + (1 - λ) * mean(y)
+    end
+end
+
 @testset "Fit for binary classification dataset" begin
     # Test consistency of output
     results = []
