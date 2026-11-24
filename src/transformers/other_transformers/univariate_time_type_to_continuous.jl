@@ -111,13 +111,8 @@ function MMI.transform(model::UnivariateTimeTypeToContinuous, fitresult, X)
         throw(ArgumentError("Different `TimeType` encountered during `transform` than expected from `fit`. Found `$(eltype(X))`, expected `$(typeof(min_dt))`"))
     end
     # Set the size of a single step.
-    next_time = min_dt + step
-    if next_time == min_dt
-        # Time type loops if step is a multiple of Hour(24), so calculate the
-        # number of multiples, then re-scale to Hour(12) and adjust delta to match original.
-        m = step / Dates.Hour(12)
-        delta = m * (
-            Float64(Dates.value(min_dt + Dates.Hour(12)) - Dates.value(min_dt)))
+    if min_dt isa Dates.Time
+        delta = Float64(Dates.value(convert(Nanosecond, step)))
     else
         delta = Float64(Dates.value(min_dt + step) - Dates.value(min_dt))
     end
