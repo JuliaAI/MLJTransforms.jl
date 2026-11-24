@@ -1,4 +1,3 @@
-
 @testset "TimeTypeToContinuous" begin
     let dt = [Date(2018, 6, 15) + Day(i) for i=0:10],
         transformer = UnivariateTimeTypeToContinuous(; step=Day(1))
@@ -102,4 +101,22 @@
         dt_continuous = MLJBase.transform(transformer, fr, dt)
         @test all(dt_continuous .== Float64.(0:10))
     end
+end
+
+@testset "https://github.com/JuliaAI/MLJTransforms.jl/issues/101" begin
+    fitt(model, X) = (m = MLJBase.machine(model, X); MLJBase.fit!(m, verbosity=0); m)
+
+    X1 = [Time(9),  Time(10), Time(15)]
+    X2 = [Time(13), Time(14), Time(19)]
+
+    @test MLJBase.transform(fitt(UnivariateTimeTypeToContinuous(), X1), X1) ≈
+        [0.0, 1/24, 6/24]
+    @test MLJBase.transform(fitt(UnivariateTimeTypeToContinuous(), X2), X2) ≈
+        [0.0, 1/24, 6/24]
+    @test MLJBase.transform(fitt(UnivariateTimeTypeToContinuous(step=Hour(13)), X2), X2) ≈
+        [0.0, 1/13, 6/13]
+    @test MLJBase.transform(fitt(UnivariateTimeTypeToContinuous(step=Hour(36)), X2), X2) ≈
+        [0.0, 1/36, 6/36]
+    @test MLJBase.transform(fitt(UnivariateTimeTypeToContinuous(step=Hour(1)), X2), X2) ≈
+        [0.0, 1.0, 6.0]
 end
